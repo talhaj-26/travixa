@@ -12,7 +12,12 @@ export const API_CONFIG = new InjectionToken<ApiConfig>(
 );
 
 export const defaultApiConfig: ApiConfig = {
-  baseUrl: 'http://localhost:8081',
+  baseUrl:
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:8081'
+      : 'https://travixa-backend.onrender.com',
   apiPrefix: '/api',
   backendReady: true,
 };
