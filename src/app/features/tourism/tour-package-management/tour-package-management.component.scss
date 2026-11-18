@@ -1,0 +1,20 @@
+:host { display: block; min-height: 100%; background: #f5f7f5; color: #182b27; }
+.tour-admin-page { max-width: 1360px; padding-block: 2.25rem 4rem !important; }
+.tour-admin-page > header { padding: clamp(1.4rem, 3vw, 2rem); border-radius: 22px; color: #fff; background: linear-gradient(120deg, #123d35, #25634e 62%, #719b70); box-shadow: 0 16px 40px rgba(22,62,52,.13); }
+.tour-admin-page > header h1 { font-weight: 750; letter-spacing: -.035em; }
+.tour-admin-page > header p { color: rgba(255,255,255,.78) !important; }
+.tour-admin-page > header .btn { color: #fff; border-color: rgba(255,255,255,.42); }
+.tour-admin-page > header .btn:hover { color: #174538; background: #fff; }
+.tour-admin-page > .card, .tour-admin-page > form.card { margin-bottom: 1.25rem; border: 1px solid #e4ebe6; border-radius: 18px; box-shadow: 0 8px 24px rgba(30,57,48,.045); }
+.tour-admin-page .card-body { padding: clamp(1rem, 2.5vw, 1.5rem); }
+.tour-admin-page h2 { color: #193c33; font-weight: 700; letter-spacing: -.02em; }
+.tour-admin-page .form-label { color: #3c514a; font-size: .86rem; font-weight: 650; }
+.tour-admin-page .form-control, .tour-admin-page .form-select { min-height: 44px; border-color: #dce6df; border-radius: 10px; }
+.tour-admin-page .form-control:focus, .tour-admin-page .form-select:focus { border-color: #4c8974; box-shadow: 0 0 0 .2rem rgba(57,126,101,.13); }
+.tour-admin-page .btn-primary { border-color: #205e4e; background: #205e4e; }
+.tour-admin-page .btn-primary:hover { border-color: #174b3e; background: #174b3e; }
+.tour-admin-page .table { --bs-table-bg: transparent; }
+.tour-admin-page .table thead th { padding-block: .8rem; color: #60746b; border-bottom-color: #e3ebe5; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+.tour-admin-page .table tbody td { padding-block: .85rem; border-color: #edf1ee; vertical-align: middle; }
+.tour-admin-page .alert { border: 0; border-radius: 12px; }
+@media (max-width: 575px) { .tour-admin-page { padding-inline: 1rem; } .tour-admin-page > header { border-radius: 18px; } }

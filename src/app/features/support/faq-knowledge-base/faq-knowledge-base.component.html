@@ -1,0 +1,1202 @@
+<div class="faq-page">
+  <style>
+    .faq-page {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef2f7;
+      --text: #152033;
+      --muted: #6b7688;
+      --border: rgba(21, 32, 51, 0.1);
+      --primary: #6c4df6;
+      --secondary: #00a6a6;
+      --accent: #ff8a3d;
+      --success: #20a56a;
+      --shadow: 0 18px 45px rgba(27, 39, 65, 0.1);
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 10% 5%,
+          rgba(108, 77, 246, 0.12),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 90% 15%,
+          rgba(0, 166, 166, 0.1),
+          transparent 22%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      padding-bottom: 80px;
+    }
+
+    [data-theme="dark"] .faq-page {
+      --bg: #09111f;
+      --surface: #101b2d;
+      --surface-2: #172337;
+      --text: #edf3ff;
+      --muted: #9aa9bd;
+      --border: rgba(255, 255, 255, 0.09);
+      --primary: #8b74ff;
+      --secondary: #29c7c2;
+      --accent: #ff9d61;
+      --success: #42d393;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    .faq-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* KNOWLEDGE NAV */
+    .knowledge-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: color-mix(in srgb, var(--surface) 90%, transparent);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .knowledge-nav-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .knowledge-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-orbit {
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .brand-orbit::after {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: -4px;
+      right: 1px;
+    }
+
+    .brand-name {
+      font-weight: 900;
+      letter-spacing: 1px;
+      font-size: 1.08rem;
+    }
+
+    .brand-sub {
+      display: block;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-topics {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-topics a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 9px 12px;
+      border-radius: 12px;
+      transition: 0.25s;
+    }
+
+    .nav-topics a:hover {
+      background: var(--surface-2);
+      color: var(--primary);
+    }
+
+    .nav-help {
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #927cff);
+      padding: 10px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(108, 77, 246, 0.24);
+    }
+
+    /* HERO */
+    .faq-hero {
+      padding: 72px 0 42px;
+      text-align: center;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      box-shadow: var(--shadow);
+    }
+
+    .faq-hero h1 {
+      max-width: 800px;
+      margin: 20px auto 14px;
+      font-size: clamp(2.3rem, 6vw, 4.7rem);
+      line-height: 0.98;
+      letter-spacing: -2.5px;
+      font-weight: 950;
+    }
+
+    .faq-hero h1 span {
+      background: linear-gradient(
+        90deg,
+        var(--primary),
+        var(--secondary),
+        var(--accent)
+      );
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    /* SEARCH */
+    .search-console {
+      max-width: 760px;
+      margin: 30px auto 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 9px;
+      display: flex;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-console input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      padding: 13px 15px;
+      font-size: 0.98rem;
+    }
+
+    .search-console button {
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #917dff);
+      padding: 0 22px;
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* CATEGORY RAIL */
+    .category-rail {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin: 20px 0 50px;
+    }
+
+    .category-chip {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 17px 10px;
+      cursor: pointer;
+      transition: 0.25s;
+      text-align: center;
+    }
+
+    .category-chip:hover,
+    .category-chip.active {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 15px 30px rgba(108, 77, 246, 0.13);
+    }
+
+    .category-icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .category-chip strong {
+      display: block;
+      font-size: 0.82rem;
+    }
+
+    .category-chip small {
+      color: var(--muted);
+      font-size: 0.68rem;
+    }
+
+    /* SECTION */
+    .section-heading {
+      margin-bottom: 20px;
+    }
+
+    .section-heading .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      font-weight: 900;
+    }
+
+    .section-heading h2 {
+      margin: 5px 0;
+      font-size: 1.8rem;
+      font-weight: 900;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* POPULAR */
+    .popular-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 52px;
+    }
+
+    .popular-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 21px;
+      box-shadow: var(--shadow);
+      transition: 0.3s;
+    }
+
+    .popular-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .popular-card .mini-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--surface-2);
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .popular-card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .popular-card p {
+      color: var(--muted);
+      font-size: 0.83rem;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .popular-card a {
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    /* FAQ LAYOUT */
+    .faq-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .faq-index {
+      position: sticky;
+      top: 94px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .faq-index h3 {
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    .index-link {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .index-link:hover {
+      background: var(--surface-2);
+      color: var(--primary);
+    }
+
+    .faq-group {
+      margin-bottom: 32px;
+    }
+
+    .faq-group h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      font-weight: 900;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: 0.25s;
+    }
+
+    .faq-item[open] {
+      border-color: rgba(108, 77, 246, 0.38);
+      box-shadow: 0 12px 28px rgba(108, 77, 246, 0.08);
+    }
+
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 20px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      width: 27px;
+      height: 27px;
+      flex: 0 0 27px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .faq-item[open] summary::after {
+      content: "−";
+    }
+
+    .faq-answer {
+      padding: 0 20px 19px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.75;
+    }
+
+    .faq-answer a {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    /* HELP CTA */
+    .help-panel {
+      margin-top: 50px;
+      border-radius: 30px;
+      padding: 38px;
+      background:
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(255, 255, 255, 0.15),
+          transparent 30%
+        ),
+        linear-gradient(135deg, #4d35c7, #087f86);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .help-panel::after {
+      content: "?";
+      position: absolute;
+      right: 35px;
+      bottom: -55px;
+      font-size: 13rem;
+      font-weight: 950;
+      opacity: 0.07;
+    }
+
+    .help-panel h2 {
+      font-size: 2rem;
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .help-panel p {
+      max-width: 620px;
+      opacity: 0.88;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    .help-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .help-actions a {
+      text-decoration: none;
+      padding: 11px 17px;
+      border-radius: 13px;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .help-primary {
+      background: #fff;
+      color: #4432bd;
+    }
+
+    .help-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    /* QUICK POLICIES */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 28px;
+    }
+
+    .policy-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 21px;
+    }
+
+    .policy-card span {
+      font-size: 1.5rem;
+    }
+
+    .policy-card h4 {
+      margin: 13px 0 6px;
+      font-size: 0.94rem;
+    }
+
+    .policy-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .no-results {
+      display: none;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .category-rail {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .faq-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .faq-index {
+        position: static;
+      }
+
+      .popular-grid,
+      .policy-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-topics {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .faq-shell {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .knowledge-nav-inner {
+        min-height: 66px;
+      }
+
+      .nav-help {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+      }
+
+      .faq-hero {
+        padding-top: 48px;
+      }
+
+      .faq-hero h1 {
+        letter-spacing: -1.5px;
+      }
+
+      .search-console {
+        flex-direction: column;
+      }
+
+      .search-console button {
+        min-height: 46px;
+      }
+
+      .category-rail {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .help-panel {
+        padding: 27px;
+      }
+    }
+  </style>
+
+  <!-- KNOWLEDGE NAV -->
+
+  <nav class="knowledge-nav">
+    <div class="faq-shell knowledge-nav-inner">
+      <a href="/" class="knowledge-brand">
+        <span class="brand-orbit">T</span>
+        <span>
+          <span class="brand-name">TRAVIXA</span>
+          <span class="brand-sub">Knowledge Hub</span>
+        </span>
+      </a>
+
+      <div class="nav-topics">
+        <a href="/discover">Discover</a>
+        <a href="/my-bookings">My Trips</a>
+        <a href="/booking">Booking</a>
+        <a href="/settings">Settings</a>
+      </div>
+
+      <a href="/support" class="nav-help">Need Help?</a>
+    </div>
+  </nav>
+
+  <main class="faq-shell">
+    <!-- HERO -->
+    <section class="faq-hero">
+      <div class="hero-kicker">✦ Smart Help Atlas</div>
+
+      <h1>
+        Answers for every
+        <span>journey moment.</span>
+      </h1>
+
+      <p class="hero-copy">
+        Find clear answers about bookings, payments, cancellations, travel,
+        partner services and your TRAVIXA account — all in one place.
+      </p>
+
+      <div class="search-console">
+        <input
+          id="faqSearch"
+          type="search"
+          placeholder="Search: cancellation, payment, booking, refund..."
+          aria-label="Search frequently asked questions"
+        />
+        <button type="button" onclick="searchFaqs()">Search</button>
+      </div>
+    </section>
+
+    <!-- CATEGORY RAIL -->
+    <section class="category-rail">
+      <button
+        type="button"
+        class="category-chip active"
+        onclick="filterCategory('all', this)"
+      >
+        <span class="category-icon">✦</span>
+        <strong>All Topics</strong>
+        <small>Everything</small>
+      </button>
+
+      <button
+        type="button"
+        class="category-chip"
+        onclick="filterCategory('booking', this)"
+      >
+        <span class="category-icon">🧳</span>
+        <strong>Bookings</strong>
+        <small>Trips & reservations</small>
+      </button>
+
+      <button
+        type="button"
+        class="category-chip"
+        onclick="filterCategory('payment', this)"
+      >
+        <span class="category-icon">৳</span>
+        <strong>Payments</strong>
+        <small>Billing & refunds</small>
+      </button>
+
+      <button
+        type="button"
+        class="category-chip"
+        onclick="filterCategory('travel', this)"
+      >
+        <span class="category-icon">🌍</span>
+        <strong>Travel</strong>
+        <small>Before you go</small>
+      </button>
+
+      <button
+        type="button"
+        class="category-chip"
+        onclick="filterCategory('account', this)"
+      >
+        <span class="category-icon">◉</span>
+        <strong>Account</strong>
+        <small>Profile & security</small>
+      </button>
+
+      <button
+        type="button"
+        class="category-chip"
+        onclick="filterCategory('partner', this)"
+      >
+        <span class="category-icon">◆</span>
+        <strong>Partners</strong>
+        <small>Business services</small>
+      </button>
+    </section>
+
+    <!-- POPULAR -->
+    <section>
+      <div class="section-heading">
+        <span class="eyebrow">Start here</span>
+        <h2>Popular answers</h2>
+        <p>The questions travellers ask most often.</p>
+      </div>
+
+      <div class="popular-grid">
+        <article class="popular-card">
+          <div class="mini-icon">🧾</div>
+          <h3>Where can I find my booking?</h3>
+          <p>
+            Your confirmed reservations are available from the My Bookings area
+            of your TRAVIXA account.
+          </p>
+          <a href="/my-bookings">Open My Bookings →</a>
+        </article>
+
+        <article class="popular-card">
+          <div class="mini-icon">💳</div>
+          <h3>How does payment work?</h3>
+          <p>
+            TRAVIXA checkout supports secure payment flows and displays the
+            complete price before confirmation.
+          </p>
+          <a href="/payment">Explore Payment →</a>
+        </article>
+
+        <article class="popular-card">
+          <div class="mini-icon">🔄</div>
+          <h3>Can I cancel my booking?</h3>
+          <p>
+            Cancellation depends on the service and its policy. Always review
+            the cancellation terms before confirming.
+          </p>
+          <a href="/booking-history">View Booking History →</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- FAQ AREA -->
+    <section>
+      <div class="section-heading">
+        <span class="eyebrow">Knowledge base</span>
+        <h2>Browse the answer library</h2>
+        <p>Choose a topic or search above to narrow the results.</p>
+      </div>
+
+      <div class="faq-layout">
+        <!-- INDEX -->
+        <aside class="faq-index">
+          <h3>Knowledge Index</h3>
+
+          <a href="#booking-faq" class="index-link">Booking & Reservations</a>
+          <a href="#payment-faq" class="index-link">Payment & Refunds</a>
+          <a href="#travel-faq" class="index-link">Travel & Safety</a>
+          <a href="#account-faq" class="index-link">Account & Security</a>
+          <a href="#partner-faq" class="index-link">Partner Services</a>
+
+          <hr style="border-color: var(--border)" />
+
+          <a href="/support" class="index-link"> Contact Support → </a>
+        </aside>
+
+        <!-- QUESTIONS -->
+        <div id="faqList">
+          <!-- BOOKING -->
+          <div class="faq-group" id="booking-faq" data-category="booking">
+            <h3>🧳 Booking & Reservations</h3>
+
+            <details
+              class="faq-item"
+              data-keywords="booking reservation reserve hotel tour restaurant"
+            >
+              <summary>How do I make a booking on TRAVIXA?</summary>
+              <div class="faq-answer">
+                Select a service such as a hotel, tour package, restaurant or
+                transport option, review its details, choose your required date
+                and guest information, then continue through checkout.
+                <br /><br />
+                <a href="/booking">Start a booking →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="booking confirmation reference confirmed"
+            >
+              <summary>How do I know whether my booking is confirmed?</summary>
+              <div class="faq-answer">
+                A successful booking receives a booking reference and a
+                confirmation status. You can review the full reservation from
+                your booking details or My Bookings area.
+                <br /><br />
+                <a href="/my-bookings">Check my bookings →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="modify change booking date guest"
+            >
+              <summary>Can I change my booking after confirmation?</summary>
+              <div class="faq-answer">
+                Modification depends on the service's availability and booking
+                policy. Open the booking details and check whether modification
+                is available for that reservation.
+              </div>
+            </details>
+          </div>
+
+          <!-- PAYMENT -->
+          <div class="faq-group" id="payment-faq" data-category="payment">
+            <h3>💳 Payment & Refunds</h3>
+
+            <details class="faq-item" data-keywords="payment card checkout pay">
+              <summary>What payment methods can I use?</summary>
+              <div class="faq-answer">
+                Available payment methods are shown during checkout. The
+                checkout page provides the selected payment option, booking
+                amount and final payable total before confirmation.
+                <br /><br />
+                <a href="/checkout">Open checkout →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="refund money cancellation refund"
+            >
+              <summary>When will I receive a refund?</summary>
+              <div class="faq-answer">
+                Refund timing depends on the cancellation policy, service
+                provider and payment method. If a refund is approved, the
+                transaction status should be reflected in your payment or
+                booking records.
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="failed payment transaction"
+            >
+              <summary>What should I do if my payment fails?</summary>
+              <div class="faq-answer">
+                First verify your payment details and try again. If the issue
+                continues, keep the transaction information and contact TRAVIXA
+                support for assistance.
+                <br /><br />
+                <a href="/support">Contact support →</a>
+              </div>
+            </details>
+          </div>
+
+          <!-- TRAVEL -->
+          <div class="faq-group" id="travel-faq" data-category="travel">
+            <h3>🌍 Travel & Safety</h3>
+
+            <details
+              class="faq-item"
+              data-keywords="travel weather destination weather"
+            >
+              <summary>Where can I check destination weather?</summary>
+              <div class="faq-answer">
+                TRAVIXA provides a Weather Intelligence area where travellers
+                can review destination conditions, forecasts and travel
+                advisories.
+                <br /><br />
+                <a href="/weather">Check weather →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="map location directions destination"
+            >
+              <summary>
+                Can I check locations and destinations on a map?
+              </summary>
+              <div class="faq-answer">
+                Yes. TRAVIXA includes a Maps area designed to help travellers
+                explore destinations and location information before or during
+                their journey.
+                <br /><br />
+                <a href="/maps">Open Maps →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="ai planner itinerary trip plan"
+            >
+              <summary>Can TRAVIXA help me plan a trip?</summary>
+              <div class="faq-answer">
+                The AI Planner is designed to help travellers build a more
+                structured itinerary around destinations, activities and travel
+                preferences.
+                <br /><br />
+                <a href="/ai-planner">Open AI Planner →</a>
+              </div>
+            </details>
+          </div>
+
+          <!-- ACCOUNT -->
+          <div class="faq-group" id="account-faq" data-category="account">
+            <h3>◉ Account & Security</h3>
+
+            <details
+              class="faq-item"
+              data-keywords="profile account edit personal information"
+            >
+              <summary>Where can I update my profile information?</summary>
+              <div class="faq-answer">
+                Your personal account information and travel preferences can be
+                managed from the User Profile area.
+                <br /><br />
+                <a href="/user-profile">Open profile →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="password forgot reset security"
+            >
+              <summary>What if I forget my password?</summary>
+              <div class="faq-answer">
+                Use the password recovery flow to request account access
+                assistance and follow the instructions shown there.
+                <br /><br />
+                <a href="/forgot-password">Recover password →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="notifications email preferences"
+            >
+              <summary>Can I control my notification preferences?</summary>
+              <div class="faq-answer">
+                Yes. TRAVIXA provides notification controls for managing account
+                and travel-related communication preferences.
+                <br /><br />
+                <a href="/settings">Open settings →</a>
+              </div>
+            </details>
+          </div>
+
+          <!-- PARTNER -->
+          <div class="faq-group" id="partner-faq" data-category="partner">
+            <h3>◆ Partner Services</h3>
+
+            <details
+              class="faq-item"
+              data-keywords="partner hotel restaurant agency guide registration"
+            >
+              <summary>How can my business join TRAVIXA?</summary>
+              <div class="faq-answer">
+                Businesses can submit their details through the Partner
+                Registration flow. The platform supports hotels, restaurants,
+                tour agencies, tour guides and transport providers.
+                <br /><br />
+                <a href="/partner-registration">Become a partner →</a>
+              </div>
+            </details>
+
+            <details class="faq-item" data-keywords="partner profile business">
+              <summary>
+                Where can partners manage their business identity?
+              </summary>
+              <div class="faq-answer">
+                The Partner Profile area provides a central place for business
+                identity, verification information, active services and
+                performance-related details.
+                <br /><br />
+                <a href="/partner-profile">Open partner profile →</a>
+              </div>
+            </details>
+
+            <details
+              class="faq-item"
+              data-keywords="partner performance vendor"
+            >
+              <summary>How can partners monitor performance?</summary>
+              <div class="faq-answer">
+                Partner Performance provides business-level signals such as
+                revenue trajectory, service performance and partner health.
+                <br /><br />
+                <a href="/partner-performance">View performance →</a>
+              </div>
+            </details>
+          </div>
+
+          <div id="noResults" class="no-results">
+            <strong>No matching answers found.</strong>
+            <p style="margin: 8px 0 0">
+              Try another keyword or contact our support team.
+            </p>
+            <a
+              href="/support"
+              style="
+                display: inline-block;
+                margin-top: 15px;
+                color: var(--primary);
+                font-weight: 900;
+                text-decoration: none;
+              "
+            >
+              Contact Support →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK POLICIES -->
+    <section style="margin-top: 55px">
+      <div class="section-heading">
+        <span class="eyebrow">Quick reference</span>
+        <h2>Know before you go</h2>
+        <p>A few useful checkpoints before confirming a service.</p>
+      </div>
+
+      <div class="policy-grid">
+        <article class="policy-card">
+          <span>📅</span>
+          <h4>Check dates carefully</h4>
+          <p>
+            Confirm travel, check-in, check-out and reservation dates before
+            completing payment.
+          </p>
+        </article>
+
+        <article class="policy-card">
+          <span>📜</span>
+          <h4>Read service policies</h4>
+          <p>
+            Cancellation, modification and refund conditions may differ by
+            service provider.
+          </p>
+        </article>
+
+        <article class="policy-card">
+          <span>🔐</span>
+          <h4>Protect your account</h4>
+          <p>
+            Keep your login information private and contact support if you
+            notice unusual account activity.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SUPPORT CTA -->
+    <section class="help-panel">
+      <h2>Still need a human?</h2>
+
+      <p>
+        If the knowledge base didn't answer your question, our Support Center is
+        the next stop. Bring your booking reference or relevant details so the
+        issue can be resolved faster.
+      </p>
+
+      <div class="help-actions">
+        <a href="/support" class="help-primary"> Open Support Center </a>
+
+        <a href="/notification-center" class="help-secondary">
+          Notification Center
+        </a>
+
+        <a href="/booking-history" class="help-secondary"> Booking History </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function searchFaqs() {
+      const input = document.getElementById("faqSearch");
+      const query = input.value.trim().toLowerCase();
+
+      const groups = document.querySelectorAll(".faq-group");
+      const items = document.querySelectorAll(".faq-item");
+      const noResults = document.getElementById("noResults");
+
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const text = (
+          item.innerText +
+          " " +
+          (item.getAttribute("data-keywords") || "")
+        ).toLowerCase();
+
+        const match = query === "" || text.includes(query);
+
+        item.style.display = match ? "" : "none";
+
+        if (match) {
+          visibleCount++;
+        }
+      });
+
+      groups.forEach((group) => {
+        const visibleItems = group.querySelectorAll(
+          '.faq-item:not([style*="display: none"])',
+        );
+
+        group.style.display = visibleItems.length ? "" : "none";
+      });
+
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
+
+      if (query) {
+        document.getElementById("faqList").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+
+    function filterCategory(category, button) {
+      document.querySelectorAll(".category-chip").forEach((chip) => {
+        chip.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      const groups = document.querySelectorAll(".faq-group");
+      const items = document.querySelectorAll(".faq-item");
+      const noResults = document.getElementById("noResults");
+
+      document.getElementById("faqSearch").value = "";
+
+      let count = 0;
+
+      groups.forEach((group) => {
+        const visible =
+          category === "all" ||
+          group.getAttribute("data-category") === category;
+
+        group.style.display = visible ? "" : "none";
+
+        if (visible) {
+          group.querySelectorAll(".faq-item").forEach((item) => {
+            item.style.display = "";
+            count++;
+          });
+        }
+      });
+
+      noResults.style.display = count ? "none" : "block";
+    }
+
+    document
+      .getElementById("faqSearch")
+      .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          searchFaqs();
+        }
+      });
+  </script>
+</div>

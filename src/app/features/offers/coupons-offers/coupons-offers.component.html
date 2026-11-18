@@ -1,0 +1,1027 @@
+
+<div class="offers-page">
+
+  <style>
+    :host {
+      display: block;
+    }
+
+    .offers-page {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef2f7;
+      --text: #172033;
+      --muted: #687386;
+      --line: rgba(23, 32, 51, .10);
+      --accent: #7c3aed;
+      --accent-2: #ec4899;
+      --success: #16a34a;
+      --warning: #d97706;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(124,58,237,.12), transparent 25%),
+        radial-gradient(circle at 90% 15%, rgba(236,72,153,.10), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      padding-bottom: 70px;
+      transition: .3s ease;
+    }
+
+    [data-theme="dark"] .offers-page {
+      --bg: #080b14;
+      --surface: #111827;
+      --surface-2: #182133;
+      --text: #f4f7ff;
+      --muted: #9aa6ba;
+      --line: rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 10% 5%, rgba(124,58,237,.18), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(236,72,153,.12), transparent 28%),
+        var(--bg);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .deal-nav {
+      width: min(1180px, calc(100% - 32px));
+      margin: 20px auto 0;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(18px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      box-shadow: 0 14px 40px rgba(15,23,42,.08);
+    }
+
+    [data-theme="dark"] .deal-nav {
+      background: rgba(17,24,39,.78);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 25px rgba(124,58,237,.28);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      padding: 9px 12px;
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: .25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--surface-2);
+      transform: translateY(-2px);
+    }
+
+    .nav-deal {
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      padding: 10px 15px;
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(124,58,237,.22);
+    }
+
+    .hero {
+      width: min(1180px, calc(100% - 32px));
+      margin: 65px auto 30px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-main {
+      border-radius: 34px;
+      padding: 48px;
+      min-height: 370px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(23,16,45,.88), rgba(76,29,149,.88)),
+        url('assets/images/tour-packages/tour-1.jpg') center/cover;
+      box-shadow: 0 28px 70px rgba(76,29,149,.20);
+    }
+
+    .hero-main::before,
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+
+    .hero-main::before {
+      width: 280px;
+      height: 280px;
+      right: -90px;
+      top: -100px;
+    }
+
+    .hero-main::after {
+      width: 180px;
+      height: 180px;
+      right: 30px;
+      bottom: -100px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-main h1 {
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: .98;
+      max-width: 650px;
+      margin: 22px 0 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-main p {
+      max-width: 580px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.7;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 2;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions a,
+    .hero-actions button {
+      border: 0;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 12px 17px;
+      border-radius: 13px;
+      font-weight: 800;
+      transition: .25s ease;
+    }
+
+    .primary {
+      color: #4c1d95;
+      background: white;
+    }
+
+    .secondary {
+      color: white;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18) !important;
+    }
+
+    .hero-actions a:hover,
+    .hero-actions button:hover {
+      transform: translateY(-3px);
+    }
+
+    .savings-card {
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: var(--surface);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 55px rgba(15,23,42,.07);
+    }
+
+    .savings-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .savings-value {
+      font-size: 45px;
+      font-weight: 950;
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .vault-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      background: var(--surface-2);
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      overflow: hidden;
+      margin: 20px 0 10px;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 72%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      animation: grow 1.4s ease;
+    }
+
+    @keyframes grow {
+      from { width: 0; }
+      to { width: 72%; }
+    }
+
+    .savings-footer {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      width: min(1180px, calc(100% - 32px));
+      margin: 55px auto 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .section-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .category {
+      text-decoration: none;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px 15px;
+      text-align: center;
+      transition: .25s ease;
+    }
+
+    .category:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124,58,237,.35);
+      box-shadow: 0 14px 35px rgba(124,58,237,.10);
+    }
+
+    .category-icon {
+      font-size: 27px;
+      margin-bottom: 9px;
+    }
+
+    .category strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .category small {
+      color: var(--muted);
+    }
+
+    .deal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .deal {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 25px;
+      transition: .3s ease;
+    }
+
+    .deal:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 20px 45px rgba(15,23,42,.10);
+    }
+
+    .deal-image {
+      height: 185px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .deal-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(17,24,39,.82);
+      color: white;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .deal-content {
+      padding: 20px;
+    }
+
+    .deal-content h3 {
+      margin: 0 0 7px;
+      font-size: 19px;
+    }
+
+    .deal-content p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin-bottom: 17px;
+    }
+
+    .coupon-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px dashed rgba(124,58,237,.45);
+      background: rgba(124,58,237,.06);
+      border-radius: 13px;
+      padding: 10px;
+      margin-bottom: 13px;
+    }
+
+    .coupon-code {
+      font-weight: 950;
+      letter-spacing: .12em;
+      color: var(--accent);
+    }
+
+    .copy-btn {
+      border: 0;
+      background: var(--text);
+      color: var(--surface);
+      border-radius: 9px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .deal-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .expiry {
+      color: var(--warning);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .claim {
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      padding: 9px 12px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .featured {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      min-height: 280px;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .featured-image {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.05), rgba(0,0,0,.15)),
+        url('assets/images/hotels/hotel-1.jpg') center/cover;
+      min-height: 280px;
+    }
+
+    .featured-content {
+      padding: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .featured-content .tag {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .featured-content h2 {
+      font-size: 31px;
+      margin: 9px 0;
+    }
+
+    .featured-content p {
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 560px;
+    }
+
+    .feature-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 10px 0 20px;
+    }
+
+    .feature-price strong {
+      font-size: 31px;
+    }
+
+    .feature-price del {
+      color: var(--muted);
+    }
+
+    .featured-content a {
+      width: fit-content;
+      text-decoration: none;
+      background: var(--text);
+      color: var(--surface);
+      padding: 12px 17px;
+      border-radius: 13px;
+      font-weight: 850;
+    }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .rule {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: var(--surface);
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .rule span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%, 90px);
+      background: var(--text);
+      color: var(--surface);
+      padding: 12px 18px;
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0;
+      transition: .3s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .featured {
+        grid-template-columns: 1fr;
+      }
+
+      .categories {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .deal-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .rules {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-image {
+        min-height: 220px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-main {
+        padding: 30px;
+      }
+
+      .hero-main h1 {
+        font-size: 42px;
+      }
+
+      .categories,
+      .deal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .deal-nav {
+        border-radius: 16px;
+      }
+
+      .nav-deal {
+        padding: 9px 11px;
+      }
+
+      .savings-card,
+      .featured-content {
+        padding: 25px;
+      }
+    }
+  </style>
+
+  <!-- DEAL VAULT NAVBAR -->
+  <nav class="deal-nav">
+    <a href="/" class="brand">
+      <span class="brand-mark">✦</span>
+      TRAVIXA
+    </a>
+
+    <div class="nav-links">
+      <a href="/discover">Discover</a>
+      <a href="/tour-packages">Tours</a>
+      <a href="/stays">Stays</a>
+      <a href="/restaurants">Dining</a>
+      <a href="/wishlist">Wishlist</a>
+    </div>
+
+    <a href="/checkout" class="nav-deal">Use a Deal →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="hero-main">
+      <span class="eyebrow">✦ TRAVIXA DEAL VAULT</span>
+
+      <h1>Travel more.<br>Pay less.</h1>
+
+      <p>
+        Exclusive coupons, partner offers and limited-time travel deals
+        collected in one intelligent offer exchange.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#deals" class="primary">Explore Offers</a>
+        <a href="/search-results" class="secondary">Find a Service</a>
+      </div>
+    </div>
+
+    <div class="savings-card">
+
+      <div>
+        <div class="savings-top">
+          <div>
+            <div class="mini-label">Your savings potential</div>
+            <div class="savings-value">৳8,450</div>
+          </div>
+
+          <div class="vault-icon">🎟️</div>
+        </div>
+
+        <div class="progress">
+          <span></span>
+        </div>
+
+        <div class="savings-footer">
+          <span>72% offer coverage</span>
+          <strong>12 active deals</strong>
+        </div>
+      </div>
+
+      <div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:25px 0;">
+
+        <div class="mini-label">Next expiring</div>
+        <strong style="display:block;margin-top:6px;">
+          HOTEL15 expires in 2 days
+        </strong>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section">
+
+    <div class="section-head">
+      <div>
+        <h2>Browse the offer exchange</h2>
+        <p>Pick a category and unlock a better travel price.</p>
+      </div>
+    </div>
+
+    <div class="categories">
+
+      <a href="/stays" class="category">
+        <div class="category-icon">🏨</div>
+        <strong>Hotels</strong>
+        <small>18 offers</small>
+      </a>
+
+      <a href="/tour-packages" class="category">
+        <div class="category-icon">🗺️</div>
+        <strong>Tours</strong>
+        <small>24 offers</small>
+      </a>
+
+      <a href="/restaurants" class="category">
+        <div class="category-icon">🍽️</div>
+        <strong>Dining</strong>
+        <small>11 offers</small>
+      </a>
+
+      <a href="/transportation" class="category">
+        <div class="category-icon">🚌</div>
+        <strong>Transport</strong>
+        <small>9 offers</small>
+      </a>
+
+      <a href="/booking" class="category">
+        <div class="category-icon">✨</div>
+        <strong>Bundles</strong>
+        <small>7 offers</small>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- ACTIVE DEALS -->
+  <section class="section" id="deals">
+
+    <div class="section-head">
+      <div>
+        <h2>Live deals</h2>
+        <p>Fresh offers currently available across TRAVIXA.</p>
+      </div>
+
+      <span style="color:var(--success);font-size:12px;font-weight:900;">
+        ● LIVE OFFER BOARD
+      </span>
+    </div>
+
+    <div class="deal-grid">
+
+      <!-- HOTEL DEAL -->
+      <article class="deal">
+
+        <div
+          class="deal-image"
+          style="background-image:url('assets/images/hotels/hotel-1.jpg');">
+          <span class="deal-badge">HOTEL • 15% OFF</span>
+        </div>
+
+        <div class="deal-content">
+          <h3>Staycation Saver</h3>
+
+          <p>
+            Save 15% on selected hotel stays and premium room categories.
+          </p>
+
+          <div class="coupon-row">
+            <span class="coupon-code">HOTEL15</span>
+            <button
+              type="button"
+              class="copy-btn"
+              onclick="copyCode('HOTEL15')">
+              Copy
+            </button>
+          </div>
+
+          <div class="deal-bottom">
+            <span class="expiry">⏳ Ends in 2 days</span>
+            <a href="/stays" class="claim">Claim Deal</a>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- TOUR DEAL -->
+      <article class="deal">
+
+        <div
+          class="deal-image"
+          style="background-image:url('assets/images/tour-packages/tour-1.jpg');">
+          <span class="deal-badge">TOUR • ৳2,000 OFF</span>
+        </div>
+
+        <div class="deal-content">
+          <h3>Cloud Escape</h3>
+
+          <p>
+            Take ৳2,000 off selected Sajek Valley and hill destination packages.
+          </p>
+
+          <div class="coupon-row">
+            <span class="coupon-code">SAJEK2K</span>
+            <button
+              type="button"
+              class="copy-btn"
+              onclick="copyCode('SAJEK2K')">
+              Copy
+            </button>
+          </div>
+
+          <div class="deal-bottom">
+            <span class="expiry">⏳ Ends in 5 days</span>
+            <a href="/tour-packages" class="claim">Claim Deal</a>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- DINING DEAL -->
+      <article class="deal">
+
+        <div
+          class="deal-image"
+          style="background-image:url('assets/images/restaurants/restaurant-1.jpg');">
+          <span class="deal-badge">DINING • 20% OFF</span>
+        </div>
+
+        <div class="deal-content">
+          <h3>Table for Less</h3>
+
+          <p>
+            Enjoy 20% off selected restaurant reservations during eligible hours.
+          </p>
+
+          <div class="coupon-row">
+            <span class="coupon-code">DINE20</span>
+            <button
+              type="button"
+              class="copy-btn"
+              onclick="copyCode('DINE20')">
+              Copy
+            </button>
+          </div>
+
+          <div class="deal-bottom">
+            <span class="expiry">⏳ Ends tonight</span>
+            <a href="/restaurants" class="claim">Claim Deal</a>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- FEATURED OFFER -->
+  <section class="section">
+
+    <div class="featured">
+
+      <div class="featured-image"></div>
+
+      <div class="featured-content">
+
+        <span class="tag">★ Featured partner offer</span>
+
+        <h2>Grand Palace Weekend Drop</h2>
+
+        <p>
+          Turn your next Dhaka stay into a premium escape with an exclusive
+          TRAVIXA partner rate.
+        </p>
+
+        <div class="feature-price">
+          <strong>৳12,750</strong>
+          <del>৳15,000</del>
+          <span style="color:var(--success);font-weight:900;">15% OFF</span>
+        </div>
+
+        <a href="/hotel-details">
+          View Stay & Offer →
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+
+    <div class="section-head">
+      <div>
+        <h2>How the vault works</h2>
+        <p>Three simple steps from discovery to savings.</p>
+      </div>
+    </div>
+
+    <div class="rules">
+
+      <div class="rule">
+        <strong>01 · Discover</strong>
+        <span>
+          Find a coupon that matches your hotel, tour, dining or transport plan.
+        </span>
+      </div>
+
+      <div class="rule">
+        <strong>02 · Copy</strong>
+        <span>
+          Copy the unique offer code and continue to your selected service.
+        </span>
+      </div>
+
+      <div class="rule">
+        <strong>03 · Save</strong>
+        <span>
+          Apply the code during checkout and watch the eligible discount appear.
+        </span>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section">
+
+    <div
+      style="
+        border-radius:28px;
+        padding:40px;
+        text-align:center;
+        color:white;
+        background:linear-gradient(135deg,#4c1d95,#be185d);
+        box-shadow:0 25px 60px rgba(76,29,149,.20);
+      ">
+
+      <div style="font-size:11px;font-weight:900;letter-spacing:.14em;">
+        YOUR NEXT JOURNEY IS WAITING
+      </div>
+
+      <h2 style="font-size:34px;margin:10px 0;">
+        Ready to unlock your next deal?
+      </h2>
+
+      <p style="color:rgba(255,255,255,.75);max-width:620px;margin:0 auto 22px;">
+        Compare services, choose your destination and make your next
+        TRAVIXA booking smarter.
+      </p>
+
+      <a
+        href="/compare-services"
+        style="
+          display:inline-block;
+          text-decoration:none;
+          background:white;
+          color:#4c1d95;
+          padding:13px 19px;
+          border-radius:13px;
+          font-weight:900;
+        ">
+        Compare & Save →
+      </a>
+
+    </div>
+
+  </section>
+
+  <div class="toast" id="copyToast">
+    Coupon copied successfully ✓
+  </div>
+
+  <script>
+    function copyCode(code) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code);
+      }
+
+      const toast = document.getElementById('copyToast');
+
+      if (toast) {
+        toast.textContent = code + ' copied successfully ✓';
+        toast.classList.add('show');
+
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2200);
+      }
+    }
+  </script>
+
+</div>
+

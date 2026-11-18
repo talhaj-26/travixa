@@ -1,0 +1,657 @@
+
+<section class="register-page">
+  <!-- Animated background -->
+  <div class="reg-bg" aria-hidden="true">
+    <div class="reg-orb reg-orb-one"></div>
+    <div class="reg-orb reg-orb-two"></div>
+    <div class="reg-orb reg-orb-three"></div>
+    <div class="reg-noise"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="reg-topbar">
+    <a routerLink="/" class="reg-brand" aria-label="TRAVIXA home">
+      <span class="reg-brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.8" aria-hidden="true">
+          <path d="M12 2 2 7l10 5 10-5-10-5Z"></path>
+          <path d="m2 17 10 5 10-5"></path>
+          <path d="m2 12 10 5 10-5"></path>
+        </svg>
+      </span>
+
+      <span class="reg-brand-copy">
+        <strong>TRAVIXA</strong>
+        <small>TRAVEL DIFFERENTLY</small>
+      </span>
+    </a>
+
+    <div class="reg-topbar-actions">
+      <app-theme-toggle></app-theme-toggle>
+
+      <span class="reg-topbar-question">
+        Already have an account?
+      </span>
+
+      <a routerLink="/login" class="topbar-login">
+        Sign in <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="reg-shell">
+
+    <!-- LEFT: Registration form -->
+    <section class="reg-form-side" aria-labelledby="registerTitle">
+      <div class="reg-form-card">
+
+        <!-- Intro -->
+        <header class="reg-header">
+          <span class="reg-kicker">
+            <span class="reg-kicker-dot"></span>
+            YOUR JOURNEY BEGINS HERE
+          </span>
+
+          <h1 id="registerTitle" class="reg-title">
+            Travel more.
+            <em>Feel everything.</em>
+          </h1>
+
+          <p class="reg-subtitle">
+            Create your TRAVIXA account and turn your next travel idea
+            into an unforgettable experience.
+          </p>
+        </header>
+
+        <!-- API error -->
+        @if (errorMessage) {
+        <div class="reg-alert reg-alert-error" role="alert">
+          <span class="reg-alert-icon" aria-hidden="true">!</span>
+          <p class="reg-alert-message">{{ errorMessage }}</p>
+
+          <button
+            type="button"
+            class="reg-alert-close"
+            aria-label="Dismiss error"
+            (click)="errorMessage = ''">
+            ×
+          </button>
+        </div>
+        }
+
+        <!-- Success -->
+        @if (successMessage) {
+        <div class="reg-alert reg-alert-success" role="status">
+          <span class="reg-alert-icon" aria-hidden="true">✓</span>
+          <p class="reg-alert-message">{{ successMessage }}</p>
+        </div>
+        }
+
+        <!-- Customer account information -->
+        <div class="reg-account-note">
+          <span class="reg-account-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.8">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </span>
+
+          <span>
+            <strong>Your personal travel account</strong>
+            <small>Registration automatically creates a Customer
+              account.</small>
+          </span>
+
+          <svg class="reg-account-check" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.2"
+            aria-hidden="true">
+            <path d="m5 12 4 4L19 6"></path>
+          </svg>
+        </div>
+
+        <!-- Registration form -->
+        <form
+          [formGroup]="registerForm"
+          (ngSubmit)="register()"
+          novalidate
+          class="reg-form">
+
+          <div class="reg-section-head">
+            <span class="reg-section-index">01</span>
+            <span>Personal details</span>
+          </div>
+
+          <!-- Username -->
+          <div class="reg-field">
+            <label for="username">
+              Username <span class="required">*</span>
+            </label>
+
+            <div class="reg-input-wrap">
+              <span class="reg-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.7">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                </svg>
+              </span>
+
+              <input
+                id="username"
+                type="text"
+                formControlName="username"
+                placeholder="Choose a username"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                [attr.aria-invalid]="username.invalid && username.touched"
+                [attr.aria-describedby]="
+                  username.invalid && username.touched ? 'usernameError' : null
+                ">
+            </div>
+
+            @if (username.invalid && username.touched) {
+            <small id="usernameError" class="reg-error">
+              @if (username.errors?.['required']) {
+              Username is required.
+              } @else if (username.errors?.['minlength']) {
+              Use at least 3 characters.
+              } @else if (username.errors?.['maxlength']) {
+              Username cannot exceed 50 characters.
+              } @else if (username.errors?.['pattern']) {
+              Use letters, numbers, dots, underscores, or hyphens only.
+              }
+            </small>
+            }
+          </div>
+
+          <!-- First name + Last name -->
+          <div class="reg-row">
+            <div class="reg-field">
+              <label for="firstName">
+                First name <span class="required">*</span>
+              </label>
+
+              <div class="reg-input-wrap">
+                <input
+                  id="firstName"
+                  type="text"
+                  formControlName="firstName"
+                  placeholder="e.g. Alex"
+                  autocomplete="given-name"
+                  [attr.aria-invalid]="firstName.invalid && firstName.touched">
+              </div>
+
+              @if (firstName.invalid && firstName.touched) {
+              <small class="reg-error">
+                @if (firstName.errors?.['required']) {
+                First name is required.
+                } @else if (firstName.errors?.['minlength']) {
+                Enter at least 2 characters.
+                } @else if (firstName.errors?.['maxlength']) {
+                Maximum 100 characters.
+                }
+              </small>
+              }
+            </div>
+
+            <div class="reg-field">
+              <label for="lastName">
+                Last name <span class="required">*</span>
+              </label>
+
+              <div class="reg-input-wrap">
+                <input
+                  id="lastName"
+                  type="text"
+                  formControlName="lastName"
+                  placeholder="e.g. Morgan"
+                  autocomplete="family-name"
+                  [attr.aria-invalid]="lastName.invalid && lastName.touched">
+              </div>
+
+              @if (lastName.invalid && lastName.touched) {
+              <small class="reg-error">
+                @if (lastName.errors?.['required']) {
+                Last name is required.
+                } @else if (lastName.errors?.['minlength']) {
+                Enter at least 2 characters.
+                } @else if (lastName.errors?.['maxlength']) {
+                Maximum 100 characters.
+                }
+              </small>
+              }
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="reg-field">
+            <label for="email">
+              Email address <span class="required">*</span>
+            </label>
+
+            <div class="reg-input-wrap">
+              <span class="reg-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.7">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="m3 7 9 6 9-6"></path>
+                </svg>
+              </span>
+
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                [attr.aria-invalid]="email.invalid && email.touched">
+            </div>
+
+            @if (email.invalid && email.touched) {
+            <small class="reg-error">
+              @if (email.errors?.['required']) {
+              Email address is required.
+              } @else if (email.errors?.['email']) {
+              Enter a valid email address.
+              } @else if (email.errors?.['maxlength']) {
+              Email cannot exceed 254 characters.
+              }
+            </small>
+            }
+          </div>
+
+          <!-- Optional phone -->
+          <div class="reg-field">
+            <label for="phone">
+              Phone number <span class="reg-optional">Optional</span>
+            </label>
+
+            <div class="reg-input-wrap">
+              <span class="reg-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.7">
+                  <path
+                    d="M5 3h4l2 5-3 2a15 15 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"></path>
+                </svg>
+              </span>
+
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="+880 1XXX-XXXXXX"
+                autocomplete="tel">
+            </div>
+          </div>
+
+          <!-- Password section -->
+          <div class="reg-section-head reg-security-heading">
+            <span class="reg-section-index">02</span>
+            <span>Secure your account</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.8" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+          </div>
+
+          <div class="reg-row reg-password-row">
+            <!-- Password -->
+            <div class="reg-field">
+              <label for="password">
+                Password <span class="required">*</span>
+              </label>
+
+              <div class="reg-input-wrap">
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="Create a password"
+                  autocomplete="new-password"
+                  [attr.aria-invalid]="password.invalid && password.touched">
+
+                <button
+                  type="button"
+                  class="reg-eye"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                  [attr.aria-pressed]="showPassword">
+                  @if (showPassword) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" aria-hidden="true">
+                    <path d="M3 3 21 21"></path>
+                    <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                    <path
+                      d="M9.9 5.2A11 11 0 0 1 12 5c7 0 10 7 10 7a15 15 0 0 1-4 4.8"></path>
+                    <path
+                      d="M6.2 6.2C3.5 8 2 12 2 12s3 7 10 7a10 10 0 0 0 4-.8"></path>
+                  </svg>
+                  } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" aria-hidden="true">
+                    <path
+                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  }
+                </button>
+              </div>
+
+              @if (password.invalid && password.touched) {
+              <small class="reg-error">
+                @if (password.errors?.['required']) {
+                Password is required.
+                } @else if (password.errors?.['minlength']) {
+                Use at least 8 characters.
+                } @else if (password.errors?.['maxlength']) {
+                Password cannot exceed 72 characters.
+                } @else if (password.errors?.['pattern']) {
+                Include an uppercase letter, a number, and a symbol.
+                }
+              </small>
+              }
+            </div>
+
+            <!-- Confirm password -->
+            <div class="reg-field">
+              <label for="confirmPassword">
+                Confirm password <span class="required">*</span>
+              </label>
+
+              <div class="reg-input-wrap">
+                <input
+                  id="confirmPassword"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  placeholder="Repeat password"
+                  autocomplete="new-password"
+                  [attr.aria-invalid]="
+                    confirmPassword.touched &&
+                    (confirmPassword.invalid ||
+                    registerForm.hasError('passwordMismatch'))
+                  ">
+
+                <button
+                  type="button"
+                  class="reg-eye"
+                  (click)="toggleConfirmPassword()"
+                  [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+                  [attr.aria-pressed]="showConfirmPassword">
+                  @if (showConfirmPassword) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" aria-hidden="true">
+                    <path d="M3 3 21 21"></path>
+                    <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                    <path
+                      d="M9.9 5.2A11 11 0 0 1 12 5c7 0 10 7 10 7a15 15 0 0 1-4 4.8"></path>
+                    <path
+                      d="M6.2 6.2C3.5 8 2 12 2 12s3 7 10 7a10 10 0 0 0 4-.8"></path>
+                  </svg>
+                  } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" aria-hidden="true">
+                    <path
+                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  }
+                </button>
+              </div>
+
+              @if (confirmPassword.touched &&
+              confirmPassword.errors?.['required']) {
+              <small class="reg-error">Please confirm your password.</small>
+              } @else if (
+              confirmPassword.touched &&
+              registerForm.hasError('passwordMismatch')
+              ) {
+              <small class="reg-error">Your passwords do not match.</small>
+              }
+            </div>
+          </div>
+
+          <!-- Password strength -->
+          @if (password.value) {
+          <div class="reg-strength" [attr.data-level]="passwordStrength">
+            <div class="reg-strength-top">
+              <span>Password strength</span>
+              <strong>{{ passwordStrengthLabel }}</strong>
+            </div>
+
+            <div class="reg-strength-bar" aria-hidden="true">
+              <span [class.active]="passwordStrength >= 1"></span>
+              <span [class.active]="passwordStrength >= 2"></span>
+              <span [class.active]="passwordStrength >= 3"></span>
+              <span [class.active]="passwordStrength >= 4"></span>
+            </div>
+
+            <div class="reg-criteria">
+              @for (criterion of passwordCriteria; track criterion.label) {
+              <span
+                class="reg-criteria-chip"
+                [class.reg-criteria-chip--met]="criterion.met">
+                <span aria-hidden="true">
+                  {{ criterion.met ? '✓' : '○' }}
+                </span>
+                {{ criterion.label }}
+              </span>
+              }
+            </div>
+          </div>
+          }
+
+          <!-- Terms -->
+          <div class="reg-terms-area">
+            <label class="reg-terms">
+              <input
+                type="checkbox"
+                formControlName="terms"
+                [attr.aria-invalid]="terms.invalid && terms.touched">
+
+              <span class="reg-terms-check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="3">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+              </span>
+
+              <span class="reg-terms-text">
+                I agree to the
+                <a routerLink="/faq">Terms of Service</a>
+                and
+                <a routerLink="/faq">Privacy Policy</a>.
+              </span>
+            </label>
+
+            @if (terms.invalid && terms.touched) {
+            <small class="reg-error">
+              Please accept the terms to create your account.
+            </small>
+            }
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="reg-submit"
+            [disabled]="isLoading || registerForm.pending">
+
+            @if (isLoading) {
+            <span class="reg-submit-spinner" aria-hidden="true"></span>
+            <span>Creating your account...</span>
+            } @else {
+            <span>Create my account</span>
+            <span class="reg-submit-arrow" aria-hidden="true">↗</span>
+            }
+          </button>
+
+          <p class="reg-signin-prompt">
+            Already registered?
+            <a routerLink="/login">Sign in to your account</a>
+          </p>
+
+          <div class="reg-trust-row" aria-label="Account benefits">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" aria-hidden="true">
+                <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              Secure account
+            </span>
+
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path
+                  d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>
+              </svg>
+              Discover more
+            </span>
+
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" aria-hidden="true">
+                <path d="m12 3 8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4Z"></path>
+                <path d="m8.5 12 2.3 2.3 4.7-4.7"></path>
+              </svg>
+              Your journey
+            </span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT: Destination slideshow -->
+    <aside class="reg-visual-side" aria-label="Explore Bangladesh">
+
+      <div class="reg-slideshow">
+        @for (slide of slides; track slide.location; let i = $index) {
+        <div
+          class="reg-slide"
+          [class.active]="currentSlide === i"
+          [style.background-image]="'url(' + slide.image + ')'"
+          [attr.aria-hidden]="currentSlide !== i">
+        </div>
+        }
+
+        <div class="reg-slide-overlay"></div>
+        <div class="reg-image-grain" aria-hidden="true"></div>
+      </div>
+
+      <div class="reg-visual-content">
+        <!-- Top label -->
+        <div class="reg-visual-topline">
+          <span class="reg-visual-badge">
+            <span class="reg-badge-dot"></span>
+            {{ slides[currentSlide].badge }}
+          </span>
+
+          <span class="reg-visual-index">
+            {{ (currentSlide + 1).toString().padStart(2, '0') }}
+            <span>/ {{ slides.length.toString().padStart(2, '0') }}</span>
+          </span>
+        </div>
+
+        <!-- Destination text -->
+        <div class="reg-visual-bottom" aria-live="polite">
+          <span class="reg-visual-eyebrow">
+            THE BEAUTY OF BANGLADESH
+          </span>
+
+          <div class="reg-location-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.8" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="2.5"></circle>
+            </svg>
+            {{ slides[currentSlide].location }}, Bangladesh
+          </div>
+
+          <h2 class="reg-visual-quote">
+            {{ slides[currentSlide].quote }}
+          </h2>
+
+          <p class="reg-visual-caption">
+            {{ slides[currentSlide].caption }}
+          </p>
+
+          <div class="reg-visual-signature">
+            <span class="reg-signature-line"></span>
+            <span>Find your kind of extraordinary.</span>
+          </div>
+        </div>
+
+        <!-- Slideshow controls -->
+        <div class="reg-visual-controls">
+          <div class="reg-visual-control-top">
+            <span class="reg-control-label">EXPLORE THE UNEXPECTED</span>
+            <span class="reg-control-timer">LIVE DESTINATION STORIES</span>
+          </div>
+
+          <div class="reg-visual-progress" aria-hidden="true">
+            <div
+              class="reg-visual-progress-bar"
+              [style.width.%]="slideProgress">
+            </div>
+          </div>
+
+          <div class="reg-visual-control-row">
+            <div class="reg-visual-dots" aria-label="Choose destination">
+              @for (slide of slides; track slide.location; let i = $index) {
+              <button
+                type="button"
+                class="reg-dot"
+                [class.active]="currentSlide === i"
+                (click)="goToSlide(i)"
+                [attr.aria-label]="'Show ' + slide.location"
+                [attr.aria-current]="currentSlide === i ? 'true' : null">
+              </button>
+              }
+            </div>
+
+            <div class="reg-visual-arrows">
+              <button
+                type="button"
+                class="reg-arrow"
+                (click)="prevSlide()"
+                aria-label="Previous destination">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6"></path>
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                class="reg-arrow"
+                (click)="nextSlide()"
+                aria-label="Next destination">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <path d="m9 18 6-6-6-6"></path>
+                </svg>
+              </button> 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating decorative card -->
+      <div class="reg-floating-card" aria-hidden="true">
+        <span class="reg-floating-icon">✦</span>
+        <span>
+          <strong>Your next story</strong>
+          <small>Starts with one account.</small>
+        </span>
+      </div>
+    </aside>
+  </main>
+</section>

@@ -1,0 +1,40 @@
+<section class="not-found-page">
+  <div class="container">
+    <div class="not-found-content text-center">
+      <!-- Error Code -->
+      <div class="error-code">404</div>
+
+      <!-- Icon -->
+      <div class="error-icon">✦</div>
+
+      <!-- Heading -->
+      <h1>Oops! This journey doesn't exist.</h1>
+
+      <!-- Description -->
+      <p class="error-description">
+        The page you're looking for may have been moved, removed, or the URL
+        might be incorrect.
+      </p>
+
+      <!-- Requested Path -->
+      <div class="requested-path">
+        <span> Requested path </span>
+
+        <code>
+          {{ currentPath }}
+        </code>
+      </div>
+
+      <!-- Actions -->
+      <div class="error-actions">
+        <a routerLink="/" class="travixa-btn travixa-btn-primary">
+          ← Back to Home
+        </a>
+
+        <a routerLink="/discover" class="travixa-btn explore-btn">
+          Explore TRAVIXA →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

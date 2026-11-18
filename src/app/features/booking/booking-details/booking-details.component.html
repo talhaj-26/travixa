@@ -1,0 +1,408 @@
+<div class="booking-details-page">
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="booking-nav">
+    <div class="booking-nav-inner">
+      <a class="booking-brand" (click)="goToHome()">
+        <span class="brand-mark">T</span>
+        <span class="brand-text">
+          <span class="brand-name">TRAVIXA</span>
+          <span class="brand-sub">BOOKING DESK</span>
+        </span>
+      </a>
+
+      <div class="nav-status">
+        <span class="live-dot"></span>
+        Booking system online
+      </div>
+
+      <div class="nav-actions">
+        <a class="nav-link" (click)="goToMyBookings()">My Bookings</a>
+        <a class="nav-link" (click)="goToSupport()">Support</a>
+        <a class="nav-link" (click)="goToHome()">Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-shell">
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a (click)="goToHome()">Home</a>
+      <span class="sep">/</span>
+      <a (click)="goToMyBookings()">My Bookings</a>
+      <span class="sep">/</span>
+      <span class="current">Booking Details</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HERO
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="booking-hero" [attr.data-status]="booking.status">
+      <div class="hero-glow hero-glow--1"></div>
+      <div class="hero-glow hero-glow--2"></div>
+      <div class="hero-watermark">BOOKING</div>
+
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div>
+            <div class="hero-kicker">
+              {{ getCategoryIcon(booking.category) }}
+              {{ booking.serviceType }} · Reservation
+            </div>
+            <h1 class="hero-title">Your journey is booked.</h1>
+            <div class="hero-reference">
+              Booking Reference:
+              <span class="reference-code">{{ booking.reference }}</span>
+            </div>
+          </div>
+
+          <div class="status-badge" [attr.data-status]="booking.status">
+            <span class="status-pulse"></span>
+            {{ getStatusIcon(booking.status) }}
+            {{ booking.statusLabel | uppercase }}
+          </div>
+        </div>
+
+        <div class="hero-bottom">
+          <div class="hero-stat">
+            <div class="hero-stat-label">Booking Type</div>
+            <div class="hero-stat-value">{{ booking.serviceType }}</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Booking Date</div>
+            <div class="hero-stat-value">{{ booking.bookingDate }}</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Guests</div>
+            <div class="hero-stat-value">{{ booking.guestsLabel }}</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Payment</div>
+            <div class="hero-stat-value">{{ booking.paymentLabel }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MAIN GRID
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="main-grid">
+      <!-- ─── MAIN CONTENT ─── -->
+      <main>
+        <!-- SERVICE -->
+        <section class="panel">
+          <div class="panel-heading">
+            <div class="panel-kicker">Reserved Service</div>
+            <h2 class="panel-title">Your accommodation</h2>
+          </div>
+
+          <div class="service-card">
+            <div class="service-image">
+              @if (booking.serviceImage) {
+              <img
+                [src]="booking.serviceImage"
+                [alt]="booking.serviceName"
+                loading="lazy"
+                (error)="booking.serviceImage = ''"
+              />
+              } @else {
+                <div class="service-image-placeholder" role="img" aria-label="No service photo available">{{ getCategoryIcon(booking.category) }}</div>
+              }
+              <div class="service-image-overlay"></div>
+              @if (booking.serviceRating > 0) { <span class="service-rating-badge"
+                >★ {{ booking.serviceRating }}</span
+              > }
+            </div>
+
+            <div class="service-info">
+              <div class="service-type">{{ booking.serviceType }}</div>
+              <div class="service-name">{{ booking.serviceName }}</div>
+              <div class="service-location">
+                📍 {{ booking.serviceLocation }}
+              </div>
+
+              <div class="service-tags">
+                @for (tag of booking.serviceTags; track tag) {
+                  <span class="service-tag">{{ tag }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STAY INFORMATION -->
+        <section class="panel">
+          <div class="panel-heading">
+            <div class="panel-kicker">Reservation Details</div>
+            <h2 class="panel-title">Stay information</h2>
+          </div>
+
+          <div class="info-grid">
+            @if (booking.checkIn) {
+              <div class="info-item">
+                <div class="info-label">Check-in</div>
+                <div class="info-value">{{ booking.checkIn }}</div>
+              </div>
+            }
+            @if (booking.checkOut) {
+              <div class="info-item">
+                <div class="info-label">Check-out</div>
+                <div class="info-value">{{ booking.checkOut }}</div>
+              </div>
+            }
+            @if (booking.room) {
+              <div class="info-item">
+                <div class="info-label">Room</div>
+                <div class="info-value">{{ booking.room }}</div>
+              </div>
+            }
+            <div class="info-item">
+              <div class="info-label">Guests</div>
+              <div class="info-value">{{ booking.guests }}</div>
+            </div>
+            @if (booking.nights) {
+              <div class="info-item">
+                <div class="info-label">Nights</div>
+                <div class="info-value">{{ booking.nights }} Nights</div>
+              </div>
+            }
+            <div class="info-item info-item--highlight">
+              <div class="info-label">Cancellation</div>
+              <div class="info-value">{{ booking.cancellation }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CUSTOMER -->
+        <section class="panel">
+          <div class="panel-heading">
+            <div class="panel-kicker">Primary Traveller</div>
+            <h2 class="panel-title">Guest information</h2>
+          </div>
+
+          <div class="customer-box">
+            <div class="customer-avatar">{{ booking.customerInitials }}</div>
+
+            <div class="customer-details">
+              <div class="customer-name">{{ booking.customerName }}</div>
+              <div class="customer-detail">
+                ✉ {{ booking.customerEmail }} · 📱 {{ booking.customerPhone }}
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TIMELINE -->
+        <section class="panel">
+          <div class="panel-heading">
+            <div class="panel-kicker">Booking Journey</div>
+            <h2 class="panel-title">Reservation timeline</h2>
+          </div>
+
+          <div class="timeline">
+            @for (
+              event of booking.timeline;
+              track event.title;
+              let last = $last
+            ) {
+              <div
+                class="timeline-item"
+                [class.timeline-item--pending]="event.pending"
+                [class.timeline-item--last]="last"
+              >
+                <div class="timeline-rail"></div>
+                <div class="timeline-dot">
+                  <span class="timeline-dot-icon">{{ event.icon }}</span>
+                </div>
+
+                <div class="timeline-content">
+                  <div class="timeline-date">
+                    {{ event.date }}
+                    @if (event.time) {
+                      <span class="timeline-time">· {{ event.time }}</span>
+                    }
+                  </div>
+                  <div class="timeline-title">{{ event.title }}</div>
+                  <div class="timeline-text">{{ event.text }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- SPECIAL REQUEST -->
+        @if (booking.requestBody) {
+          <section class="panel">
+            <div class="panel-heading">
+              <div class="panel-kicker">Traveller Note</div>
+              <h2 class="panel-title">Special request</h2>
+            </div>
+
+            <div class="request-box">
+              <div class="request-icon">✦</div>
+              <div>
+                <strong>{{ booking.requestTitle }}</strong>
+                <p>{{ booking.requestBody }}</p>
+              </div>
+            </div>
+          </section>
+        }
+      </main>
+
+      <!-- ─── SIDEBAR ─── -->
+      <aside>
+        <!-- PRICE -->
+        <section class="panel price-card sticky-card">
+          <div class="price-glow"></div>
+
+          <div class="panel-kicker">Payment Summary</div>
+          <h2 class="panel-title">Booking total</h2>
+
+          <div class="payment-state">
+            <span class="payment-label">Payment status</span>
+            <span class="payment-status" [attr.data-status]="booking.status">
+              {{ getStatusIcon(booking.status) }}
+              {{ booking.paymentLabel | uppercase }}
+            </span>
+          </div>
+
+          @for (line of booking.priceLines; track line.label) {
+            <div
+              class="price-line"
+              [class.price-line--discount]="line.isDiscount"
+            >
+              <span>{{ line.label }}</span>
+              <strong>
+                @if (line.isDiscount) {
+                  −
+                }
+                {{ formatCurrency(line.value) }}
+              </strong>
+            </div>
+          }
+
+          <div class="total-line">
+            <div class="total-label">{{ booking.paymentLabel === 'PENDING' ? 'Total Payable' : 'Total Paid' }}</div>
+            <div class="total-value">{{ formatCurrency(animatedTotal) }}</div>
+          </div>
+
+          <div class="action-stack">
+            <button
+              type="button"
+              class="action-button action-primary"
+              (click)="downloadConfirmation()"
+            >
+              <span>↓</span> Download Invoice
+            </button>
+            <button
+              type="button"
+              class="action-button"
+              (click)="shareBooking()"
+            >
+              <span>↗</span> Share Booking
+            </button>
+            @if (booking.status === 'PENDING') {
+            <button
+              type="button"
+              class="action-button action-danger"
+              (click)="openCancelDialog()"
+            >
+              <span>×</span> Cancel Booking
+            </button>
+            }
+          </div>
+        </section>
+
+        <!-- IMPORTANT NOTES -->
+        <section class="panel">
+          <div class="panel-heading">
+            <div class="panel-kicker">Before You Travel</div>
+            <h2 class="panel-title">Important notes</h2>
+          </div>
+
+          <div class="info-grid">
+            @for (note of booking.importantNotes; track note.label) {
+              <div class="info-item">
+                <div class="info-label">{{ note.label }}</div>
+                <div class="info-value">{{ note.value }}</div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- HELP -->
+        <section class="panel help-card">
+          <div class="help-icon">?</div>
+          <div class="help-title">Need help with this booking?</div>
+          <p class="help-text">
+            Our support team can help with changes, cancellations, payment
+            questions and service-related issues.
+          </p>
+          <a class="help-link" (click)="goToSupport()">
+            Open Support Center →
+          </a>
+        </section>
+      </aside>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-actions">
+      <a class="bottom-link" (click)="goToMyBookings()">
+        ← Back to My Bookings
+      </a>
+      <a class="bottom-link" (click)="goToDiscover()"> Discover More Places </a>
+      <a class="bottom-link" (click)="goToTourPackages()">
+        Explore Tour Packages
+      </a>
+      <a class="bottom-link" (click)="goToPlanner()"> Plan Another Journey </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CANCEL DIALOG
+       ═══════════════════════════════════════════════════════════ -->
+  @if (cancelDialog.open) {
+    <div class="modal-backdrop" (click)="closeCancelDialog()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-icon">⚠</div>
+        <h3>Cancel this booking?</h3>
+        <p>
+          Pending booking <strong>{{ booking.reference }}</strong> will be cancelled. This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-modal-ghost" (click)="closeCancelDialog()">
+            Keep booking
+          </button>
+          <button class="btn-modal-danger" (click)="confirmCancel()">
+            Yes, Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════════ -->
+  @if (toast.show) {
+    <div class="toast" [attr.data-type]="toast.type">
+      <span class="toast-icon">
+        @switch (toast.type) {
+          @case ("success") {
+            ✓
+          }
+          @case ("info") {
+            ⓘ
+          }
+          @case ("danger") {
+            ⚠
+          }
+        }
+      </span>
+      <span>{{ toast.message }}</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,398 @@
+<div class="tour-details-page">
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="package-nav">
+    <div class="nav-inner">
+      <a class="route-mark" (click)="goToPackages()">
+        <span class="route-icon">✦</span>
+        <span class="route-name">
+          TRAVIXA
+          <small>PACKAGE EXPLORER</small>
+        </span>
+      </a>
+
+      <div class="nav-center">
+        <a (click)="goToDiscover()">Discover</a>
+        <a (click)="goToDestinations()">Destinations</a>
+        <a class="active" (click)="goToPackages()">Packages</a>
+        <a (click)="goToMyTrips()">My Trips</a>
+      </div>
+
+      <div class="nav-action">
+        <a class="nav-pill" (click)="goToWishlist()">♥ Saved</a>
+        <a class="nav-pill nav-pill--dark" (click)="goToDashboard()">
+          Dashboard
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <main class="package-shell">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a (click)="goToHome()">Home</a>
+      <span>›</span>
+      <a (click)="goToPackages()">Tour Packages</a>
+      <span>›</span>
+      <span class="current">{{ package.title }}</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HERO
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="hero-grid">
+      <div class="hero-main">
+        @if (heroMainImage) { <img [src]="heroMainImage" [alt]="package.title" (error)="heroMainImage = ''" /> }
+        @else { <div class="package-image-placeholder" role="img" [attr.aria-label]="package.title + ' photo unavailable'">✦</div> }
+
+        <div class="hero-content">
+          <span class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            {{ package.badge }}
+          </span>
+
+          <h1>{{ package.title }}</h1>
+
+          <p>{{ package.subtitle }}</p>
+
+          <div class="hero-meta">
+            <span class="hero-meta-pill">
+              ◷ {{ package.duration }}
+            </span>
+            <span class="hero-meta-pill">
+              ◉ {{ package.location }}
+            </span>
+            <span class="hero-meta-pill">
+              ♙ {{ package.groupType }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-side">
+        @for (item of gallerySide; track item.image) {
+          <div class="gallery-card">
+            @if (item.image) { <img [src]="item.image" [alt]="item.label" loading="lazy" (error)="item.image = ''" /> } @else { <div class="package-image-placeholder" aria-hidden="true">✦</div> }
+            <span class="gallery-label">{{ item.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         INFO STRIP
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="info-strip">
+      <div class="info-box">
+        <div class="info-icon">◷</div>
+        <small>Duration</small>
+        <strong>{{ package.duration }}</strong>
+      </div>
+
+      <div class="info-box">
+        <div class="info-icon">♙</div>
+        <small>Group size</small>
+        <strong>{{ package.groupType }}</strong>
+      </div>
+
+      <div class="info-box">
+        <div class="info-icon">৳</div>
+        <small>Starting price</small>
+        <strong>{{ formatCurrency(packageBasePrice, packageBaseCurrency) }} / person</strong>
+      </div>
+
+      <div class="info-box">
+        <div class="info-icon">✓</div>
+        <small>Package Status</small>
+        <strong>{{ package.status }}</strong>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CONTENT GRID
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="content-grid">
+      <!-- ═══════════════════════════════════════════════════════
+           LEFT COLUMN
+           ═══════════════════════════════════════════════════════ -->
+      <div>
+        <!-- ─── ITINERARY ─── -->
+        <article class="section-card">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">DAY-BY-DAY PLAN</span>
+              <h2>Journey itinerary</h2>
+              <p>Day-by-day details supplied by the travel agency.</p>
+            </div>
+            <span class="section-badge">{{ itinerary.length }} DAYS</span>
+          </div>
+
+          <div class="timeline">
+            @for (day of itinerary; track day.day; let last = $last) {
+              <div class="day" [class.day--last]="last">
+                <div class="day-rail"></div>
+                <div class="day-dot"></div>
+
+                <div class="day-body">
+                  @if (day.image) {
+                    <div class="day-image">
+                      <img [src]="day.image" [alt]="day.title" loading="lazy" />
+                      <div class="day-image-overlay"></div>
+                    </div>
+                  }
+
+                  <div class="day-content">
+                    <div class="day-tag">{{ day.day }}</div>
+                    <h3>{{ day.title }}</h3>
+                    <p>{{ day.text }}</p>
+
+                    <div class="day-items">
+                      @for (item of day.items; track item) {
+                        <span class="day-item">{{ item }}</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            @if (!itinerary.length) { <p class="empty-section">The agency has not added itinerary details yet.</p> }
+          </div>
+        </article>
+
+        <!-- ─── INCLUSIONS ─── -->
+        <article class="section-card">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">PACKAGE CONTENTS</span>
+              <h2>What's included?</h2>
+              <p>Included and excluded services provided for this package.</p>
+            </div>
+            <button
+              type="button"
+              class="section-toggle"
+              (click)="toggleInclusions()"
+            >
+              {{ expandedInclusions ? 'Show less ↑' : 'Show all ↓' }}
+            </button>
+          </div>
+
+          <div class="inclusion-grid">
+            @for (inc of visibleInclusions; track inc.label) {
+              <div
+                class="include-item"
+                [class.include-item--exclude]="inc.type === 'EXCLUDE'"
+              >
+                <span class="include-icon">{{ inc.icon }}</span>
+                <span class="include-label">{{ inc.label }}</span>
+              </div>
+            }
+          </div>
+          @if (!inclusions.length) { <p class="empty-section">Package inclusions have not been provided yet.</p> }
+        </article>
+
+        <!-- ─── POLICIES ─── -->
+        @if (policies.length > 0) { <article class="section-card">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">GOOD TO KNOW</span>
+              <h2>Important information</h2>
+              <p>Please review these before confirming your trip.</p>
+            </div>
+          </div>
+
+          <div class="policy-list">
+            @for (p of policies; track p.title) {
+              <div class="policy">
+                <span class="policy-icon">{{ p.icon }}</span>
+                <div>
+                  <strong>{{ p.title }}</strong>
+                  <span>{{ p.text }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </article> }
+
+        <!-- ─── SIMILAR PACKAGES ─── -->
+        @if (similarPackages.length > 0) { <article class="section-card">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">YOU MAY ALSO LIKE</span>
+              <h2>Similar experiences</h2>
+              <p>Other tour packages currently published in TRAVIXA.</p>
+            </div>
+            <a class="section-link" (click)="goToPackages()">
+              View all →
+            </a>
+          </div>
+
+          <div class="similar-grid">
+            @for (p of similarPackages; track p.id) {
+              <article class="similar-card" (click)="viewSimilarPackage(p)">
+                <div class="similar-image">
+                  @if (p.image) { <img [src]="p.image" [alt]="p.title" loading="lazy" (error)="p.image = ''" /> }
+                  @else { <div class="package-image-placeholder" role="img" [attr.aria-label]="p.title + ' photo unavailable'">✦</div> }
+                  <div class="similar-overlay"></div>
+                  <span class="similar-days">{{ p.days }}</span>
+                </div>
+                <div class="similar-body">
+                  <h4>{{ p.title }}</h4>
+                  <p>📍 {{ p.location }}</p>
+                  <div class="similar-foot">
+                    <strong>{{ formatCurrency(p.price, p.currency) }}</strong>
+                    <span class="similar-arrow">→</span>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        </article> }
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════
+           BOOKING SIDEBAR
+           ═══════════════════════════════════════════════════════ -->
+      <aside>
+        <div class="booking-card">
+          <span class="booking-label">Package price</span>
+
+          <div class="price">
+            <strong>{{ formatCurrency(package.price) }}</strong>
+            <span>/ person</span>
+          </div>
+
+          <!-- Travellers counter -->
+          <div class="booking-field">
+            <label>Travellers</label>
+            <div class="traveller-counter">
+              <button
+                type="button"
+                (click)="decrementTravellers()"
+                [disabled]="booking.travellers <= 1"
+              >
+                −
+              </button>
+              <strong>{{ booking.travellers }}</strong>
+              <button type="button" (click)="incrementTravellers()">
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="booking-field">
+            <label>Travel date</label>
+            <select [ngModel]="selectedDepartureId" (ngModelChange)="selectDeparture($event)">
+              <option [ngValue]="null">Choose an available departure</option>
+              @for (departure of departures; track departure.id) {
+                <option [ngValue]="departure.id" [disabled]="departure.seatsRemaining < booking.travellers">
+                  {{ formatDate(departure.startsAt) }} · {{ departure.seatsRemaining }} seats
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Live summary -->
+          <div class="booking-summary">
+            <div class="summary-row">
+              <span>{{ formatCurrency(package.price) }} × {{ booking.travellers }}</span>
+              <strong>{{ formatCurrency(subtotal) }}</strong>
+            </div>
+            <div class="summary-row">
+              <span>Service fee</span>
+              <strong class="summary-include">Included</strong>
+            </div>
+            <div class="summary-row summary-row--total">
+              <span>Total</span>
+              <strong>{{ formatCurrency(total) }}</strong>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="reserve-btn"
+            [disabled]="!bookingValid"
+            (click)="reservePackage()"
+          >
+            <span class="reserve-btn-icon">⚡</span>
+            <span>Reserve This Journey</span>
+            <span class="reserve-btn-arrow">→</span>
+          </button>
+
+          <div class="safe-note">
+            <span class="safe-icon">✓</span>
+            Secure booking · Instant confirmation
+          </div>
+
+          <!-- Availability -->
+          <div class="availability">
+            <div class="availability-head">
+              <span>Next departure availability</span>
+              <strong>{{ animatedAvailability }}%</strong>
+            </div>
+
+            <div class="progress-line">
+              <span [style.width.%]="animatedAvailability"></span>
+            </div>
+
+            <small class="availability-note">
+              {{ package.availabilityNote }}
+            </small>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         FINAL CTA
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="final-cta">
+      <div class="cta-glow"></div>
+      <div class="cta-watermark">TRAVIXA</div>
+
+      <div class="cta-inner">
+        <div class="cta-text">
+          <span class="cta-kicker">READY TO GO?</span>
+          <h2>Your next story starts here.</h2>
+          <p>
+            Choose your dates, reserve your seats and let TRAVIXA handle the
+            journey from planning to experience.
+          </p>
+        </div>
+
+        <div class="cta-actions">
+          <button type="button" class="cta-btn" (click)="continueToBooking()">
+            <span>Continue to Booking</span>
+            <span>→</span>
+          </button>
+          <button
+            type="button"
+            class="cta-btn cta-btn--ghost"
+            (click)="goToPackages()"
+          >
+            Browse More Packages
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════════ -->
+  @if (toast.show) {
+    <div class="toast" [attr.data-type]="toast.type">
+      <span class="toast-icon">
+        @switch (toast.type) {
+          @case ('success') { ✓ }
+          @case ('info') { ⓘ }
+          @case ('danger') { ⚠ }
+        }
+      </span>
+      <span>{{ toast.message }}</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,462 @@
+<div class="bookings-page">
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <a class="nav-brand" (click)="goToDiscover()">
+        <div class="brand-mark">✈</div>
+        <div class="brand-text">
+          <strong>TRAVIXA</strong>
+          <small>Journey Control</small>
+        </div>
+      </a>
+
+      <div class="nav-status">
+        <span class="status-dot"></span>
+        <small>Booking system online</small>
+      </div>
+
+      <div class="nav-actions">
+        <a class="btn-nav-ghost" (click)="goToDiscover()">Dashboard</a>
+        <a class="btn-nav-primary" (click)="goToDiscover()">
+          <span>+</span> New Trip
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO — Editorial split with live wallet
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="container hero-section">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7 hero-text-col">
+        <div class="hero-badge">
+          <span class="hero-badge__pulse"></span>
+          <small>YOUR JOURNEY HUB</small>
+          <span class="hero-badge__divider"></span>
+          <small class="hero-badge__live">LIVE</small>
+        </div>
+
+        <h1 class="hero-title">
+          Every booking.
+          <br />
+          <span>One journey.</span>
+        </h1>
+
+        <p class="hero-text">
+          Track your stays, experiences, reservations and transport journeys
+          from one powerful travel command center.
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn-hero-primary" (click)="goToDestinations()">
+            <span>Explore New Places</span>
+            <strong>→</strong>
+          </a>
+          <a class="btn-hero-ghost" (click)="goToPlanner()">
+            ✨ Plan a Trip
+          </a>
+        </div>
+
+        <!-- Mini stat pills under CTA -->
+        <div class="hero-mini-stats">
+          <div class="mini-stat">
+            <strong>{{ bookings.length }}</strong>
+            <small>Total</small>
+          </div>
+          <div class="mini-stat">
+            <strong>{{ upcomingCount }}</strong>
+            <small>Upcoming</small>
+          </div>
+          <div class="mini-stat">
+            <strong>{{ statusCounts.COMPLETED }}</strong>
+            <small>Completed</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="wallet-card">
+          <div class="wallet-blob wallet-blob--1"></div>
+          <div class="wallet-blob wallet-blob--2"></div>
+
+          <div class="wallet-inner">
+            <div class="wallet-head">
+              <div>
+                <small class="wallet-eyebrow">Travel Wallet</small>
+                <h2 class="wallet-title">Your 2026 Journey</h2>
+              </div>
+              <div class="wallet-avatar">✦</div>
+            </div>
+
+            <div class="wallet-stats">
+              <div class="wallet-stat">
+                <small>BOOKINGS</small>
+                <strong>{{ bookings.length }}</strong>
+              </div>
+              <div class="wallet-stat">
+                <small>SPENT</small>
+                <strong class="wallet-amount">
+                  {{ totalSpentSummary }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="wallet-progress">
+              <div class="wallet-progress__row">
+                <small>Journey completion</small>
+                <strong>{{ completionPercent }}%</strong>
+              </div>
+              <div class="wallet-bar">
+                <div
+                  class="wallet-bar__fill"
+                  [style.width.%]="completionPercent"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FILTER BAR
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="container filter-section">
+    <div class="filter-bar">
+      <div class="filter-bar__head">
+        <div class="filter-bar__title">
+          <small class="filter-eyebrow">BOOKING EXPLORER</small>
+          <strong class="filter-title">Filter your journeys</strong>
+        </div>
+
+        <div class="filter-bar__tools">
+          <div class="search-box">
+            <span class="search-icon">🔎</span>
+            <input
+              type="text"
+              placeholder="Search bookings, references..."
+              [(ngModel)]="searchTerm"
+            />
+            @if (searchTerm) {
+              <button type="button" class="clear-btn" (click)="searchTerm = ''">×</button>
+            }
+          </div>
+
+          <select class="sort-select" [(ngModel)]="sortBy">
+            @for (opt of sortOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="tabs-row">
+        @for (tab of tabs; track tab.value) {
+          <button
+            type="button"
+            class="tab-pill"
+            [class.tab-pill--active]="activeTab === tab.value"
+            (click)="setTab(tab.value)"
+          >
+            <span class="tab-icon">{{ tab.icon }}</span>
+            <span class="tab-label">{{ tab.label }}</span>
+            <span class="tab-count">{{ statusCounts[tab.value] }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BOOKINGS LIST — image-driven premium cards
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="container bookings-list">
+    @if (filteredBookings.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No bookings found</h3>
+        <p>Try a different filter or search term to find your journeys.</p>
+        <button class="btn-hero-primary" (click)="setTab('ALL'); searchTerm = ''">
+          Show All Bookings
+        </button>
+      </div>
+    }
+
+    @for (b of filteredBookings; track b.id; let idx = $index) {
+      <article
+        class="booking-card"
+        [attr.data-status]="b.status"
+        [attr.data-category]="b.category"
+        [attr.data-id]="b.id"
+        [class.booking-card--revealed]="isRevealed(b.id)"
+        [style.animation-delay.ms]="idx * 60"
+      >
+        <!-- ─── IMAGE PANEL ─── -->
+        <div class="booking-image">
+          @if (b.image) { <img [src]="b.image" [alt]="b.title" loading="lazy" /> }
+          <div class="booking-image__overlay"></div>
+
+          <span class="booking-image__status" [attr.data-status]="b.status">
+            {{ getStatusIcon(b.status) }} {{ getStatusLabel(b.status) }}
+          </span>
+
+          @if (b.rating) {
+            <span class="booking-image__rating">★ {{ b.rating }}</span>
+          }
+
+          <div class="booking-image__bottom">
+            <div class="booking-image__icon">
+              {{ getCategoryIcon(b.category) }}
+            </div>
+            <div class="booking-image__label">
+              <small>{{ getCategoryLabel(b.category) }}</small>
+              <strong>📍 {{ b.location }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── CONTENT PANEL ─── -->
+        <div class="booking-content">
+          <header class="booking-header">
+            <div>
+              <h3 class="booking-title">{{ b.title }}</h3>
+              <p class="booking-subtitle">{{ b.subtitle }}</p>
+            </div>
+            <div class="booking-ref-block">
+              <small>REF</small>
+              <strong>{{ b.reference }}</strong>
+            </div>
+          </header>
+
+          <!-- Meta grid -->
+          <div class="booking-meta-grid">
+            <div class="meta-cell">
+              <small>{{ b.primaryDateLabel }}</small>
+              <strong>{{ formatDate(b.date) }}</strong>
+              @if (b.time) { <span>{{ b.time }}</span> }
+            </div>
+
+            @if (b.extraInfo && b.extraInfo.length) {
+              @for (info of b.extraInfo; track info.label) {
+                <div class="meta-cell">
+                  <small>{{ info.label }}</small>
+                  <strong>{{ info.value.split(' · ')[0] }}</strong>
+                  @if (info.value.includes(' · ')) {
+                    <span>{{ info.value.split(' · ')[1] }}</span>
+                  }
+                </div>
+              }
+            }
+
+            <div class="meta-cell">
+              <small>Guests</small>
+              <strong>{{ b.guestsLabel }}</strong>
+            </div>
+
+            @for (m of b.meta; track m.label) {
+              <div class="meta-cell">
+                <small>{{ m.label }}</small>
+                <strong>{{ m.value }}</strong>
+              </div>
+            }
+          </div>
+
+          @if (b.notes) {
+            <div class="booking-note">
+              <span>ⓘ</span>
+              <small>{{ b.notes }}</small>
+            </div>
+          }
+
+          <!-- Footer actions -->
+          <footer class="booking-footer">
+            <div class="booking-status-line">
+              @if (b.paid) {
+                <span class="dot dot--success"></span>
+                <small>Payment secured · Booked {{ formatDate(b.bookedOn) }}</small>
+              } @else if (b.status === 'PENDING') {
+                <span class="dot dot--warning"></span>
+                <small>Booking awaiting payment · Placed {{ formatDate(b.bookedOn) }}</small>
+              } @else if (b.status === 'CANCELLED') {
+                <span class="dot dot--danger"></span>
+                <small>Booking cancelled · Placed {{ formatDate(b.bookedOn) }}</small>
+              } @else if (b.status === 'REFUNDED') {
+                <span class="dot dot--info"></span>
+                <small>Refund completed · Booked {{ formatDate(b.bookedOn) }}</small>
+              } @else {
+                <span class="dot dot--info"></span>
+                <small>Booked {{ formatDate(b.bookedOn) }}</small>
+              }
+            </div>
+
+            <div class="booking-amount">
+              <small>Total</small>
+              <strong>{{ formatCurrency(b.total, b.currency) }}</strong>
+            </div>
+
+            <div class="action-buttons">
+              @if (b.status === 'CONFIRMED' || b.status === 'PENDING') {
+                <button class="btn-action btn-action--ghost" (click)="downloadInvoice(b)">
+                  ⬇ Invoice
+                </button>
+              }
+
+              @if (b.status === 'CONFIRMED') {
+                <button class="btn-action btn-action--primary" (click)="viewDetails(b)">
+                  View Booking <span>→</span>
+                </button>
+              }
+
+              @if (b.status === 'PENDING') {
+                <button class="btn-action btn-action--ghost" (click)="openCancelDialog(b)">
+                  Cancel
+                </button>
+                <button class="btn-action btn-action--outline" (click)="payNow(b)">
+                  Pay Now
+                </button>
+                <button class="btn-action btn-action--primary" (click)="viewDetails(b)">
+                  View Reservation <span>→</span>
+                </button>
+              }
+
+              @if (b.status === 'COMPLETED') {
+                <button class="btn-action btn-action--ghost" (click)="shareBooking(b)">
+                  ↗ Share
+                </button>
+                <button class="btn-action btn-action--outline" (click)="writeReview(b)">
+                  ★ Review
+                </button>
+                <button class="btn-action btn-action--primary" (click)="viewDetails(b)">
+                  View Experience <span>→</span>
+                </button>
+              }
+
+              @if (b.status === 'CANCELLED') {
+                <button class="btn-action btn-action--ghost" (click)="openDeleteDialog(b)">
+                  Delete
+                </button>
+                <button class="btn-action btn-action--primary" (click)="openRebookDialog(b)">
+                  ↻ Book Again
+                </button>
+              }
+            </div>
+          </footer>
+        </div>
+      </article>
+    }
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JOURNEY SUMMARY CTA
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="container journey-cta">
+    <div class="journey-card">
+      <div class="journey-blob journey-blob--1"></div>
+      <div class="journey-blob journey-blob--2"></div>
+
+      <div class="row align-items-center g-4 position-relative">
+        <div class="col-lg-8">
+          <small class="journey-eyebrow">NEXT ADVENTURE</small>
+          <h2 class="journey-title">
+            Don't just book a trip.
+            <br />
+            <span>Build a memory.</span>
+          </h2>
+          <p class="journey-text">
+            Discover stays, experiences, destinations and unforgettable
+            journeys waiting for you.
+          </p>
+        </div>
+        <div class="col-lg-4 journey-actions">
+          <a class="btn-journey-light" (click)="goToDiscover()">
+            Discover <span>→</span>
+          </a>
+          <a class="btn-journey-outline" (click)="goToPackages()">
+            Packages
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOT NOTE -->
+  <div class="foot-note">
+    <span>✦</span>
+    <small>TRAVIXA • Travel smarter • Travel better</small>
+    <span>✦</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONFIRM DIALOG
+       ═══════════════════════════════════════════════════════════ -->
+  @if (dialog.open && dialog.booking) {
+    <div class="modal-backdrop" (click)="closeDialog()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-icon" [attr.data-action]="dialog.action">
+          @switch (dialog.action) {
+            @case ('cancel') { ⓘ }
+            @case ('delete') { ⚠ }
+            @case ('rebook') { ↻ }
+          }
+        </div>
+
+        <h3>
+          @switch (dialog.action) {
+            @case ('cancel') { Cancel this booking? }
+            @case ('delete') { Delete this booking? }
+            @case ('rebook') { Book this again? }
+          }
+        </h3>
+
+        <p>
+          @switch (dialog.action) {
+            @case ('cancel') {
+              <strong>{{ dialog.booking.title }}</strong> ({{ dialog.booking.reference }}) will be cancelled. This cannot be undone.
+            }
+            @case ('delete') {
+              <strong>{{ dialog.booking.title }}</strong> will be permanently removed.
+            }
+            @case ('rebook') {
+              You'll be taken to the booking flow with <strong>{{ dialog.booking.title }}</strong> pre-selected.
+            }
+          }
+        </p>
+
+        <div class="modal-actions">
+          <button class="btn-modal-ghost" (click)="closeDialog()">Keep it</button>
+          <button
+            class="btn-modal-primary"
+            [attr.data-action]="dialog.action"
+            (click)="confirmAction()"
+          >
+            @switch (dialog.action) {
+              @case ('cancel') { Yes, Cancel }
+              @case ('delete') { Yes, Delete }
+              @case ('rebook') { Continue → }
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════════ -->
+  @if (toast.show) {
+    <div class="toast" [attr.data-type]="toast.type">
+      <span class="toast-icon">
+        @switch (toast.type) {
+          @case ('success') { ✓ }
+          @case ('info') { ⓘ }
+          @case ('danger') { ⚠ }
+        }
+      </span>
+      <span>{{ toast.message }}</span>
+    </div>
+  }
+</div>

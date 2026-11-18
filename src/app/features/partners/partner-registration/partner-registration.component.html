@@ -1,0 +1,88 @@
+<main class="partner-page">
+  <section class="partner-hero">
+    <div class="container partner-hero__inner">
+      <p class="partner-eyebrow">TRAVIXA PARTNER NETWORK</p>
+      <h1>Build better journeys with us.</h1>
+      <p>Apply to offer verified accommodation, dining, tours, transport, or guide services. Every partner application is reviewed before it can receive bookings.</p>
+      <div class="partner-hero__points">
+        <span>✓ Verified marketplace</span><span>✓ You own your business data</span><span>✓ BDT settlement ready</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container partner-layout">
+    @if (submittedApplicationId) {
+      <div class="partner-success" role="status">
+        <span class="partner-success__icon">✓</span>
+        <p class="partner-eyebrow">APPLICATION RECEIVED</p>
+        <h2>Thank you for applying.</h2>
+        <p>Your reference is <strong>{{ submittedApplicationId }}</strong>. Our verification team will review your business details before your partner workspace is activated.</p>
+        <div class="partner-actions">
+          <button type="button" class="btn btn-primary" (click)="reset()">Submit another application</button>
+          <a routerLink="/" class="btn btn-outline-secondary">Return home</a>
+        </div>
+      </div>
+    } @else {
+      <aside class="partner-side">
+        <p class="partner-eyebrow">WHAT HAPPENS NEXT</p>
+        <ol>
+          <li><strong>Submit business details</strong><span>Tell us exactly what you offer and where you operate.</span></li>
+          <li><strong>Verification review</strong><span>We validate license and contact information.</span></li>
+          <li><strong>Partner activation</strong><span>Approved partners receive the correct management workspace.</span></li>
+        </ol>
+        <div class="partner-side__notice"><strong>Privacy first</strong><span>TRAVIXA scopes partner data to the approved business. The future backend enforces this authorization.</span></div>
+      </aside>
+
+      <form class="partner-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="partner-form__head"><div><p class="partner-eyebrow">PARTNER APPLICATION</p><h2>Business verification details</h2></div><span>Required fields are marked *</span></div>
+
+        @if (errorMessage) { <div class="alert alert-danger" role="alert">{{ errorMessage }}</div> }
+
+        <fieldset>
+          <legend>Business type</legend>
+          <div class="business-types">
+            @for (type of businessTypes; track type.value) {
+              <label class="business-type" [class.business-type--selected]="form.controls.businessType.value === type.value">
+                <input type="radio" formControlName="businessType" [value]="type.value" />
+                <span><strong>{{ type.label }}</strong><small>{{ type.description }}</small></span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <div class="service-preview"><strong>Your workspace will support</strong><span>@for (service of selectedBusinessType.services; track service) { <em>{{ service }}</em> }</span></div>
+
+        <fieldset><legend>Business and contact</legend>
+          <div class="form-grid">
+            <label>Legal business name *<input type="text" formControlName="legalBusinessName" autocomplete="organization" /><small class="field-error" *ngIf="form.controls.legalBusinessName.touched && form.controls.legalBusinessName.invalid">Enter the registered business name.</small></label>
+            <label>Trading name <input type="text" formControlName="tradingName" /></label>
+            <label>Primary contact name *<input type="text" formControlName="contactName" autocomplete="name" /><small class="field-error" *ngIf="form.controls.contactName.touched && form.controls.contactName.invalid">Enter the responsible contact.</small></label>
+            <label>Business email *<input type="email" formControlName="contactEmail" autocomplete="email" /><small class="field-error" *ngIf="form.controls.contactEmail.touched && form.controls.contactEmail.invalid">Enter a valid email address.</small></label>
+            <label>Bangladesh mobile number *<input type="tel" formControlName="contactPhone" placeholder="+8801XXXXXXXXX" autocomplete="tel" /><small class="field-error" *ngIf="form.controls.contactPhone.touched && form.controls.contactPhone.invalid">Use +8801 followed by 9 digits.</small></label>
+            <label>Website <input type="url" formControlName="website" placeholder="https://example.com" /><small class="field-error" *ngIf="form.controls.website.touched && form.controls.website.invalid">Include http:// or https://.</small></label>
+          </div>
+        </fieldset>
+
+        <fieldset><legend>Location and compliance</legend>
+          <div class="form-grid">
+            <label class="form-grid__wide">Registered address *<textarea rows="3" formControlName="address"></textarea><small class="field-error" *ngIf="form.controls.address.touched && form.controls.address.invalid">Provide a complete registered address.</small></label>
+            <label>District *<input type="text" formControlName="district" /><small class="field-error" *ngIf="form.controls.district.touched && form.controls.district.invalid">Enter the district.</small></label>
+            <label>Division *<select formControlName="division"><option value="">Choose a division</option>@for (division of divisions; track division) { <option [value]="division">{{ division }}</option> }</select><small class="field-error" *ngIf="form.controls.division.touched && form.controls.division.invalid">Choose a division.</small></label>
+            <label>Trade license number *<input type="text" formControlName="tradeLicenseNumber" /><small class="field-error" *ngIf="form.controls.tradeLicenseNumber.touched && form.controls.tradeLicenseNumber.invalid">Enter the valid trade-license number.</small></label>
+            <label>TIN (if applicable)<input type="text" formControlName="taxIdentificationNumber" /></label>
+            <label>Years operating *<input type="number" formControlName="yearsOperating" min="0" max="100" /><small class="field-error" *ngIf="form.controls.yearsOperating.touched && form.controls.yearsOperating.invalid">Enter a value between 0 and 100.</small></label>
+          </div>
+        </fieldset>
+
+        <fieldset><legend>About your services</legend>
+          <label>Business description *<textarea rows="5" formControlName="businessDescription" placeholder="Describe your locations, service standards, operating hours, and what travelers can expect."></textarea><small class="field-error" *ngIf="form.controls.businessDescription.touched && form.controls.businessDescription.invalid">Use at least 40 characters so reviewers can understand your business.</small></label>
+        </fieldset>
+
+        <label class="consent"><input type="checkbox" formControlName="consent" /><span>I confirm that these details are accurate and I am authorized to submit this application. I understand that activation requires TRAVIXA verification. *</span></label>
+        <small class="field-error" *ngIf="form.controls.consent.touched && form.controls.consent.invalid">Your confirmation is required.</small>
+
+        <div class="partner-actions"><button type="submit" class="btn btn-primary" [disabled]="isSubmitting">{{ isSubmitting ? 'Submitting application…' : 'Submit for verification' }}</button><button type="button" class="btn btn-outline-secondary" (click)="reset()" [disabled]="isSubmitting">Reset form</button></div>
+      </form>
+    }
+  </section>
+</main>

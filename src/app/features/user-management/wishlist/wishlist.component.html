@@ -1,0 +1,305 @@
+<div class="wishlist-page">
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a class="brand" (click)="goToHome()">
+        <div class="brand-mark">✈</div>
+        <div class="brand-text">
+          <strong>TRAVIXA</strong>
+          <small>Your Travel Vault</small>
+        </div>
+      </a>
+
+      <div class="nav-center">
+        <a class="nav-pill" (click)="goToDiscover()">✦ Discover</a>
+        <a class="nav-pill" (click)="goToDestinations()">◉ Destinations</a>
+        <a class="nav-pill nav-pill--active" (click)="goToBookings()">
+          ◫ My Bookings
+        </a>
+      </div>
+
+      <a class="nav-profile" (click)="goToProfile()"> 👤 My Profile </a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="hero-section">
+    <div class="hero-glow hero-glow--1"></div>
+    <div class="hero-glow hero-glow--2"></div>
+    <div class="hero-glow hero-glow--3"></div>
+
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <div class="hero-badge">
+            <span class="hero-badge__dot"></span>
+            ❤️ PERSONAL TRAVEL VAULT
+          </div>
+
+          <h1 class="hero-title">
+            Keep the places
+            <span class="hero-title__gradient">worth returning to.</span>
+          </h1>
+
+          <p class="hero-text">
+            Save your favourite stays, unforgettable destinations, dream tours
+            and culinary experiences in one beautifully organised travel
+            collection.
+          </p>
+
+          <div class="hero-cta">
+            <button class="btn-hero btn-hero--primary" (click)="goToDiscover()">
+              <span>✦</span> Discover More
+            </button>
+            <button class="btn-hero btn-hero--ghost" (click)="goToPlanner()">
+              ✨ Plan a Trip
+            </button>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="vault-card">
+            <div class="vault-ring"></div>
+            <div class="vault-glow"></div>
+
+            <div class="vault-head">
+              <div>
+                <small>MY COLLECTION</small>
+                <h3>Travel Vault</h3>
+              </div>
+              <div class="vault-icon">
+                <span class="vault-icon__pulse"></span>
+                ♥
+              </div>
+            </div>
+
+            <div class="vault-stats">
+              @for (stat of categoryStats; track stat.category; let i = $index) {
+                <div class="vault-stat" [attr.data-accent]="stat.accent">
+                  <span class="vault-stat__icon">{{ stat.icon }}</span>
+                  <strong class="vault-stat__value">
+                    {{ animatedCounts[i] < 10 ? "0" + animatedCounts[i] : animatedCounts[i] }}
+                  </strong>
+                  <small class="vault-stat__label">{{ stat.label }}</small>
+                </div>
+              }
+            </div>
+
+            <div class="vault-foot">
+              <span>Total saved</span>
+              <strong>{{ totalSaved }} experiences</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FILTER BAR ═══════════════ -->
+  <section class="filter-section">
+    <div class="container">
+      <div class="filter-bar">
+        <div class="filter-bar__tabs">
+          <span class="filter-label">Browse Vault</span>
+
+          @for (filter of filters; track filter.value) {
+            <button
+              type="button"
+              class="filter-tab"
+              [class.filter-tab--active]="activeFilter === filter.value"
+              [attr.data-accent]="filter.accent"
+              (click)="setFilter(filter.value)"
+            >
+              <span class="filter-tab__icon">{{ filter.icon }}</span>
+              <span class="filter-tab__label">{{ filter.label }}</span>
+              <span class="filter-tab__count">
+                {{ categoryCount[filter.value] || 0 }}
+              </span>
+            </button>
+          }
+        </div>
+
+        <div class="filter-bar__tools">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search your vault..."
+              [(ngModel)]="searchTerm"
+            />
+            @if (searchTerm) {
+              <button type="button" class="clear-btn" (click)="clearSearch()">
+                ×
+              </button>
+            }
+          </div>
+
+          <select class="sort-select" [(ngModel)]="sortBy">
+            <option value="recent">Recent</option>
+            <option value="rating">Top Rated</option>
+            <option value="name">A → Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ LISTING ═══════════════ -->
+  <section class="listing-section">
+    <div class="container">
+      <div class="listing-head">
+        <div>
+          <span class="listing-kicker">CURATED BY YOU</span>
+          <h2 class="listing-title">
+            Your saved experiences
+            @if (filteredItems.length !== totalSaved) {
+              <span class="listing-count">{{ filteredItems.length }}</span>
+            }
+          </h2>
+          <p class="listing-sub">Places you don't want to lose.</p>
+        </div>
+
+        <div class="listing-meta">
+          <span class="listing-badge">{{ totalSaved }} saved</span>
+          @if (activeFilter !== "ALL" || searchTerm) {
+            <button class="clear-all" (click)="clearAllFilters()">
+              Clear filters ✕
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (loading) {
+        <div class="row g-4">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div class="col-md-6 col-xl-4">
+              <div class="skeleton-card">
+                <div class="skeleton-image"></div>
+                <div class="skeleton-body">
+                  <div class="skeleton-line skeleton-line--sm"></div>
+                  <div class="skeleton-line skeleton-line--lg"></div>
+                  <div class="skeleton-line"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (filteredItems.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">🧭</div>
+          <h3>Nothing here yet</h3>
+          <p>Try a different filter or explore new experiences.</p>
+          <button class="btn-hero btn-hero--primary" (click)="clearAllFilters()">
+            Show All
+          </button>
+        </div>
+      } @else {
+        <div class="row g-4">
+          @for (item of filteredItems; track item.id; let i = $index) {
+            <div class="col-md-6 col-xl-4">
+              <article
+                class="wish-card"
+                [attr.data-category]="item.category"
+                [style.animation-delay.ms]="i * 70"
+              >
+                <!-- IMAGE -->
+                <div class="wish-card__image" (click)="openItem(item)">
+                  <img [src]="item.image" [alt]="item.title" loading="lazy" />
+                  <div class="wish-card__gradient"></div>
+
+                  <span class="wish-card__category">
+                    {{ item.categoryIcon }} {{ item.categoryLabel }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="wish-card__heart wish-card__heart--active"
+                    (click)="removeFromWishlist(item, $event)"
+                    [attr.aria-label]="'Remove from wishlist'"
+                  >
+                    ♥
+                  </button>
+
+                  <div class="wish-card__image-bottom">
+                    <span class="wish-card__rating">
+                      ⭐ {{ item.rating }}
+                      <small>({{ item.reviews }})</small>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- BODY -->
+                <div class="wish-card__body">
+                  <div class="wish-card__head">
+                    <small class="wish-card__country">{{ item.country }}</small>
+                    <h3 class="wish-card__title">{{ item.title }}</h3>
+                    <p class="wish-card__location">📍 {{ item.location }}</p>
+                  </div>
+
+                  <p class="wish-card__desc">{{ item.description }}</p>
+
+                  <div class="wish-card__meta">
+                    <span class="meta-pill">{{ item.meta1 }}</span>
+                    <span class="meta-pill">{{ item.meta2 }}</span>
+                    @if (item.price) {
+                      <span class="meta-pill meta-pill--price">{{ item.price }}</span>
+                    }
+                  </div>
+
+                  <div class="wish-card__foot">
+                    <small class="wish-card__date">
+                      ♥ Saved {{ item.savedDate }}
+                    </small>
+
+                    <button
+                      class="wish-card__action"
+                      [attr.data-category]="item.category"
+                      (click)="openItem(item)"
+                    >
+                      {{ item.actionLabel }} <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════ CTA ═══════════════ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-glow"></div>
+        <div class="cta-icon">🧭</div>
+        <h2>Your next favourite place is still out there.</h2>
+        <p>
+          Keep exploring TRAVIXA and build a collection of places, stays and
+          experiences that match your travel story.
+        </p>
+        <div class="cta-actions">
+          <button class="btn-hero btn-hero--primary" (click)="goToDiscover()">
+            Start Exploring
+          </button>
+          <button class="btn-hero btn-hero--outline" (click)="goToPlanner()">
+            ✨ Build My Trip
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer class="page-footer">
+    <div class="container footer-inner">
+      <span>© 2026 TRAVIXA — Travel + Innovation</span>
+      <div class="footer-links">
+        <a (click)="goToDashboard()">Dashboard</a>
+        <a (click)="goToNotifications()">Notifications</a>
+        <a (click)="goToSupport()">Support</a>
+      </div>
+    </div>
+  </footer>
+</div>

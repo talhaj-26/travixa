@@ -1,0 +1,23 @@
+<main class="performance-page">
+  <div class="performance-shell">
+    <header class="performance-hero"><div><span class="eyebrow">PARTNER NETWORK · LIVE SNAPSHOT</span><h1>Your service portfolio</h1><p>Current listing and review counts from your active partner organizations.</p></div><a routerLink="/partner-dashboard">Workspace <span>↗</span></a></header>
+    @if (loading) { <section class="state-card" aria-live="polite"><span class="spinner"></span><h2>Loading performance</h2><p>Fetching organization-scoped data from TRAVIXA.</p></section> }
+    @else if (errorMessage) { <section class="state-card error" role="alert"><h2>Metrics unavailable</h2><p>{{ errorMessage }}</p><button type="button" (click)="load()">Try again</button></section> }
+    @else if (data) {
+      <div class="scope"><span></span>{{ data.scope }}</div>
+      <section class="metrics">
+        <article class="metric metric--accent"><span>Managed listings</span><strong>{{ listingCount | number }}</strong><small>All service types in linked organizations</small></article>
+        <article class="metric"><span>Pending review</span><strong>{{ data.pendingListings | number }}</strong><small>Listings awaiting platform review</small></article>
+        <article class="metric"><span>Organizations</span><strong>{{ data.totalPartnerOrganizations | number }}</strong><small>Active memberships represented</small></article>
+      </section>
+      <section class="service-grid" aria-label="Partner listing counts">
+        <a routerLink="/hotel-management"><span class="service-icon">⌂</span><span><small>ACCOMMODATION</small><strong>Hotels</strong></span><b>{{ data.totalHotels | number }}</b><i>↗</i></a>
+        <a routerLink="/restaurant-management"><span class="service-icon">♨</span><span><small>DINING</small><strong>Restaurants</strong></span><b>{{ data.totalRestaurants | number }}</b><i>↗</i></a>
+        <a routerLink="/tour-package-management"><span class="service-icon">✧</span><span><small>EXPERIENCES</small><strong>Tour packages</strong></span><b>{{ data.totalTourPackages | number }}</b><i>↗</i></a>
+        <a routerLink="/tour-guide-management"><span class="service-icon">◎</span><span><small>LOCAL EXPERTS</small><strong>Tour guides</strong></span><b>{{ data.totalTourGuides | number }}</b><i>↗</i></a>
+        <a routerLink="/transport-management"><span class="service-icon">⇄</span><span><small>GETTING AROUND</small><strong>Transport routes</strong></span><b>{{ data.totalTransportRoutes | number }}</b><i>↗</i></a>
+      </section>
+      <p class="data-note">Bookings, revenue, ratings and trend charts are not included because this partner-scoped API does not return those metrics.</p>
+    }
+  </div>
+</main>

@@ -1,0 +1,1382 @@
+<style>
+  :host {
+    --sd-bg: #f6f8fc;
+    --sd-surface: rgba(255, 255, 255, 0.86);
+    --sd-surface-2: #ffffff;
+    --sd-text: #172033;
+    --sd-muted: #697386;
+    --sd-border: rgba(23, 32, 51, 0.09);
+    --sd-accent: #6c5ce7;
+    --sd-accent-2: #9b8cff;
+    --sd-success: #16a673;
+    --sd-warning: #e9a21b;
+    --sd-danger: #df5a67;
+    --sd-shadow: 0 24px 70px rgba(36, 42, 72, 0.1);
+
+    display: block;
+    min-height: 100vh;
+    color: var(--sd-text);
+    background:
+      radial-gradient(
+        circle at 8% 5%,
+        rgba(108, 92, 231, 0.14),
+        transparent 25%
+      ),
+      radial-gradient(
+        circle at 92% 18%,
+        rgba(22, 166, 115, 0.1),
+        transparent 24%
+      ),
+      var(--sd-bg);
+    transition: 0.3s ease;
+  }
+
+  :host-context([data-theme="dark"]) {
+    --sd-bg: #0b0d14;
+    --sd-surface: rgba(20, 23, 34, 0.88);
+    --sd-surface-2: #151925;
+    --sd-text: #f3f5fb;
+    --sd-muted: #9ca5b8;
+    --sd-border: rgba(255, 255, 255, 0.08);
+    --sd-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+
+    background:
+      radial-gradient(
+        circle at 8% 5%,
+        rgba(108, 92, 231, 0.2),
+        transparent 25%
+      ),
+      radial-gradient(
+        circle at 92% 18%,
+        rgba(22, 166, 115, 0.1),
+        transparent 24%
+      ),
+      var(--sd-bg);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* =========================
+     SIGNAL DESK NAVBAR
+     ========================= */
+
+  .signal-nav {
+    position: relative;
+    z-index: 10;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 22px 28px 8px;
+  }
+
+  .nav-shell {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 22px;
+    padding: 13px 16px;
+    border: 1px solid var(--sd-border);
+    border-radius: 22px;
+    background: var(--sd-surface);
+    backdrop-filter: blur(18px);
+    box-shadow: var(--sd-shadow);
+  }
+
+  .desk-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 210px;
+  }
+
+  .desk-mark {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    color: white;
+    font-weight: 900;
+    background: linear-gradient(145deg, var(--sd-accent), #4e3fc4);
+    box-shadow: 0 10px 25px rgba(108, 92, 231, 0.28);
+  }
+
+  .brand-name {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-label {
+    display: block;
+    margin-top: 2px;
+    color: var(--sd-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+  }
+
+  .desk-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .desk-nav a {
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: var(--sd-muted);
+    font-size: 12px;
+    font-weight: 800;
+    transition: 0.25s ease;
+  }
+
+  .desk-nav a:hover {
+    color: var(--sd-text);
+    background: rgba(108, 92, 231, 0.08);
+  }
+
+  .case-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border: 1px solid var(--sd-border);
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sd-success);
+    box-shadow: 0 0 0 5px rgba(22, 166, 115, 0.1);
+  }
+
+  /* =========================
+     HERO
+     ========================= */
+
+  .desk-wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 54px 24px 80px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 58px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 11px;
+    border: 1px solid rgba(108, 92, 231, 0.18);
+    border-radius: 999px;
+    color: var(--sd-accent);
+    background: rgba(108, 92, 231, 0.07);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+  }
+
+  .hero h1 {
+    max-width: 680px;
+    margin: 18px 0 16px;
+    font-size: clamp(42px, 6vw, 76px);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+    font-weight: 950;
+  }
+
+  .hero h1 span {
+    color: var(--sd-accent);
+  }
+
+  .hero p {
+    max-width: 590px;
+    margin: 0;
+    color: var(--sd-muted);
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .search-desk {
+    margin-top: 28px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border: 1px solid var(--sd-border);
+    border-radius: 18px;
+    background: var(--sd-surface);
+    box-shadow: var(--sd-shadow);
+  }
+
+  .search-desk input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    padding: 14px 15px;
+    color: var(--sd-text);
+    background: transparent;
+    font-size: 13px;
+  }
+
+  .search-btn {
+    border: 0;
+    border-radius: 13px;
+    padding: 0 21px;
+    color: white;
+    background: linear-gradient(135deg, var(--sd-accent), #4f3bc8);
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.25s ease;
+  }
+
+  .search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(108, 92, 231, 0.25);
+  }
+
+  /* =========================
+     CASE CARD
+     ========================= */
+
+  .case-board {
+    position: relative;
+    padding: 28px;
+    border: 1px solid var(--sd-border);
+    border-radius: 28px;
+    background: var(--sd-surface);
+    box-shadow: var(--sd-shadow);
+    overflow: hidden;
+  }
+
+  .case-board::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -70px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(108, 92, 231, 0.1);
+  }
+
+  .board-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .board-title {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+  }
+
+  .case-number {
+    color: var(--sd-muted);
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .case-main {
+    position: relative;
+    padding: 22px;
+    border-radius: 21px;
+    background: var(--sd-surface-2);
+    border: 1px solid var(--sd-border);
+  }
+
+  .case-status {
+    display: inline-flex;
+    padding: 6px 9px;
+    border-radius: 8px;
+    color: var(--sd-success);
+    background: rgba(22, 166, 115, 0.1);
+    font-size: 9px;
+    font-weight: 900;
+  }
+
+  .case-main h3 {
+    margin: 16px 0 7px;
+    font-size: 19px;
+  }
+
+  .case-main p {
+    margin: 0;
+    color: var(--sd-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .case-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .meta-box {
+    padding: 13px;
+    border-radius: 13px;
+    background: rgba(108, 92, 231, 0.055);
+  }
+
+  .meta-label {
+    color: var(--sd-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+  }
+
+  .meta-value {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .board-footer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 18px;
+    color: var(--sd-muted);
+    font-size: 10px;
+  }
+
+  .agent-avatar {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    background: linear-gradient(135deg, #ff8a65, #e85d9e);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  /* =========================
+     SECTION
+     ========================= */
+
+  .section {
+    margin-top: 68px;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 20px;
+    margin-bottom: 23px;
+  }
+
+  .section-kicker {
+    color: var(--sd-accent);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+  }
+
+  .section h2 {
+    margin: 7px 0 0;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+  }
+
+  .section-desc {
+    max-width: 470px;
+    color: var(--sd-muted);
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  /* =========================
+     CATEGORY CARDS
+     ========================= */
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .category-card {
+    position: relative;
+    padding: 22px;
+    min-height: 165px;
+    overflow: hidden;
+    border: 1px solid var(--sd-border);
+    border-radius: 20px;
+    background: var(--sd-surface);
+    transition: 0.28s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--sd-shadow);
+    border-color: rgba(108, 92, 231, 0.25);
+  }
+
+  .category-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: rgba(108, 92, 231, 0.1);
+    font-size: 19px;
+  }
+
+  .category-card h3 {
+    margin: 17px 0 7px;
+    font-size: 15px;
+  }
+
+  .category-card p {
+    margin: 0;
+    color: var(--sd-muted);
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .category-arrow {
+    position: absolute;
+    right: 19px;
+    bottom: 17px;
+    color: var(--sd-accent);
+    font-weight: 900;
+  }
+
+  /* =========================
+     OPEN CASES
+     ========================= */
+
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .ticket {
+    padding: 20px;
+    border: 1px solid var(--sd-border);
+    border-radius: 20px;
+    background: var(--sd-surface);
+    transition: 0.25s ease;
+  }
+
+  .ticket:hover {
+    transform: translateY(-4px);
+  }
+
+  .ticket-top,
+  .ticket-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ticket-id {
+    color: var(--sd-muted);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+
+  .priority {
+    padding: 5px 8px;
+    border-radius: 7px;
+    font-size: 8px;
+    font-weight: 900;
+  }
+
+  .priority.high {
+    color: var(--sd-danger);
+    background: rgba(223, 90, 103, 0.1);
+  }
+
+  .priority.medium {
+    color: var(--sd-warning);
+    background: rgba(233, 162, 27, 0.11);
+  }
+
+  .priority.low {
+    color: var(--sd-success);
+    background: rgba(22, 166, 115, 0.1);
+  }
+
+  .ticket h3 {
+    margin: 17px 0 7px;
+    font-size: 15px;
+  }
+
+  .ticket p {
+    margin: 0 0 20px;
+    color: var(--sd-muted);
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .ticket-bottom {
+    padding-top: 13px;
+    border-top: 1px solid var(--sd-border);
+  }
+
+  .ticket-category {
+    color: var(--sd-muted);
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .ticket-link {
+    color: var(--sd-accent);
+    font-size: 9px;
+    font-weight: 900;
+  }
+
+  /* =========================
+     SUPPORT FLOW
+     ========================= */
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--sd-border);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--sd-surface);
+  }
+
+  .flow-step {
+    position: relative;
+    padding: 27px;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--sd-border);
+    border-radius: 50%;
+    background: var(--sd-surface-2);
+    color: var(--sd-accent);
+    font-weight: 900;
+  }
+
+  .step-number {
+    color: var(--sd-accent);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+  }
+
+  .flow-step h3 {
+    margin: 11px 0 7px;
+    font-size: 16px;
+  }
+
+  .flow-step p {
+    margin: 0;
+    color: var(--sd-muted);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  /* =========================
+     FAQ
+     ========================= */
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+  }
+
+  details {
+    border: 1px solid var(--sd-border);
+    border-radius: 15px;
+    background: var(--sd-surface);
+    overflow: hidden;
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 17px 19px;
+    font-size: 12px;
+    font-weight: 850;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "+";
+    float: right;
+    color: var(--sd-accent);
+    font-size: 17px;
+  }
+
+  details[open] summary::after {
+    content: "−";
+  }
+
+  details p {
+    margin: 0;
+    padding: 0 19px 18px;
+    color: var(--sd-muted);
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  /* =========================
+     HUMAN SUPPORT
+     ========================= */
+
+  .human-help {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 16px;
+    margin-top: 68px;
+  }
+
+  .help-main {
+    padding: 30px;
+    border-radius: 25px;
+    color: white;
+    background:
+      radial-gradient(
+        circle at 90% 10%,
+        rgba(255, 255, 255, 0.18),
+        transparent 24%
+      ),
+      linear-gradient(135deg, #5848d9, #7c69f1);
+    box-shadow: 0 24px 55px rgba(91, 73, 210, 0.22);
+  }
+
+  .help-main small {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    opacity: 0.75;
+  }
+
+  .help-main h2 {
+    max-width: 500px;
+    margin: 12px 0;
+    font-size: 30px;
+    letter-spacing: -0.04em;
+  }
+
+  .help-main p {
+    max-width: 550px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .help-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 23px;
+  }
+
+  .help-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 14px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 10px;
+    font-weight: 900;
+    transition: 0.25s ease;
+  }
+
+  .help-btn:hover {
+    background: white;
+    color: #5141ca;
+    transform: translateY(-2px);
+  }
+
+  .urgent-card {
+    padding: 27px;
+    border: 1px solid var(--sd-border);
+    border-radius: 25px;
+    background: var(--sd-surface);
+  }
+
+  .urgent-icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    color: var(--sd-danger);
+    background: rgba(223, 90, 103, 0.1);
+  }
+
+  .urgent-card h3 {
+    margin: 18px 0 8px;
+    font-size: 17px;
+  }
+
+  .urgent-card p {
+    margin: 0;
+    color: var(--sd-muted);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .urgent-link {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--sd-danger);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  /* =========================
+     QUICK ACTIONS
+     ========================= */
+
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .quick {
+    padding: 18px;
+    border: 1px solid var(--sd-border);
+    border-radius: 16px;
+    background: var(--sd-surface);
+    transition: 0.25s ease;
+  }
+
+  .quick:hover {
+    transform: translateY(-4px);
+    border-color: rgba(108, 92, 231, 0.25);
+  }
+
+  .quick strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+  }
+
+  .quick span {
+    color: var(--sd-muted);
+    font-size: 9px;
+  }
+
+  /* =========================
+     FOOTER
+     ========================= */
+
+  .desk-footer {
+    margin-top: 75px;
+    padding-top: 25px;
+    border-top: 1px solid var(--sd-border);
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    color: var(--sd-muted);
+    font-size: 9px;
+  }
+
+  .desk-footer strong {
+    color: var(--sd-text);
+  }
+
+  /* =========================
+     RESPONSIVE
+     ========================= */
+
+  @media (max-width: 900px) {
+    .nav-shell {
+      grid-template-columns: 1fr auto;
+    }
+
+    .desk-nav {
+      display: none;
+    }
+
+    .hero,
+    .human-help {
+      grid-template-columns: 1fr;
+    }
+
+    .category-grid,
+    .cases-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .signal-nav {
+      padding: 12px 12px 5px;
+    }
+
+    .desk-wrap {
+      padding: 35px 15px 60px;
+    }
+
+    .desk-brand {
+      min-width: auto;
+    }
+
+    .case-chip {
+      display: none;
+    }
+
+    .hero h1 {
+      font-size: 43px;
+    }
+
+    .search-desk {
+      flex-direction: column;
+    }
+
+    .search-btn {
+      min-height: 45px;
+    }
+
+    .category-grid,
+    .cases-grid,
+    .faq-grid,
+    .quick-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .flow {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "↓";
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -14px;
+      transform: translateX(-50%);
+    }
+
+    .section-head {
+      display: block;
+    }
+
+    .section-desc {
+      margin-top: 10px;
+    }
+
+    .desk-footer {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<!-- =========================
+     SIGNAL DESK NAVBAR
+     ========================= -->
+
+<nav class="signal-nav">
+  <div class="nav-shell">
+    <a routerLink="/" class="desk-brand">
+      <div class="desk-mark">T</div>
+      <div>
+        <div class="brand-name">TRAVIXA</div>
+        <span class="brand-label">HELP DESK • CASE CENTER</span>
+      </div>
+    </a>
+
+    <div class="desk-nav">
+      <a href="#help">Knowledge</a>
+      <a href="#cases">My Cases</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <div class="case-chip">
+      <span class="live-dot"></span>
+      24/7 DESK ONLINE
+    </div>
+  </div>
+</nav>
+
+<main class="desk-wrap">
+  <!-- =========================
+       HERO
+       ========================= -->
+
+  <section class="hero" id="help">
+    <div>
+      <span class="eyebrow"> ✦ TRAVIXA SUPPORT NETWORK </span>
+
+      <h1>
+        Every journey<br />
+        deserves an <span>answer.</span>
+      </h1>
+
+      <p>
+        Find quick answers, track your support cases, or connect with the right
+        TRAVIXA team for booking, payment, transport, stay and account
+        assistance.
+      </p>
+
+      <div class="search-desk">
+        <input
+          type="text"
+          placeholder="Search bookings, payments, transport, stays..."
+        />
+
+        <button
+          type="button"
+          class="search-btn"
+          onclick="alert('Demo: Searching TRAVIXA Knowledge Base...')"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+
+    <!-- CASE BOARD -->
+
+    <div class="case-board">
+      <div class="board-top">
+        <span class="board-title">ACTIVE CASE</span>
+        <span class="case-number">#TVX-2048</span>
+      </div>
+
+      <div class="case-main">
+        <span class="case-status"> ● IN REVIEW </span>
+
+        <h3>Payment verification request</h3>
+
+        <p>
+          Your payment case has been received and is currently being reviewed by
+          the TRAVIXA support team.
+        </p>
+
+        <div class="case-meta">
+          <div class="meta-box">
+            <div class="meta-label">CATEGORY</div>
+            <div class="meta-value">Payment</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">LAST UPDATE</div>
+            <div class="meta-value">12 min ago</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">PRIORITY</div>
+            <div class="meta-value">Medium</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">BOOKING</div>
+            <div class="meta-value">TVX-BK901</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-footer">
+        <div class="agent-avatar">A</div>
+        <span>Assigned to <strong>TRAVIXA Support</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       SUPPORT CATEGORIES
+       ========================= -->
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">CHOOSE A PATH</div>
+        <h2>What can we help with?</h2>
+      </div>
+
+      <div class="section-desc">
+        Select a support area and move directly to the information or service
+        you need.
+      </div>
+    </div>
+
+    <div class="category-grid">
+      <a href="/my-bookings" class="category-card">
+        <div class="category-icon">🎫</div>
+        <h3>Booking & Reservations</h3>
+        <p>
+          Manage bookings, cancellations, confirmation and reservation-related
+          questions.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+
+      <a href="/payment" class="category-card">
+        <div class="category-icon">💳</div>
+        <h3>Payment & Refunds</h3>
+        <p>
+          Get help with payment status, failed transactions, refunds and
+          billing.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+
+      <a href="/transportation" class="category-card">
+        <div class="category-icon">🚌</div>
+        <h3>Transport</h3>
+        <p>
+          Find assistance for transport schedules, tickets, routes and mobility
+          services.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+
+      <a href="/stays" class="category-card">
+        <div class="category-icon">🏨</div>
+        <h3>Hotels & Stays</h3>
+        <p>
+          Resolve accommodation questions, stay details, availability and
+          property issues.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+
+      <a href="/tour-packages" class="category-card">
+        <div class="category-icon">🧭</div>
+        <h3>Tour Packages</h3>
+        <p>
+          Explore package information, booking support, schedules and traveller
+          assistance.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+
+      <a href="/user-profile" class="category-card">
+        <div class="category-icon">🔐</div>
+        <h3>Account & Security</h3>
+        <p>
+          Manage profile access, account settings and security-related support.
+        </p>
+        <span class="category-arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================
+       OPEN CASES
+       ========================= -->
+
+  <section class="section" id="cases">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">CASE CENTER</div>
+        <h2>Recent support cases</h2>
+      </div>
+
+      <a href="#contact" class="ticket-link"> Open a new case → </a>
+    </div>
+
+    <div class="cases-grid">
+      <article class="ticket">
+        <div class="ticket-top">
+          <span class="ticket-id">#TVX-2048</span>
+          <span class="priority high">HIGH</span>
+        </div>
+
+        <h3>Payment verification request</h3>
+
+        <p>
+          Payment confirmation is taking longer than expected for booking
+          TVX-BK901.
+        </p>
+
+        <div class="ticket-bottom">
+          <span class="ticket-category">PAYMENT</span>
+          <a href="#contact" class="ticket-link">View case →</a>
+        </div>
+      </article>
+
+      <article class="ticket">
+        <div class="ticket-top">
+          <span class="ticket-id">#TVX-2037</span>
+          <span class="priority medium">MEDIUM</span>
+        </div>
+
+        <h3>Hotel reservation question</h3>
+
+        <p>
+          Traveller requested clarification regarding check-in timing and
+          reservation details.
+        </p>
+
+        <div class="ticket-bottom">
+          <span class="ticket-category">STAY</span>
+          <a href="#contact" class="ticket-link">View case →</a>
+        </div>
+      </article>
+
+      <article class="ticket">
+        <div class="ticket-top">
+          <span class="ticket-id">#TVX-2021</span>
+          <span class="priority low">LOW</span>
+        </div>
+
+        <h3>Profile information update</h3>
+
+        <p>
+          Account profile information needs to be reviewed before the next
+          booking.
+        </p>
+
+        <div class="ticket-bottom">
+          <span class="ticket-category">ACCOUNT</span>
+          <a href="/user-profile" class="ticket-link">Open profile →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- =========================
+       SUPPORT FLOW
+       ========================= -->
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">HOW IT WORKS</div>
+        <h2>From question to resolution.</h2>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-number">01 / OPEN</div>
+        <h3>Tell us what happened</h3>
+        <p>
+          Select a category and describe the issue connected to your journey or
+          account.
+        </p>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-number">02 / REVIEW</div>
+        <h3>Support reviews your case</h3>
+        <p>
+          A support representative checks the relevant booking, payment or
+          service information.
+        </p>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-number">03 / RESOLVE</div>
+        <h3>Get the next answer</h3>
+        <p>
+          Follow the case status and receive the recommended resolution or next
+          action.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       FAQ
+       ========================= -->
+
+  <section class="section" id="faq">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">KNOWLEDGE BASE</div>
+        <h2>Frequently asked questions</h2>
+      </div>
+
+      <div class="section-desc">
+        Quick answers for the most common TRAVIXA traveller support scenarios.
+      </div>
+    </div>
+
+    <div class="faq-grid">
+      <details>
+        <summary>How can I check my booking status?</summary>
+        <p>
+          Open My Bookings from your account to review confirmation, payment
+          status, booking type and journey details.
+        </p>
+      </details>
+
+      <details>
+        <summary>What happens if my payment fails?</summary>
+        <p>
+          Check the payment section first. If the transaction remains
+          unresolved, create a support case with your booking reference.
+        </p>
+      </details>
+
+      <details>
+        <summary>Can I cancel a booking?</summary>
+        <p>
+          Cancellation depends on the booking type and applicable booking
+          policy. Open the relevant booking to review available actions.
+        </p>
+      </details>
+
+      <details>
+        <summary>Where can I find my booking reference?</summary>
+        <p>
+          Your booking reference is displayed in My Bookings and Booking History
+          after a reservation is created.
+        </p>
+      </details>
+
+      <details>
+        <summary>How do I update my profile?</summary>
+        <p>
+          Visit User Profile to review your account information, preferences and
+          security settings.
+        </p>
+      </details>
+
+      <details>
+        <summary>How can I get help with transport?</summary>
+        <p>
+          Visit Transportation for available services or open a support case
+          under the Transport category.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- =========================
+       HUMAN SUPPORT
+       ========================= -->
+
+  <section class="human-help" id="contact">
+    <div class="help-main">
+      <small>NEED A HUMAN ANSWER?</small>
+
+      <h2>Sometimes the fastest answer is a real conversation.</h2>
+
+      <p>
+        Connect with the appropriate TRAVIXA support channel for your journey,
+        booking or account question.
+      </p>
+
+      <div class="help-actions">
+        <a href="/notifications" class="help-btn"> 💬 Support Inbox </a>
+
+        <a href="mailto:support@travixa.demo" class="help-btn">
+          ✉ Email Support
+        </a>
+
+        <a href="tel:+8801000000000" class="help-btn"> ☎ Call Support </a>
+      </div>
+    </div>
+
+    <div class="urgent-card">
+      <div class="urgent-icon">⚠</div>
+
+      <h3>Priority assistance</h3>
+
+      <p>
+        For urgent journey-related problems, create a priority support case and
+        include your booking reference.
+      </p>
+
+      <a
+        href="#cases"
+        class="urgent-link"
+        onclick="alert('Demo: Priority support case form opened.')"
+      >
+        Create priority case →
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================
+       QUICK ACTIONS
+       ========================= -->
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">QUICK ACCESS</div>
+        <h2>Go directly where you need.</h2>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <a href="/my-bookings" class="quick">
+        <strong>🎫 My Bookings</strong>
+        <span>Review current journeys</span>
+      </a>
+
+      <a href="/booking" class="quick">
+        <strong>➕ New Booking</strong>
+        <span>Start a new reservation</span>
+      </a>
+
+      <a href="/dashboard" class="quick">
+        <strong>📊 Dashboard</strong>
+        <span>Open your travel command center</span>
+      </a>
+
+      <a href="/forgot-password" class="quick">
+        <strong>🔐 Account Help</strong>
+        <span>Recover account access</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================
+       FOOTER
+       ========================= -->
+
+  <footer class="desk-footer">
+    <div>
+      <strong>TRAVIXA Help Desk</strong>
+      <span> • Every journey deserves an answer.</span>
+    </div>
+
+    <div>Support Center • Case Center • Knowledge Base</div>
+  </footer>
+</main>

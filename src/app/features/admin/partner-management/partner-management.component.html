@@ -1,0 +1,1234 @@
+<section class="partner-page">
+
+  <!-- Cinematic Hero -->
+
+  <header class="management-hero">
+
+    <div class="hero-slideshow">
+
+      <div class="hero-slide slide-one"></div>
+
+      <div class="hero-slide slide-two"></div>
+
+      <div class="hero-slide slide-three"></div>
+
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+      <div class="hero-breadcrumb">
+
+        <span>TRAVIXA</span>
+
+        <i class="breadcrumb-dot"></i>
+
+        <span>ADMINISTRATION</span>
+
+        <i class="breadcrumb-dot"></i>
+
+        <span>PARTNER MANAGEMENT</span>
+
+      </div>
+
+      <div class="hero-main">
+
+        <div class="hero-copy">
+
+          <span class="hero-eyebrow">
+
+            <i class="bi bi-globe-americas"></i>
+
+            YOUR GLOBAL TRAVEL NETWORK
+
+          </span>
+
+          <h1>
+
+            Build connections.<br />
+
+            <span>Discover destinations.</span>
+
+          </h1>
+
+          <p>
+
+            Manage your hospitality partners and curate extraordinary
+
+            destinations across the TRAVIXA travel ecosystem.
+
+          </p>
+
+          <div class="hero-actions">
+
+            <button
+              class="hero-primary"
+              type="button"
+              (click)="chooseTab('organizations')">
+
+              <i class="bi bi-buildings"></i>
+
+              Manage Partners
+
+              <i class="bi bi-arrow-up-right"></i>
+
+            </button>
+
+            <button
+              class="hero-secondary"
+              type="button"
+              (click)="chooseTab('destinations')">
+
+              Explore Destinations
+
+              <i class="bi bi-arrow-right"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="hero-side">
+
+          <div class="hero-orbit">
+
+            <div class="orbit-ring"></div>
+
+            <div class="orbit-center">
+
+              <i class="bi bi-airplane"></i>
+
+            </div>
+
+            <span class="orbit-point point-one"></span>
+
+            <span class="orbit-point point-two"></span>
+
+            <span class="orbit-point point-three"></span>
+
+          </div>
+
+          <div class="hero-side-caption">
+
+            <span>ONE PLATFORM</span>
+
+            <strong>Limitless journeys.</strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="hero-bottom">
+
+        <span><i class="bi bi-shield-check"></i> Trusted Partner Network</span>
+
+        <span><i class="bi bi-compass"></i> Curated Destinations</span>
+
+        <span class="hero-bottom-right">TRAVEL BEYOND ORDINARY</span>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- Dashboard Content -->
+
+  <main class="management-container">
+
+    <!-- Page Heading -->
+
+    <div class="page-heading">
+
+      <div>
+
+        <span class="section-kicker">MANAGEMENT CENTER</span>
+
+        <h2>Partner & Destination Hub</h2>
+
+        <p>Everything you need to manage your travel ecosystem.</p>
+
+      </div>
+
+      <button
+        class="refresh-button"
+        type="button"
+        (click)="load()"
+        [disabled]="loading">
+
+        <i class="bi bi-arrow-clockwise" [class.spinning]="loading"></i>
+
+        Refresh Data
+
+      </button>
+
+    </div>
+
+    <!-- Statistics -->
+
+    <div class="stats-grid">
+
+      <article class="stat-card stat-partners">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+
+            <i class="bi bi-buildings"></i>
+
+          </div>
+
+          <span class="stat-label">PARTNER NETWORK</span>
+
+        </div>
+
+        <div class="stat-value">{{ organizations.length }}</div>
+
+        <div class="stat-footer">
+
+          <span>Registered organizations</span>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </div>
+
+        <div class="stat-decoration"></div>
+
+      </article>
+
+      <article class="stat-card stat-destinations">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+
+            <i class="bi bi-geo-alt"></i>
+
+          </div>
+
+          <span class="stat-label">DESTINATION CATALOG</span>
+
+        </div>
+
+        <div class="stat-value">{{ destinations.length }}</div>
+
+        <div class="stat-footer">
+
+          <span>Managed destinations</span>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </div>
+
+        <div class="stat-decoration"></div>
+
+      </article>
+
+      <article class="stat-card stat-featured">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+
+            <i class="bi bi-stars"></i>
+
+          </div>
+
+          <span class="stat-label">FEATURED PLACES</span>
+
+        </div>
+
+        <div class="stat-value">
+
+          {{ featuredDestinationsCount }}
+
+        </div>
+
+        <div class="stat-footer">
+
+          <span>Featured destinations</span>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </div>
+
+        <div class="stat-decoration"></div>
+
+      </article>
+
+      <article class="stat-card stat-published">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+
+            <i class="bi bi-globe2"></i>
+
+          </div>
+
+          <span class="stat-label">LIVE DESTINATIONS</span>
+
+        </div>
+
+        <div class="stat-value">
+
+          {{ publishedDestinationsCount }}
+
+        </div>
+
+        <div class="stat-footer">
+
+          <span>Published destinations</span>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </div>
+
+        <div class="stat-decoration"></div>
+
+      </article>
+
+    </div>
+
+    <!-- Alerts -->
+
+    @if (error) {
+
+    <div class="alert-message alert-error">
+
+      <i class="bi bi-exclamation-circle"></i>
+
+      <span>{{ error }}</span>
+
+      <button type="button" (click)="error = ''">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+    }
+
+    @if (notice) {
+
+    <div class="alert-message alert-success">
+
+      <i class="bi bi-check-circle"></i>
+
+      <span>{{ notice }}</span>
+
+      <button type="button" (click)="notice = ''">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+    }
+
+    <!-- Management Workspace -->
+
+    <section class="workspace">
+
+      <!-- Workspace Header -->
+
+      <div class="workspace-header">
+
+        <div>
+
+          <span class="section-kicker">YOUR ECOSYSTEM</span>
+
+          <h3>Manage your collection</h3>
+
+        </div>
+
+        <div class="workspace-tabs">
+
+          <button
+            type="button"
+            [class.active]="tab === 'organizations'"
+            (click)="chooseTab('organizations')">
+
+            <i class="bi bi-buildings"></i>
+
+            Organizations
+
+            <span class="tab-count">{{ organizations.length }}</span>
+
+          </button>
+
+          <button
+            type="button"
+            [class.active]="tab === 'destinations'"
+            (click)="chooseTab('destinations')">
+
+            <i class="bi bi-geo-alt"></i>
+
+            Destinations
+
+            <span class="tab-count">{{ destinations.length }}</span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="workspace-body">
+
+        <!-- LEFT: Record Directory -->
+
+        <div class="directory-panel">
+
+          <div class="directory-heading">
+
+            <div>
+
+              <h4>
+
+                {{
+
+                tab === "organizations"
+
+                ? "Partner Directory"
+
+                : "Destination Explorer"
+
+                }}
+
+              </h4>
+
+              <p>
+
+                {{
+
+                tab === "organizations"
+
+                ? "Your registered hospitality and travel partners."
+
+                : "Explore and manage your destination collection."
+
+                }}
+
+              </p>
+
+            </div>
+
+            <span class="record-count">
+
+              {{
+
+              tab === "organizations"
+
+              ? organizations.length
+
+              : destinations.length
+
+              }}
+
+              RECORDS
+
+            </span>
+
+          </div>
+
+          @if (loading) {
+
+          <div class="loading-state">
+
+            <div class="loading-spinner"></div>
+
+            <span>Loading your travel ecosystem...</span>
+
+          </div>
+
+          } @else {
+
+          <!-- Organization Directory -->
+
+          @if (tab === "organizations") {
+
+          @if (organizations.length > 0) {
+
+          <div class="organization-list">
+
+            @for (item of organizations; track item.id) {
+
+            <article
+              class="organization-card"
+              [class.selected]="editingId === item.id">
+
+              <div class="organization-avatar">
+
+                <span>{{ item.name.charAt(0).toUpperCase() }}</span>
+
+                <i class="bi bi-patch-check-fill"></i>
+
+              </div>
+
+              <div class="organization-info">
+
+                <div class="organization-title-row">
+
+                  <h5>{{ item.name }}</h5>
+
+                  <span
+                    class="status-pill"
+                    [class.status-active]="item.status === 'ACTIVE'"
+                    [class.status-inactive]="item.status !== 'ACTIVE'">
+
+                    <span></span>
+
+                    {{ item.status }}
+
+                  </span>
+
+                </div>
+
+                <span class="organization-slug">
+
+                  /{{ item.slug }}
+
+                </span>
+
+                <div class="organization-meta">
+
+                  <span>
+
+                    <i class="bi bi-building"></i>
+
+                    {{ item.businessType }}
+
+                  </span>
+
+                  @if (item.contactEmail) {
+
+                  <span>
+
+                    <i class="bi bi-envelope"></i>
+
+                    {{ item.contactEmail }}
+
+                  </span>
+
+                  }
+
+                </div>
+
+              </div>
+
+              <div class="record-actions">
+
+                <button
+                  type="button"
+                  class="action-edit"
+                  title="Edit organization"
+                  (click)="editOrganization(item)">
+
+                  <i class="bi bi-pencil-square"></i>
+
+                </button>
+
+                <button
+                  type="button"
+                  class="action-delete"
+                  title="Delete organization"
+                  (click)="remove(item.id, item.name)">
+
+                  <i class="bi bi-trash3"></i>
+
+                </button>
+
+              </div>
+
+            </article>
+
+            }
+
+          </div>
+
+          } @else {
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+
+              <i class="bi bi-buildings"></i>
+
+            </div>
+
+            <h4>No partners yet</h4>
+
+            <p>
+
+              Your organization directory is waiting for its first
+
+              partner.
+
+            </p>
+
+            <button type="button" (click)="resetForm()">
+
+              <i class="bi bi-plus-lg"></i>
+
+              Add first partner
+
+            </button>
+
+          </div>
+
+          }
+
+          } @else {
+          <!-- Destination Directory -->
+
+          @if (destinations.length > 0) {
+
+          <div class="destination-grid">
+
+            @for (item of destinations; track item.id) {
+
+            <article
+              class="destination-card"
+              [class.selected]="editingId === item.id">
+
+              <div class="destination-image">
+
+                @if (item.imageUrl) {
+
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.name"
+                  loading="lazy" />
+
+                } @else {
+
+                <div class="destination-image-placeholder">
+
+                  <i class="bi bi-image"></i>
+
+                </div>
+
+                }
+
+                <div class="destination-image-overlay"></div>
+
+                @if (item.featured) {
+
+                <span class="featured-badge">
+
+                  <i class="bi bi-stars"></i>
+
+                  FEATURED
+
+                </span>
+
+                }
+
+                <span
+                  class="destination-published"
+                  [class.is-published]="item.published">
+
+                  {{ item.published ? "PUBLISHED" : "DRAFT" }}
+
+                </span>
+
+              </div>
+
+              <div class="destination-content">
+
+                <div class="destination-location">
+
+                  <i class="bi bi-geo-alt-fill"></i>
+
+                  {{ item.region || item.countryCode }}
+
+                  <span>· {{ item.countryCode }}</span>
+
+                </div>
+
+                <h5>{{ item.name }}</h5>
+
+                <p>
+
+                  {{
+
+                  item.description ||
+
+                  "No destination description available."
+
+                  }}
+
+                </p>
+
+                <div class="destination-bottom">
+
+                  <span class="destination-category">
+
+                    {{ item.category || "Uncategorized" }}
+
+                  </span>
+
+                  <div class="record-actions">
+
+                    <button
+                      type="button"
+                      class="action-edit"
+                      title="Edit destination"
+                      (click)="editDestination(item)">
+
+                      <i class="bi bi-pencil-square"></i>
+
+                    </button>
+
+                    <button
+                      type="button"
+                      class="action-delete"
+                      title="Delete destination"
+                      (click)="remove(item.id, item.name)">
+
+                      <i class="bi bi-trash3"></i>
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </article>
+
+            }
+
+          </div>
+
+          } @else {
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+
+              <i class="bi bi-globe-americas"></i>
+
+            </div>
+
+            <h4>No destinations yet</h4>
+
+            <p>
+
+              Start building your travel catalog with your first
+
+              destination.
+
+            </p>
+
+            <button type="button" (click)="resetForm()">
+
+              <i class="bi bi-plus-lg"></i>
+
+              Add destination
+
+            </button>
+
+          </div>
+
+          }
+
+          }
+
+          }
+
+        </div>
+
+        <!-- RIGHT: Create / Edit Form -->
+
+        <aside class="form-panel">
+
+          <div class="form-panel-header">
+
+            <div class="form-icon">
+
+              <i
+                class="bi"
+                [class.bi-pencil-square]="editingId !== null"
+                [class.bi-plus-circle]="editingId === null">
+
+              </i>
+
+            </div>
+
+            <div>
+
+              <span class="section-kicker">
+
+                {{ editingId !== null ? "UPDATE RECORD" : "CREATE NEW RECORD" }}
+
+              </span>
+
+              <h4>
+
+                {{ editingId !== null ? "Edit " : "Add " }}
+
+                {{ tab === "organizations" ? "Organization" : "Destination" }}
+
+              </h4>
+
+            </div>
+
+          </div>
+
+          <!-- Organization Form -->
+
+          @if (tab === "organizations") {
+
+          <div class="management-form">
+
+            <div class="form-section-label">
+
+              <span>01</span>
+
+              Organization Details
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="orgName">Organization Name <span>*</span></label>
+
+              <input
+                id="orgName"
+                type="text"
+                required
+                maxlength="160"
+                [(ngModel)]="organization.name"
+                placeholder="e.g. Premium Travel Group" />
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="orgSlug">Unique Slug <span>*</span></label>
+
+              <input
+                id="orgSlug"
+                type="text"
+                required
+                maxlength="180"
+                pattern="[a-zA-Z0-9-]+"
+                [(ngModel)]="organization.slug"
+                placeholder="organization-slug" />
+
+              <small>Unique URL-friendly identifier.</small>
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="businessType">Business Type <span>*</span></label>
+
+              <select
+                id="businessType"
+                name="businessType"
+                [(ngModel)]="organization.businessType">
+                <option value="HOTEL">Hotel</option>
+                <option value="RESTAURANT">Restaurant</option>
+                <option value="TRAVEL_AGENCY">Travel agency</option>
+                <option value="TOUR_GUIDE">Tour guide</option>
+                <option value="TRANSPORT_PROVIDER">Transport provider</option>
+              </select>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-section-label">
+
+              <span>02</span>
+
+              Legal & Contact Information
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="legalName">Legal Business Name</label>
+
+              <input
+                id="legalName"
+                type="text"
+                maxlength="180"
+                [(ngModel)]="organization.legalName"
+                placeholder="Registered legal name" />
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="registrationNumber">Registration Number</label>
+
+              <input
+                id="registrationNumber"
+                type="text"
+                maxlength="100"
+                [(ngModel)]="organization.registrationNumber"
+                placeholder="Business registration ID" />
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="contactEmail">Contact Email <span>*</span></label>
+
+              <div class="input-with-icon">
+
+                <i class="bi bi-envelope"></i>
+
+                <input
+                  id="contactEmail"
+                  type="email"
+                  required
+                  maxlength="254"
+                  [(ngModel)]="organization.contactEmail"
+                  placeholder="contact@example.com" />
+
+              </div>
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="contactPhone">Contact Phone</label>
+
+              <div class="input-with-icon">
+
+                <i class="bi bi-telephone"></i>
+
+                <input
+                  id="contactPhone"
+                  type="tel"
+                  maxlength="32"
+                  [(ngModel)]="organization.contactPhone"
+                  placeholder="+880 1XXXXXXXXX" />
+
+              </div>
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="orgStatus">Organization Status</label>
+
+              <select
+                id="orgStatus"
+                name="orgStatus"
+                [(ngModel)]="organization.status">
+                <option value="PENDING">Pending</option>
+                <option value="ACTIVE">Active</option>
+                <option value="SUSPENDED">Suspended</option>
+                <option value="CLOSED">Closed</option>
+              </select>
+
+            </div>
+
+          </div>
+
+          } @else {
+          <!-- Destination Form -->
+
+          <div class="management-form">
+
+            <div class="form-section-label">
+
+              <span>01</span>
+
+              Destination Details
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="destinationName">Destination Name
+
+                <span>*</span></label>
+
+              <input
+                id="destinationName"
+                type="text"
+                required
+                maxlength="140"
+                [(ngModel)]="destination.name"
+                placeholder="e.g. Cox's Bazar" />
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="destinationSlug">Unique Slug <span>*</span></label>
+
+              <input
+                id="destinationSlug"
+                type="text"
+                required
+                maxlength="160"
+                pattern="[a-zA-Z0-9-]+"
+                [(ngModel)]="destination.slug"
+                placeholder="destination-slug" />
+
+            </div>
+
+            <div class="form-row">
+
+              <div class="form-field">
+
+                <label for="countryCode">Country Code <span>*</span></label>
+
+                <input
+                  id="countryCode"
+                  type="text"
+                  required
+                  maxlength="2"
+                  pattern="[a-zA-Z]{2}"
+                  [(ngModel)]="destination.countryCode"
+                  placeholder="BD" />
+
+              </div>
+
+              <div class="form-field">
+
+                <label for="region">Region</label>
+
+                <input
+                  id="region"
+                  type="text"
+                  [(ngModel)]="destination.region"
+                  placeholder="Division / Region" />
+
+              </div>
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="destinationCategory">Category</label>
+
+              <input
+                id="destinationCategory"
+                type="text"
+                [(ngModel)]="destination.category"
+                placeholder="e.g. BEACH, MOUNTAIN" />
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="description">Description</label>
+
+              <textarea
+                id="description"
+                rows="4"
+                [(ngModel)]="destination.description"
+                placeholder="Describe this destination..."></textarea>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-section-label">
+
+              <span>02</span>
+
+              Location Coordinates
+
+            </div>
+
+            <div class="form-row">
+
+              <div class="form-field">
+
+                <label for="latitude">Latitude</label>
+
+                <input
+                  id="latitude"
+                  type="number"
+                  step="any"
+                  [(ngModel)]="destination.latitude"
+                  placeholder="21.4272" />
+
+              </div>
+
+              <div class="form-field">
+
+                <label for="longitude">Longitude</label>
+
+                <input
+                  id="longitude"
+                  type="number"
+                  step="any"
+                  [(ngModel)]="destination.longitude"
+                  placeholder="92.0058" />
+
+              </div>
+
+            </div>
+
+            <div class="form-field">
+
+              <label for="imageUrl">Destination Image URL</label>
+
+              <div class="input-with-icon">
+
+                <i class="bi bi-image"></i>
+
+                <input
+                  id="imageUrl"
+                  type="url"
+                  maxlength="1000"
+                  [(ngModel)]="destination.imageUrl"
+                  placeholder="https\://example.com/image.jpg" />
+
+              </div>
+
+            </div>
+
+            @if (destination.imageUrl) {
+
+            <div class="image-preview">
+
+              <img [src]="destination.imageUrl" alt="Destination preview" />
+
+              <span><i class="bi bi-eye"></i> Image preview</span>
+
+            </div>
+
+            }
+
+            <div class="form-divider"></div>
+
+            <div class="form-section-label">
+
+              <span>03</span>
+
+              Publishing Options
+
+            </div>
+
+            <label class="toggle-option">
+
+              <div class="toggle-copy">
+
+                <strong>Featured Destination</strong>
+
+                <small>Highlight this place in your catalog.</small>
+
+              </div>
+
+              <input type="checkbox" [(ngModel)]="destination.featured" />
+
+              <span class="toggle-slider"></span>
+
+            </label>
+
+            <label class="toggle-option">
+
+              <div class="toggle-copy">
+
+                <strong>Publish Destination</strong>
+
+                <small>Make this destination publicly available.</small>
+
+              </div>
+
+              <input type="checkbox" [(ngModel)]="destination.published" />
+
+              <span class="toggle-slider"></span>
+
+            </label>
+
+          </div>
+
+          }
+
+          <!-- Form Actions -->
+
+          <div class="form-actions">
+
+            <button type="button" class="reset-button" (click)="resetForm()">
+
+              <i class="bi bi-arrow-counterclockwise"></i>
+
+              Reset
+
+            </button>
+
+            <button
+              type="button"
+              class="save-button"
+              (click)="save()"
+              [disabled]="saving">
+
+              @if (saving) {
+
+              <span class="button-spinner"></span>
+
+              Saving...
+
+              } @else {
+
+              <i class="bi bi-check2-circle"></i>
+
+              {{ editingId !== null ? "Save Changes" : "Create Record" }}
+
+              }
+
+            </button>
+
+          </div>
+
+          <div class="form-security-note">
+
+            <i class="bi bi-shield-lock"></i>
+
+            <span>Your management actions are protected by TRAVIXA
+
+              administration.</span>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+    <!-- Bottom Banner -->
+
+    <section class="management-footer">
+
+      <div class="footer-decoration">
+
+        <i class="bi bi-compass"></i>
+
+      </div>
+
+      <div>
+
+        <span>THE WORLD IS YOUR DESTINATION</span>
+
+        <h3>Every great journey starts with a connection.</h3>
+
+      </div>
+
+      <div class="footer-mark">TRAVIXA<span>®</span></div>
+
+    </section>
+
+  </main>
+
+</section>

@@ -1,0 +1,1393 @@
+
+<div class="reviews-page">
+
+  <style>
+    .reviews-page {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef2f7;
+      --text: #172033;
+      --muted: #687386;
+      --border: rgba(23,32,51,.10);
+      --accent: #6d5dfc;
+      --accent-2: #00b894;
+      --warning: #f5a623;
+      --danger: #e74c3c;
+      --shadow: 0 18px 50px rgba(23,32,51,.08);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(109,93,252,.10), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(0,184,148,.08), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="dark"] .reviews-page {
+      --bg: #0b1020;
+      --surface: #12192b;
+      --surface-2: #192237;
+      --text: #f4f7ff;
+      --muted: #9ca8bd;
+      --border: rgba(255,255,255,.09);
+      --accent: #8b7dff;
+      --accent-2: #20d3aa;
+      --warning: #ffc857;
+      --danger: #ff6b61;
+      --shadow: 0 20px 55px rgba(0,0,0,.28);
+    }
+
+    .review-nav {
+      position: relative;
+      margin: 18px auto 0;
+      width: min(1180px, calc(100% - 28px));
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      backdrop-filter: blur(18px);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      z-index: 5;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      color: white;
+      box-shadow: 0 10px 25px rgba(109,93,252,.28);
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: .84rem;
+      font-weight: 700;
+      transition: .25s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--surface-2);
+      color: var(--text);
+      transform: translateY(-2px);
+    }
+
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 13px;
+      background: var(--surface-2);
+      font-size: .76rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      box-shadow: 0 0 12px var(--accent-2);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      50% { transform: scale(1.45); opacity: .65; }
+    }
+
+    .container-xl-custom {
+      width: min(1180px, calc(100% - 28px));
+      margin: auto;
+    }
+
+    .hero {
+      padding: 64px 0 38px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 950;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(100deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .btn-aura {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 17px;
+      font-weight: 850;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: .25s ease;
+      cursor: pointer;
+    }
+
+    .btn-aura:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary-aura {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(109,93,252,.25);
+    }
+
+    .btn-soft {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .voice-orbit {
+      min-height: 290px;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at center, rgba(109,93,252,.22), transparent 42%),
+        var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit {
+      width: 205px;
+      height: 205px;
+      border: 1px dashed rgba(109,93,252,.45);
+      border-radius: 50%;
+      position: relative;
+      animation: rotate 16s linear infinite;
+    }
+
+    .orbit::before,
+    .orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .orbit::before {
+      width: 54px;
+      height: 54px;
+      top: -14px;
+      left: 76px;
+    }
+
+    .orbit::after {
+      width: 42px;
+      height: 42px;
+      bottom: 12px;
+      right: -10px;
+    }
+
+    .orbit-core {
+      position: absolute;
+      inset: 55px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 950;
+      box-shadow: 0 18px 45px rgba(109,93,252,.28);
+      animation: counter 16s linear infinite;
+    }
+
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes counter { to { transform: rotate(-360deg); } }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      right: -25px;
+      top: -25px;
+      background: rgba(109,93,252,.09);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .stat-value {
+      margin-top: 7px;
+      font-size: 2rem;
+      font-weight: 950;
+      letter-spacing: -.04em;
+    }
+
+    .stat-meta {
+      margin-top: 6px;
+      color: var(--accent-2);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 38px 0 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 950;
+      letter-spacing: -.035em;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: .76rem;
+      font-weight: 850;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .review-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 17px;
+      margin-bottom: 12px;
+      background: var(--surface);
+      transition: .25s ease;
+    }
+
+    .review-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(23,32,51,.09);
+    }
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .review-user {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .avatar {
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #6d5dfc, #00b894);
+      color: white;
+      font-weight: 950;
+    }
+
+    .review-user strong {
+      display: block;
+      font-size: .9rem;
+    }
+
+    .review-user small {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .stars {
+      color: var(--warning);
+      letter-spacing: 1px;
+      font-size: .85rem;
+    }
+
+    .review-text {
+      margin: 13px 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: .86rem;
+    }
+
+    .review-service {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      background: var(--surface-2);
+      border-radius: 9px;
+      font-size: .7rem;
+      font-weight: 800;
+    }
+
+    .review-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: .7rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mini-btn:hover {
+      background: var(--surface-2);
+    }
+
+    .reply-box {
+      margin-top: 12px;
+      display: none;
+    }
+
+    .reply-box textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: var(--surface-2);
+      color: var(--text);
+      outline: none;
+    }
+
+    .reply-box textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .rating-overview {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .big-rating {
+      font-size: 4rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .rating-bars {
+      flex: 1;
+    }
+
+    .rating-line {
+      display: grid;
+      grid-template-columns: 28px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 7px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .sentiment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .sentiment {
+      text-align: center;
+      padding: 14px 8px;
+      border-radius: 15px;
+      background: var(--surface-2);
+    }
+
+    .sentiment strong {
+      display: block;
+      font-size: 1.3rem;
+    }
+
+    .sentiment small {
+      color: var(--muted);
+      font-size: .68rem;
+    }
+
+    .insight-card {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, rgba(109,93,252,.10), rgba(0,184,148,.08));
+      border: 1px solid var(--border);
+    }
+
+    .insight-card strong {
+      font-size: .82rem;
+    }
+
+    .insight-card p {
+      color: var(--muted);
+      font-size: .75rem;
+      line-height: 1.6;
+      margin: 7px 0 0;
+    }
+
+    .moderation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .moderation {
+      padding: 18px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .moderation-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      font-size: 1.1rem;
+    }
+
+    .moderation strong {
+      display: block;
+      margin-top: 13px;
+    }
+
+    .moderation p {
+      color: var(--muted);
+      font-size: .76rem;
+      line-height: 1.55;
+    }
+
+    .progress-line {
+      height: 7px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-line span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: inherit;
+    }
+
+    .cta {
+      margin: 40px 0 60px;
+      padding: 32px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,.18), transparent 25%),
+        linear-gradient(135deg, #6655ef, #00a884);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .cta h3 {
+      margin: 0 0 7px;
+      font-size: 1.55rem;
+      font-weight: 950;
+    }
+
+    .cta p {
+      margin: 0;
+      opacity: .84;
+      font-size: .85rem;
+    }
+
+    .cta .btn-aura {
+      background: #fff;
+      color: #17172b;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 35px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .moderation-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-center {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .review-nav {
+        border-radius: 17px;
+      }
+
+      .nav-status {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 42px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rating-overview {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sentiment-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+
+  <!-- UNIQUE REVIEW NAVBAR -->
+  <nav class="review-nav">
+    <a href="/" class="brand-mark">
+      <span class="brand-icon">✦</span>
+      <span>TRAVIXA</span>
+    </a>
+
+    <div class="nav-center">
+      <a href="/admin-dashboard" class="nav-link">Command</a>
+      <a href="/partner-performance" class="nav-link">Partners</a>
+      <a href="/review-rating" class="nav-link">Ratings</a>
+      <a href="/support" class="nav-link">Support</a>
+    </div>
+
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      Voice Engine Live
+    </div>
+  </nav>
+
+  <div class="container-xl-custom">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <span class="eyebrow">✦ Voice of Traveller</span>
+
+        <h1>
+          Turn every review into a
+          <span>better journey.</span>
+        </h1>
+
+        <p>
+          Monitor traveller feedback, understand sentiment, respond faster,
+          and convert customer voices into actionable improvements across the
+          TRAVIXA ecosystem.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#review-inbox" class="btn-aura btn-primary-aura">
+            ✦ Review Inbox
+          </a>
+
+          <a href="/partner-performance" class="btn-aura btn-soft">
+            Partner Insights →
+          </a>
+        </div>
+      </div>
+
+      <div class="voice-orbit">
+        <div class="orbit">
+          <div class="orbit-core">
+            4.8<br>
+            <small style="font-size:.55rem;">TRAVELLER SCORE</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI -->
+    <section class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-label">Overall Rating</div>
+        <div class="stat-value">4.8/5</div>
+        <div class="stat-meta">↑ 0.2 this month</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Total Reviews</div>
+        <div class="stat-value">2,846</div>
+        <div class="stat-meta">↑ 184 new voices</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Response Rate</div>
+        <div class="stat-value">94%</div>
+        <div class="stat-meta">↑ 6% improvement</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Pending Action</div>
+        <div class="stat-value">18</div>
+        <div class="stat-meta" style="color:var(--warning);">
+          Needs attention
+        </div>
+      </div>
+
+    </section>
+
+    <!-- REVIEW INBOX -->
+    <div class="section-title" id="review-inbox">
+      <div>
+        <h2>Review Inbox</h2>
+        <p>Prioritize traveller voices that need a response.</p>
+      </div>
+    </div>
+
+    <section class="dashboard-grid">
+
+      <div class="panel">
+
+        <div class="filter-row">
+          <button type="button" class="filter-btn active" onclick="filterReviews('all', this)">
+            All Reviews
+          </button>
+
+          <button type="button" class="filter-btn" onclick="filterReviews('pending', this)">
+            Needs Reply
+          </button>
+
+          <button type="button" class="filter-btn" onclick="filterReviews('positive', this)">
+            Positive
+          </button>
+
+          <button type="button" class="filter-btn" onclick="filterReviews('critical', this)">
+            Critical
+          </button>
+        </div>
+
+        <div id="reviewList">
+
+          <article class="review-card" data-type="positive">
+            <div class="review-top">
+
+              <div class="review-user">
+                <div class="avatar">TJ</div>
+
+                <div>
+                  <strong>Tanvir Jahan</strong>
+                  <small>2 hours ago · Verified traveller</small>
+                </div>
+              </div>
+
+              <div>
+                <div class="stars">★★★★★</div>
+                <small style="color:var(--muted);">5.0</small>
+              </div>
+
+            </div>
+
+            <p class="review-text">
+              “The hotel experience was excellent. Check-in was smooth,
+              the room was clean, and the staff made the entire stay feel
+              effortless.”
+            </p>
+
+            <span class="review-service">
+              🏨 Grand Palace Dhaka
+            </span>
+
+            <div class="review-actions">
+              <button type="button" class="mini-btn" onclick="toggleReply(this)">
+                ↩ Reply
+              </button>
+
+              <button type="button" class="mini-btn" onclick="markHandled(this)">
+                ✓ Mark Handled
+              </button>
+
+              <button type="button" class="mini-btn" onclick="showToast('Review shared with hotel partner.')">
+                ↗ Share
+              </button>
+            </div>
+
+            <div class="reply-box">
+              <textarea placeholder="Write a professional response..."></textarea>
+
+              <div style="margin-top:8px;display:flex;gap:8px;">
+                <button type="button"
+                        class="btn-aura btn-primary-aura"
+                        onclick="sendReply(this)">
+                  Send Response
+                </button>
+
+                <button type="button"
+                        class="mini-btn"
+                        onclick="toggleReply(this)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="review-card" data-type="pending">
+            <div class="review-top">
+
+              <div class="review-user">
+                <div class="avatar">SA</div>
+
+                <div>
+                  <strong>Sarah Ahmed</strong>
+                  <small>Yesterday · Verified traveller</small>
+                </div>
+              </div>
+
+              <div>
+                <div class="stars">★★★★☆</div>
+                <small style="color:var(--muted);">4.0</small>
+              </div>
+
+            </div>
+
+            <p class="review-text">
+              “The Sajek package was beautiful and the guide was very helpful.
+              The only issue was that the transport arrived later than expected.”
+            </p>
+
+            <span class="review-service">
+              🏔️ Sajek Cloud Escape
+            </span>
+
+            <div class="review-actions">
+              <button type="button" class="mini-btn" onclick="toggleReply(this)">
+                ↩ Reply
+              </button>
+
+              <button type="button" class="mini-btn" onclick="markHandled(this)">
+                ✓ Mark Handled
+              </button>
+
+              <button type="button" class="mini-btn" onclick="showToast('Issue forwarded to transport operations.')">
+                ⚑ Escalate
+              </button>
+            </div>
+
+            <div class="reply-box">
+              <textarea placeholder="Acknowledge the issue and explain the improvement..."></textarea>
+
+              <div style="margin-top:8px;display:flex;gap:8px;">
+                <button type="button"
+                        class="btn-aura btn-primary-aura"
+                        onclick="sendReply(this)">
+                  Send Response
+                </button>
+
+                <button type="button"
+                        class="mini-btn"
+                        onclick="toggleReply(this)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="review-card" data-type="critical">
+            <div class="review-top">
+
+              <div class="review-user">
+                <div class="avatar">MR</div>
+
+                <div>
+                  <strong>Mahin Rahman</strong>
+                  <small>3 days ago · Verified traveller</small>
+                </div>
+              </div>
+
+              <div>
+                <div class="stars">★★☆☆☆</div>
+                <small style="color:var(--muted);">2.0</small>
+              </div>
+
+            </div>
+
+            <p class="review-text">
+              “The restaurant food was good, but the reservation queue was
+              confusing and I had to wait almost 25 minutes.”
+            </p>
+
+            <span class="review-service">
+              🍽️ Bengal Bistro
+            </span>
+
+            <div class="review-actions">
+              <button type="button" class="mini-btn" onclick="toggleReply(this)">
+                ↩ Reply
+              </button>
+
+              <button type="button" class="mini-btn" onclick="markHandled(this)">
+                ✓ Mark Handled
+              </button>
+
+              <button type="button" class="mini-btn" onclick="showToast('Restaurant operations notified.')">
+                ⚑ Escalate
+              </button>
+            </div>
+
+            <div class="reply-box">
+              <textarea placeholder="Apologize and provide a clear resolution..."></textarea>
+
+              <div style="margin-top:8px;display:flex;gap:8px;">
+                <button type="button"
+                        class="btn-aura btn-primary-aura"
+                        onclick="sendReply(this)">
+                  Send Response
+                </button>
+
+                <button type="button"
+                        class="mini-btn"
+                        onclick="toggleReply(this)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div style="font-size:2rem;">◌</div>
+          <strong>No matching reviews</strong>
+          <div style="font-size:.78rem;margin-top:5px;">
+            Try another review filter.
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- RATING INTELLIGENCE -->
+      <aside class="panel">
+
+        <div class="rating-overview">
+          <div>
+            <div class="big-rating">4.8</div>
+            <div class="stars">★★★★★</div>
+            <small style="color:var(--muted);">
+              Based on 2,846 reviews
+            </small>
+          </div>
+
+          <div class="rating-bars">
+
+            <div class="rating-line">
+              <span>5</span>
+              <div class="bar"><span style="width:82%;"></span></div>
+              <span>82%</span>
+            </div>
+
+            <div class="rating-line">
+              <span>4</span>
+              <div class="bar"><span style="width:11%;"></span></div>
+              <span>11%</span>
+            </div>
+
+            <div class="rating-line">
+              <span>3</span>
+              <div class="bar"><span style="width:4%;"></span></div>
+              <span>4%</span>
+            </div>
+
+            <div class="rating-line">
+              <span>2</span>
+              <div class="bar"><span style="width:2%;"></span></div>
+              <span>2%</span>
+            </div>
+
+            <div class="rating-line">
+              <span>1</span>
+              <div class="bar"><span style="width:1%;"></span></div>
+              <span>1%</span>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div style="margin-top:20px;font-weight:900;font-size:.9rem;">
+          Traveller Sentiment
+        </div>
+
+        <div class="sentiment-grid">
+
+          <div class="sentiment">
+            <strong style="color:var(--accent-2);">78%</strong>
+            <small>Positive</small>
+          </div>
+
+          <div class="sentiment">
+            <strong style="color:var(--warning);">16%</strong>
+            <small>Neutral</small>
+          </div>
+
+          <div class="sentiment">
+            <strong style="color:var(--danger);">6%</strong>
+            <small>Critical</small>
+          </div>
+
+        </div>
+
+
+        <div class="insight-card">
+          <strong>✦ AI-style Insight</strong>
+
+          <p>
+            Travellers praise hospitality and guide quality most frequently.
+            Transport timing is the biggest recurring friction point this week.
+          </p>
+        </div>
+
+
+        <div class="insight-card">
+          <strong>↗ Response Opportunity</strong>
+
+          <p>
+            Responding to the 18 pending reviews today could raise partner
+            trust and customer satisfaction signals.
+          </p>
+        </div>
+
+      </aside>
+
+    </section>
+
+
+    <!-- MODERATION -->
+    <div class="section-title">
+      <div>
+        <h2>Review Operations</h2>
+        <p>Keep feedback trustworthy, useful and actionable.</p>
+      </div>
+    </div>
+
+    <section class="moderation-grid">
+
+      <div class="moderation">
+        <div class="moderation-icon">✓</div>
+        <strong>Verified Feedback</strong>
+        <p>
+          Reviews connected to completed bookings receive higher trust weight.
+        </p>
+
+        <div class="progress-line">
+          <span style="width:96%;"></span>
+        </div>
+
+        <small style="display:block;margin-top:7px;color:var(--muted);">
+          96% verified
+        </small>
+      </div>
+
+
+      <div class="moderation">
+        <div class="moderation-icon">◈</div>
+        <strong>Response Quality</strong>
+        <p>
+          Professional responses are helping partners maintain stronger
+          traveller relationships.
+        </p>
+
+        <div class="progress-line">
+          <span style="width:91%;"></span>
+        </div>
+
+        <small style="display:block;margin-top:7px;color:var(--muted);">
+          91% quality score
+        </small>
+      </div>
+
+
+      <div class="moderation">
+        <div class="moderation-icon">⚑</div>
+        <strong>Moderation Queue</strong>
+        <p>
+          Potentially inappropriate or duplicate reviews are automatically
+          routed for review.
+        </p>
+
+        <div class="progress-line">
+          <span style="width:88%;"></span>
+        </div>
+
+        <small style="display:block;margin-top:7px;color:var(--muted);">
+          12 items monitored
+        </small>
+      </div>
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-title">
+      <div>
+        <h2>Quick Actions</h2>
+        <p>Move from feedback to action.</p>
+      </div>
+    </div>
+
+    <section class="panel">
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+
+        <a href="/review-rating"
+           class="btn-aura btn-primary-aura">
+          ★ Rating Center
+        </a>
+
+        <a href="/partner-performance"
+           class="btn-aura btn-soft">
+          ◈ Partner Performance
+        </a>
+
+        <a href="/admin-audit"
+           class="btn-aura btn-soft">
+          ⌁ Audit Activity
+        </a>
+
+        <a href="/reports-analytics"
+           class="btn-aura btn-soft">
+          ↗ Review Analytics
+        </a>
+
+        <a href="/support"
+           class="btn-aura btn-soft">
+          ? Support Center
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- CTA -->
+    <section class="cta">
+
+      <div>
+        <h3>Listen. Respond. Improve.</h3>
+
+        <p>
+          Every traveller review is a signal for making the next journey better.
+        </p>
+      </div>
+
+      <a href="/dashboard" class="btn-aura">
+        Open Travel Dashboard →
+      </a>
+
+    </section>
+
+  </div>
+
+
+  <!-- TOAST -->
+  <div id="reviewToast"
+       style="
+        position:fixed;
+        right:22px;
+        bottom:22px;
+        z-index:9999;
+        padding:13px 17px;
+        border-radius:15px;
+        background:#17172b;
+        color:#fff;
+        font-size:.78rem;
+        font-weight:800;
+        box-shadow:0 15px 40px rgba(0,0,0,.25);
+        transform:translateY(100px);
+        opacity:0;
+        transition:.3s ease;
+       ">
+  </div>
+
+
+  <script>
+    function filterReviews(type, button) {
+      const cards = document.querySelectorAll('.review-card');
+      const empty = document.getElementById('emptyState');
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      button.classList.add('active');
+
+      let visible = 0;
+
+      cards.forEach(card => {
+        const cardType = card.getAttribute('data-type');
+
+        if (type === 'all' || cardType === type) {
+          card.style.display = 'block';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      empty.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+
+    function toggleReply(button) {
+      const card = button.closest('.review-card');
+      const replyBox = card.querySelector('.reply-box');
+
+      if (replyBox.style.display === 'block') {
+        replyBox.style.display = 'none';
+      } else {
+        replyBox.style.display = 'block';
+
+        setTimeout(() => {
+          const textarea = replyBox.querySelector('textarea');
+          if (textarea) textarea.focus();
+        }, 100);
+      }
+    }
+
+
+    function sendReply(button) {
+      const card = button.closest('.review-card');
+      const textarea = card.querySelector('textarea');
+
+      if (!textarea.value.trim()) {
+        showToast('Please write a response first.');
+        return;
+      }
+
+      const replyBox = card.querySelector('.reply-box');
+
+      replyBox.style.display = 'none';
+
+      const actions = card.querySelector('.review-actions');
+
+      const badge = document.createElement('span');
+      badge.className = 'review-service';
+      badge.style.marginTop = '10px';
+      badge.innerHTML = '✓ Response sent';
+
+      actions.after(badge);
+
+      showToast('Traveller response sent successfully.');
+    }
+
+
+    function markHandled(button) {
+      const card = button.closest('.review-card');
+
+      card.style.opacity = '.55';
+
+      button.innerHTML = '✓ Handled';
+
+      showToast('Review marked as handled.');
+    }
+
+
+    function showToast(message) {
+      const toast = document.getElementById('reviewToast');
+
+      toast.innerText = message;
+
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+
+      setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+      }, 2400);
+    }
+  </script>
+
+</div>
+

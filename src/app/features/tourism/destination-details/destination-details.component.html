@@ -1,0 +1,46 @@
+<main class="destination-details-page">
+  @if (loading) {
+    <section class="destination-state" aria-live="polite"><span class="state-orbit"></span><h1>Gathering experiences</h1><p>Loading published stays, dining, tours and transport.</p></section>
+  } @else if (loadError || !destination) {
+    <section class="destination-state" role="alert"><span class="state-icon">!</span><h1>Destination unavailable</h1><p>{{ loadError }}</p><a routerLink="/destinations" class="destination-action">Back to destinations</a></section>
+  } @else {
+    <section class="destination-hero" [style.--destination-image]="destination.imageUrl ? 'url(' + destination.imageUrl + ')' : 'none'">
+      <a routerLink="/destinations" class="back-link">← All destinations</a>
+      <div class="hero-copy"><span class="eyebrow">{{ destination.region || 'TRAVIXA DESTINATION' }} · {{ destination.countryCode }}</span><h1>{{ destination.name }}</h1><p>{{ destination.description || 'Explore places to stay, dine, and experience in this destination.' }}</p><div class="hero-facts"><span>{{ listingCount }} published options</span><span>{{ destination.category || 'Destination' }}</span></div></div>
+    </section>
+
+    <section class="destination-content" aria-label="Services in this destination">
+      <header class="content-heading"><div><span class="eyebrow">PLAN YOUR VISIT</span><h2>Experiences in {{ destination.name }}</h2></div><p>Browse published listings connected to this destination.</p></header>
+
+      <section class="service-section">
+        <div class="section-heading"><div><span class="section-icon">⌂</span><h3>Places to stay</h3></div><span>{{ hotels.length }} listings</span></div>
+        @if (hotels.length) {
+          <div class="service-grid">@for (item of hotels; track item.id) { <button class="service-card" type="button" (click)="openHotel(item.id)"><span class="card-image"><img [src]="item.image" [alt]="item.name" (error)="hideBrokenImage($event)"><span class="card-fallback">TRAVIXA STAYS</span></span><span class="card-body"><span class="card-meta">{{ item.meta }}</span><strong>{{ item.name }}</strong><span class="card-location">{{ item.location }}</span><span class="card-description">{{ item.description }}</span><span class="card-link">View hotel <b>→</b></span></span></button> }</div>
+        } @else { <p class="empty-category">No published hotels are currently linked to this destination.</p> }
+      </section>
+
+      <section class="service-section">
+        <div class="section-heading"><div><span class="section-icon">♨</span><h3>Restaurants</h3></div><span>{{ restaurants.length }} listings</span></div>
+        @if (restaurants.length) {
+          <div class="service-grid">@for (item of restaurants; track item.id) { <button class="service-card" type="button" (click)="openRestaurant(item.id)"><span class="card-image"><img [src]="item.image" [alt]="item.name" (error)="hideBrokenImage($event)"><span class="card-fallback">LOCAL DINING</span></span><span class="card-body"><span class="card-meta">{{ item.meta }}</span><strong>{{ item.name }}</strong><span class="card-location">{{ item.location }}</span><span class="card-description">{{ item.description }}</span><span class="card-link">Explore restaurant <b>→</b></span></span></button> }</div>
+        } @else { <p class="empty-category">No published restaurants are currently linked to this destination.</p> }
+      </section>
+
+      <section class="service-section">
+        <div class="section-heading"><div><span class="section-icon">✧</span><h3>Tour packages</h3></div><span>{{ packages.length }} listings</span></div>
+        @if (packages.length) {
+          <div class="service-grid">@for (item of packages; track item.id) { <button class="service-card" type="button" (click)="openPackage(item.id)"><span class="card-image"><img [src]="item.image" [alt]="item.name" (error)="hideBrokenImage($event)"><span class="card-fallback">CURATED JOURNEYS</span></span><span class="card-body"><span class="card-meta">{{ item.meta }}</span><strong>{{ item.name }}</strong><span class="card-location">{{ item.location }}</span><span class="card-description">{{ item.description }}</span><span class="card-link">View package <b>→</b></span></span></button> }</div>
+        } @else { <p class="empty-category">No published tour packages are currently linked to this destination.</p> }
+      </section>
+
+      <section class="service-section">
+        <div class="section-heading"><div><span class="section-icon">⇄</span><h3>Transport</h3></div><span>{{ transport.length }} upcoming services</span></div>
+        @if (transport.length) {
+          <div class="transport-list">@for (item of transport; track item.id) { <article class="transport-card"><div><span class="card-meta">{{ item.meta }}</span><strong>{{ item.name }}</strong><p>{{ item.description }} · {{ item.location }}</p></div><button type="button" class="destination-action" (click)="openTransport()">Browse transport</button></article> }</div>
+        } @else { <p class="empty-category">No upcoming public transport schedules are currently linked to this destination.</p> }
+      </section>
+
+      <footer class="destination-footer"><p>Need a local guide? See the available guide services.</p><a routerLink="/tour-guides" class="destination-action">Explore guide services</a></footer>
+    </section>
+  }
+</main>

@@ -1,0 +1,962 @@
+<div class="hotel-page">
+  <!-- NAVBAR -->
+  <nav class="hotel-nav">
+    <div class="hotel-nav-inner">
+      <a class="brand" (click)="goToHome()">
+        <span class="brand-mark">✦</span>
+        <span class="brand-text">
+          TRAVIXA
+          <small>HOTEL DISCOVERY</small>
+        </span>
+      </a>
+
+      <div class="nav-center">
+        <a (click)="goToStays()">Stays</a>
+        <a (click)="goToDestinations()">Destinations</a>
+        <a (click)="goToExperiences()">Experiences</a>
+        <a (click)="goToMyTrips()">My Trips</a>
+      </div>
+
+      <div class="nav-actions">
+        <span class="nav-chip">
+          <span class="live-dot"></span>
+          LIVE
+        </span>
+        <a class="nav-chip" (click)="goToProfile()">Account ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="hotel-container">
+    <!-- BREADCRUMB -->
+    <div class="crumbs">
+      <a (click)="goToHome()">Home</a>
+      <span>›</span>
+      <a (click)="goToStays()">Stays</a>
+      <span>›</span>
+      <span class="current">{{ hotel.name }}</span>
+    </div>
+
+    <!-- LOADING -->
+    @if (loading && !hasHotelData && !hotelLoadError) {
+      <section class="section" aria-live="polite">
+        <h2>Loading hotel details...</h2>
+        <p>Please wait while we load the hotel information.</p>
+      </section>
+    }
+
+    <!-- HOTEL ERROR -->
+    @if (hotelLoadError) {
+      <section class="section" role="alert">
+        <h2>Hotel details unavailable</h2>
+        <p>{{ hotelLoadError }}</p>
+        <button
+          type="button"
+          class="reserve-btn"
+          (click)="goToStays()"
+        >
+          Back to Hotels
+        </button>
+      </section>
+    }
+
+    @if (hasHotelData) {
+      <!-- HERO SLIDESHOW -->
+      <section
+        class="hero-slider"
+        (mouseenter)="pauseSlideshow()"
+        (mouseleave)="resumeSlideshow()"
+      >
+        @for (slide of gallery; track slide.image; let i = $index) {
+          <div
+            class="hero-slide"
+            [class.hero-slide--active]="i === currentSlide"
+            [style.backgroundImage]="'url(' + slide.image + ')'"
+          ></div>
+        }
+
+        <div class="hero-overlay"></div>
+
+        <button
+          type="button"
+          class="hero-arrow hero-arrow--left"
+          (click)="prevSlide()"
+          aria-label="Previous slide"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          class="hero-arrow hero-arrow--right"
+          (click)="nextSlide()"
+          aria-label="Next slide"
+        >
+          ›
+        </button>
+
+        <div class="hero-top-badge">
+          <span class="hero-verified">✦ TRAVIXA HOTEL</span>
+        </div>
+
+        <div class="hero-info">
+          <div class="hero-info-tag">{{ currentSlideTag }}</div>
+          <div class="hero-info-caption">
+            {{ currentSlideCaption }}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="hero-photo-count"
+          (click)="openLightbox(currentSlide)"
+        >
+          ▣ {{ gallery.length }} Photos · View Gallery
+        </button>
+
+        <div class="hero-dots">
+          @for (slide of gallery; track slide.image; let i = $index) {
+            <button
+              type="button"
+              class="hero-dot"
+              [class.hero-dot--active]="i === currentSlide"
+              (click)="goToSlide(i)"
+              [attr.aria-label]="'Go to slide ' + (i + 1)"
+            ></button>
+          }
+        </div>
+
+        <div class="hero-thumbs">
+          @for (slide of gallery; track slide.image; let i = $index) {
+            <button
+              type="button"
+              class="hero-thumb"
+              [class.hero-thumb--active]="i === currentSlide"
+              (click)="goToSlide(i)"
+              [style.backgroundImage]="'url(' + slide.image + ')'"
+              [attr.aria-label]="'Thumbnail ' + (i + 1)"
+            ></button>
+          }
+        </div>
+      </section>
+
+      <!-- INTRO + BOOKING LAYOUT -->
+      <section class="intro-grid">
+        <div class="left-col">
+          <!-- HOTEL INTRO -->
+          <article class="hotel-intro">
+            <div class="intro-badges">
+              <span class="intro-badge">
+                {{ hotel.collectionLabel }}
+              </span>
+
+              @if (!loading) {
+                <span class="intro-badge intro-badge--gold">
+                  ★ {{ hotel.rating }} star property
+                </span>
+              }
+            </div>
+
+            <h1 class="hotel-title">{{ hotel.name }}</h1>
+
+            <div class="location">
+              <span class="location-icon">◉</span>
+              {{ hotel.location }}
+            </div>
+
+            <div class="rating-line">
+              <div class="rating-box">
+                <span class="rating-star">★</span>
+                <strong>{{ hotel.rating || '—' }}</strong>
+              </div>
+
+              <span class="rating-copy">
+                Official hotel star classification
+              </span>
+            </div>
+
+            <p class="hotel-description">
+              {{ hotel.description }}
+            </p>
+
+            @if (hotel.amenities.length > 0) {
+              <div class="amenity-grid">
+                @for (a of hotel.amenities; track a.label) {
+                  <div class="amenity">
+                    <span class="amenity-icon">{{ a.icon }}</span>
+                    <span class="amenity-label">{{ a.label }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </article>
+
+          <!-- ROOM SELECTION -->
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">ROOM SELECTION</span>
+                <h2>Choose your room</h2>
+                <p>
+                  Compare room types, nightly rates and availability for
+                  your selected dates.
+                </p>
+              </div>
+
+              @if (hasRoomData) {
+                <span class="section-count">
+                  {{ rooms.length }} Room Types
+                </span>
+              }
+            </div>
+
+            @if (roomLoadError) {
+              <div class="price-breakdown" role="alert">
+                <strong>Unable to load rooms</strong>
+                <p>{{ roomLoadError }}</p>
+              </div>
+            } @else if (!hasRoomData && !loading) {
+              <div class="room">
+                <div class="room-content">
+                  <h3>No room types available</h3>
+                  <p>
+                    Room types have not been configured for this hotel,
+                    or the room service is temporarily unavailable.
+                  </p>
+                </div>
+              </div>
+            } @else if (hasRoomData) {
+              <div class="rooms">
+                @for (room of rooms; track room.id) {
+                  <article
+                    class="room"
+                    [class.room--selected]="booking.roomId === room.id"
+                  >
+                    <div class="room-image">
+                      @if (room.images.length > 0) {
+                        <img class="room-gallery-image" [src]="room.images[activeRoomImage[room.id] || 0]" [alt]="room.name + ' room photo'" (error)="handleRoomImageError(room.id, activeRoomImage[room.id] || 0)" />
+                        @if (room.images.length > 1) {
+                          <button type="button" class="room-image-next" aria-label="Next room photo" (click)="activeRoomImage[room.id] = ((activeRoomImage[room.id] || 0) + 1) % room.images.length">›</button>
+                        }
+                      } @else {
+                      <div class="room-image-placeholder">
+                        <span>ROOM PHOTOS</span>
+                        <p>Photos not yet available</p>
+                      </div>
+                      }
+
+                      @if (booking.roomId === room.id) {
+                        <span class="room-selected-badge">
+                          ✓ Selected
+                        </span>
+                      }
+                    </div>
+
+                    <div class="room-content">
+                      <h3>{{ room.name }} <small>· {{ room.category }}</small></h3>
+
+                      <div class="room-info">
+                        {{ room.guests }} · {{ room.bed }} · {{ room.size }}
+                      </div>
+
+                      @if (room.features.length > 0) {
+                        <div class="room-features">
+                          @for (feature of room.features; track feature) {
+                            <span class="room-feature">
+                              {{ feature }}
+                            </span>
+                          }
+                        </div>
+                      }
+
+                      @if (availabilityLoading) {
+                        <p role="status">Checking availability for these dates...</p>
+                      } @else {
+                        @if (roomAvailabilityById[room.id]; as roomAvailability) {
+                          <p>
+                            @if (roomAvailability.available) {
+                              <span>{{ roomAvailability.availableUnits }} room(s) available ·
+                                {{ formatCurrency(roomAvailability.totalRoomCost, roomAvailability.currency) }} for {{ roomAvailability.nights }} night(s)
+                              </span>
+                            } @else {
+                              <span>Not available for the selected dates</span>
+                            }
+                          </p>
+                        } @else if (availabilityError) {
+                          <p role="alert">{{ availabilityError }}</p>
+                        } @else {
+                          <p>Choose dates to check availability</p>
+                        }
+                      }
+                    </div>
+
+                    <div class="room-price-block">
+                      <div class="room-price">
+                        <strong>{{ formatCurrency(averageNightlyRate(roomAvailabilityById[room.id]), roomAvailabilityById[room.id]?.currency || 'BDT') }}</strong>
+                        @if (roomAvailabilityById[room.id]?.available) {
+                          <small>average per room / night · date total shown above</small>
+                        } @else {
+                          <small>Confirm dates for a rate</small>
+                        }
+                      </div>
+
+                      <!-- <button
+                        type="button"
+                        class="room-btn"
+                        [class.room-btn--active]="booking.roomId === room.id"
+                        [disabled]="roomAvailabilityById[room.id]?.available !== true || availabilityLoading"
+                        (click)="selectRoom(room); checkRoomAvailability()"
+                      >
+                        {{
+                          booking.roomId === room.id
+                            ? "✓ Selected"
+                            : "Select Room"
+                        }}
+                      </button> -->
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+
+          <!-- STAY INFORMATION -->
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">ESSENTIALS</span>
+                <h2>Stay information</h2>
+                <p>Check property policies with the hotel before booking.</p>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-box">
+                <h4>Property essentials</h4>
+                <div class="info-list">
+                  <div>
+                    <span>Check-in</span>
+                    <strong>{{ hotel.checkInTime ? hotel.checkInTime.slice(0, 5) : 'Not specified' }}</strong>
+                  </div>
+                  <div>
+                    <span>Check-out</span>
+                    <strong>{{ hotel.checkOutTime ? hotel.checkOutTime.slice(0, 5) : 'Not specified' }}</strong>
+                  </div>
+                  <div>
+                    <span>Property type</span>
+                    <strong>Hotel</strong>
+                  </div>
+                  <div>
+                    <span>Room information</span>
+                    <strong>See room selection</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <h4>Booking information</h4>
+                <div class="info-list">
+                  <div>
+                    <span>Availability</span>
+                    <strong>Check selected dates</strong>
+                  </div>
+                  <div>
+                    <span>Final rate</span>
+                    <strong>Subject to booking validation</strong>
+                  </div>
+                  <div>
+                    <span>Cancellation</span>
+                    <strong>{{ hotel.cancellationPolicy || 'No cancellation policy provided' }}</strong>
+                  </div>
+                  <div>
+                    <span>Payment</span>
+                    <strong>See booking checkout</strong>
+                  </div>
+                </div>
+                @if (hotel.childPolicy || hotel.additionalCharges) {
+                  <div class="hotel-policy-notes">
+                    @if (hotel.childPolicy) { <p><strong>Child policy:</strong> {{ hotel.childPolicy }}</p> }
+                    @if (hotel.additionalCharges) { <p><strong>Additional charges:</strong> {{ hotel.additionalCharges }}</p> }
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- REVIEWS -->
+          @if (guestReviews.length > 0) {
+            <section class="section">
+              <div class="section-heading">
+                <div>
+                  <span class="section-kicker">GUEST REVIEWS</span>
+                  <h2>What guests say</h2>
+                  <p>Guest feedback.</p>
+                </div>
+              </div>
+
+              <div class="review-grid">
+                <div class="score">
+                  <div class="score-number">
+                    {{ hotel.rating | number: "1.1-1" }}
+                  </div>
+                  <div class="score-stars">★★★★★</div>
+                  <small>{{ guestReviews.length }} reviews</small>
+                </div>
+
+                <div class="review-bars">
+                  @for (cat of reviewCategories; track cat.label) {
+                    <div class="bar-line">
+                      <span>{{ cat.label }}</span>
+                      <div class="bar">
+                        <span [style.width.%]="(cat.score / 5) * 100"></span>
+                      </div>
+                      <strong>{{ cat.score }}</strong>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="review-carousel">
+                <div class="review-carousel-head">
+                  <span class="review-carousel-kicker">
+                    GUEST REVIEWS
+                  </span>
+
+                  <div class="review-carousel-nav">
+                    <button
+                      type="button"
+                      class="rc-nav"
+                      (click)="prevReview()"
+                      aria-label="Previous review"
+                    >
+                      ‹
+                    </button>
+
+                    <span class="rc-count">
+                      {{ currentReview + 1 }} / {{ guestReviews.length }}
+                    </span>
+
+                    <button
+                      type="button"
+                      class="rc-nav"
+                      (click)="nextReview()"
+                      aria-label="Next review"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+
+                @if (activeReview; as review) {
+                  <div class="review-card">
+                    <div class="review-head">
+                      <img
+                        class="review-avatar"
+                        [src]="review.avatar"
+                        [alt]="review.name"
+                      />
+
+                      <div class="review-meta">
+                        <strong>{{ review.name }}</strong>
+                        <small>
+                          {{ review.location }} · {{ review.date }}
+                        </small>
+                      </div>
+
+                      <div class="review-rating">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
+                          <span
+                            class="star"
+                            [class.star--filled]="star <= review.rating"
+                          >
+                            ★
+                          </span>
+                        }
+                      </div>
+                    </div>
+
+                    <h4 class="review-title">{{ review.title }}</h4>
+                    <p class="review-text">{{ review.text }}</p>
+
+                    <div class="review-dots">
+                      @for (r of guestReviews; track r.name; let i = $index) {
+                        <button
+                          type="button"
+                          class="review-dot"
+                          [class.review-dot--active]="i === currentReview"
+                          (click)="goToReview(i)"
+                          [attr.aria-label]="'Review ' + (i + 1)"
+                        ></button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+          } @else {
+            <section class="section">
+              <div class="section-heading">
+                <div>
+                  <span class="section-kicker">GUEST REVIEWS</span>
+                  <h2>Guest reviews</h2>
+                  <p>
+                    Guest reviews are not currently available for this hotel.
+                  </p>
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- LOCATION -->
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">WHERE YOU'LL STAY</span>
+                <h2>Location &amp; surroundings</h2>
+                <p>{{ hotel.location }}</p>
+              </div>
+
+              <a class="section-link" (click)="goToMaps()">
+                Open Maps →
+              </a>
+            </div>
+
+            <div class="location-grid">
+              <div class="location-details">
+                <h4>{{ hotel.name }}</h4>
+                <p>{{ hotel.location }}</p>
+                <p>
+                  Use the property address to confirm the exact location
+                  and nearby facilities before travelling.
+                </p>
+
+                @if (nearby.length > 0) {
+                  <div class="nearby">
+                    @for (place of nearby; track place.name) {
+                      <div class="nearby-row">
+                        <span class="nearby-icon">{{ place.icon }}</span>
+                        <span class="nearby-name">{{ place.name }}</span>
+                        <strong class="nearby-distance">
+                          {{ place.distance }}
+                        </strong>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="map-placeholder">
+                <div class="map-grid"></div>
+                <div class="map-pin">
+                  <span>●</span>
+                </div>
+                <div class="map-label">
+                  📍 {{ hotel.name }} · {{ hotel.location }}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CROSS-SELL -->
+          @if (crossSell.length > 0) {
+            <section class="section cross-sell-section">
+              <div class="section-heading">
+                <div>
+                  <span class="section-kicker">COMPLETE YOUR JOURNEY</span>
+                  <h2>Add experiences to your stay</h2>
+                  <p>
+                    Explore restaurants, tours and guides.
+                  </p>
+                </div>
+              </div>
+
+              <div class="cross-sell-grid">
+                @for (item of crossSell; track item.title) {
+                  <article
+                    class="cross-card"
+                    (click)="goToCrossSell(item)"
+                  >
+                    <div class="cross-image">
+                      <img
+                        [src]="item.image"
+                        [alt]="item.title"
+                        loading="lazy"
+                      />
+                      <div class="cross-overlay"></div>
+
+                      <span class="cross-type">
+                        {{ getCrossSellIcon(item.type) }}
+                        {{ getCrossSellLabel(item.type) }}
+                      </span>
+
+                      <span class="cross-rating">
+                        ★ {{ item.rating }}
+                      </span>
+                    </div>
+
+                    <div class="cross-body">
+                      <h4>{{ item.title }}</h4>
+                      <p>📍 {{ item.location }}</p>
+
+                      <div class="cross-foot">
+                        <span class="cross-price">
+                          {{ item.priceLabel }}
+                        </span>
+                        <span class="cross-arrow">→</span>
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+          }
+        </div>
+
+        <!-- STICKY BOOKING PANEL -->
+        @if (hasRoomData) {
+          <aside class="booking-card">
+            <div class="booking-card-head">
+              <div class="booking-card-kicker">ROOM AVAILABILITY</div>
+              <h3>Check your stay</h3>
+              <div class="booking-card-sub">
+                Select dates and room count to check current availability.
+              </div>
+            </div>
+
+            <!-- SELECTED ROOM -->
+            <div class="selected-room-preview">
+              @if (selectedRoom.images.length > 0) {
+                <img
+                  [src]="getRoomImage(selectedRoom)"
+                  [alt]="selectedRoom.name"
+                />
+              } @else {
+                <div class="room-image-placeholder">
+                  <span>ROOM</span>
+                </div>
+              }
+
+              <div class="selected-room-info">
+                <small>SELECTED ROOM</small>
+                <strong>{{ selectedRoom.name }}</strong>
+                <span>{{ selectedRoom.size }} · {{ selectedRoom.bed }}</span>
+              </div>
+            </div>
+
+            <!-- BASE RATE -->
+            <div class="price-line">
+              <div class="price-main">
+                <strong>{{ formatCurrency(averageNightlyRate(availabilityResult), availabilityResult?.currency || 'BDT') }}</strong>
+                <span>/ room / night average</span>
+              </div>
+
+              @if (availabilityResult?.available) {
+                <div class="price-nights">
+                  × {{ availabilityResult!.nights }} nights
+                </div>
+              }
+            </div>
+
+            <!-- CHECK-IN -->
+            <div class="booking-field">
+              <label for="hotel-check-in">Check-in</label>
+              <input
+                id="hotel-check-in"
+                type="date"
+                [min]="minCheckInDate"
+                [(ngModel)]="booking.checkIn"
+                (ngModelChange)="checkRoomAvailability()"
+              />
+            </div>
+
+            <!-- CHECK-OUT -->
+            <div class="booking-field">
+              <label for="hotel-check-out">Check-out</label>
+              <input
+                id="hotel-check-out"
+                type="date"
+                [min]="minCheckOutDate"
+                [(ngModel)]="booking.checkOut"
+                (ngModelChange)="checkRoomAvailability()"
+              />
+            </div>
+
+            <!-- GUEST COUNT -->
+            <div class="booking-field">
+              <label for="hotel-guests">Guests</label>
+              <select
+                id="hotel-guests"
+                [(ngModel)]="booking.guests"
+              >
+                @for (g of guestOptions; track g) {
+                  <option [ngValue]="g">{{ g }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- ROOM TYPE -->
+            <div class="booking-field">
+              <label for="hotel-room-type">Room type</label>
+              <select
+                id="hotel-room-type"
+                [(ngModel)]="booking.roomId"
+                (ngModelChange)="checkRoomAvailability()"
+              >
+                @for (r of rooms; track r.id) {
+                  <option [value]="r.id">{{ r.name }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- NUMBER OF ROOMS -->
+            <div class="booking-field">
+              <label for="hotel-room-count">Rooms</label>
+              <select
+                id="hotel-room-count"
+                [(ngModel)]="booking.rooms"
+                (ngModelChange)="checkRoomAvailability()"
+              >
+                @for (count of roomCountOptions; track count) {
+                  <option [ngValue]="count">{{ count }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- AVAILABILITY LOADING -->
+            @if (availabilityLoading) {
+              <div class="price-breakdown" role="status" aria-live="polite">
+                <strong>Checking availability...</strong>
+                <p>Please wait while we check room availability and rates.</p>
+              </div>
+            }
+
+            <!-- AVAILABILITY ERROR -->
+            @if (availabilityError && !availabilityLoading) {
+              <div class="price-breakdown" role="alert">
+                <strong>Availability unavailable</strong>
+                <p>{{ availabilityError }}</p>
+
+                <button
+                  type="button"
+                  class="room-btn"
+                  (click)="checkRoomAvailability()"
+                >
+                  Try Again
+                </button>
+              </div>
+            }
+
+            <!-- AVAILABILITY SUCCESS + PRICE -->
+            @if (availabilityResult?.available && !availabilityLoading) {
+              <div class="price-breakdown">
+                <div class="pb-row">
+                  <span>Average rate per room / night</span>
+                  <strong>
+                    {{ formatCurrency(averageNightlyRate(availabilityResult), availabilityResult!.currency) }}
+                  </strong>
+                </div>
+
+                @if (availabilityResult!.dailyRates.length > 1) {
+                  <div class="pb-row">
+                    <span>Rate by night</span>
+                    <span></span>
+                  </div>
+                  @for (dailyRate of availabilityResult!.dailyRates; track dailyRate.date) {
+                    <div class="pb-row">
+                      <span>{{ formatDate(dailyRate.date) }}</span>
+                      <strong>{{ formatCurrency(dailyRate.nightlyRate, dailyRate.currency) }}</strong>
+                    </div>
+                  }
+                }
+
+                <div class="pb-row">
+                  <span>Rooms requested</span>
+                  <strong>{{ availabilityResult!.requestedRooms }}</strong>
+                </div>
+
+                <div class="pb-row">
+                  <span>Available units</span>
+                  <strong>{{ availabilityResult!.availableUnits }}</strong>
+                </div>
+
+                <div class="pb-row">
+                  <span>Nights</span>
+                  <strong>{{ availabilityResult!.nights }}</strong>
+                </div>
+
+                <div class="pb-divider"></div>
+
+                <div class="pb-row pb-row--total">
+                  <span>Total room cost</span>
+                  <strong>
+                    {{ formatCurrency(availabilityResult!.totalRoomCost, availabilityResult!.currency) }}
+                  </strong>
+                </div>
+
+                <p>{{ availabilityResult!.message }}</p>
+              </div>
+            }
+
+            <!-- UNCHECKED STATE -->
+            @if (
+              !availabilityLoading &&
+              !availabilityError &&
+              !availabilityResult
+            ) {
+              <div class="price-breakdown">
+                <p>
+                  Select valid dates to check availability and calculate
+                  the room cost.
+                </p>
+              </div>
+            }
+
+            <!-- CONTINUE -->
+            <button
+              type="button"
+              class="reserve-btn"
+              [disabled]="
+                !bookingValid ||
+                availabilityLoading ||
+                !availabilityResult?.available
+              "
+              (click)="reserveHotel()"
+            >
+              <span>Continue to Booking</span>
+              <span>→</span>
+            </button>
+
+            <div class="secure-note">
+              Availability is checked for your selected dates. Final
+              booking confirmation depends on the booking process.
+            </div>
+
+            <div class="trust-strip">
+              <div class="trust-item">
+                <span>✓</span>
+                <small>Rate check</small>
+              </div>
+
+              <div class="trust-item">
+                <span>🔐</span>
+                <small>Secure checkout</small>
+              </div>
+
+              <div class="trust-item">
+                <span>24/7</span>
+                <small>Support</small>
+              </div>
+            </div>
+          </aside>
+        }
+      </section>
+
+      <!-- BOTTOM CTA -->
+      <section class="bottom-cta">
+        <div class="cta-glow"></div>
+
+        <div class="bottom-cta-inner">
+          <div>
+            <span class="cta-kicker">COMPLETE YOUR JOURNEY</span>
+            <h2>Make the stay part of the journey.</h2>
+            <p>
+              Check room availability, then continue to the booking process.
+            </p>
+          </div>
+
+          <div class="cta-actions">
+            <button
+              type="button"
+              class="cta-btn"
+              (click)="continueToBooking()"
+            >
+              Continue to Booking →
+            </button>
+
+            <button
+              type="button"
+              class="cta-btn cta-btn--ghost"
+              (click)="goToMyTrips()"
+            >
+              My Bookings
+            </button>
+          </div>
+        </div>
+      </section>
+    }
+  </main>
+
+  <!-- LIGHTBOX -->
+  @if (lightbox.open) {
+    <div class="lightbox-backdrop" (click)="closeLightbox()">
+      <button
+        type="button"
+        class="lightbox-close"
+        (click)="closeLightbox()"
+        aria-label="Close gallery"
+      >
+        ×
+      </button>
+
+      <button
+        type="button"
+        class="lightbox-arrow lightbox-arrow--left"
+        (click)="lightboxPrev(); $event.stopPropagation()"
+        aria-label="Previous image"
+      >
+        ‹
+      </button>
+
+      <div class="lightbox-content" (click)="$event.stopPropagation()">
+        <img
+          [src]="gallery[lightbox.index].image"
+          [alt]="gallery[lightbox.index].caption"
+        />
+
+        <div class="lightbox-caption">
+          <span class="lightbox-tag">
+            {{ gallery[lightbox.index].tag }}
+          </span>
+
+          <span class="lightbox-title">
+            {{ gallery[lightbox.index].caption }}
+          </span>
+
+          <span class="lightbox-index">
+            {{ lightbox.index + 1 }} / {{ gallery.length }}
+          </span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="lightbox-arrow lightbox-arrow--right"
+        (click)="lightboxNext(); $event.stopPropagation()"
+        aria-label="Next image"
+      >
+        ›
+      </button>
+    </div>
+  }
+
+  <!-- TOAST -->
+  @if (toast.show) {
+    <div class="toast" [attr.data-type]="toast.type">
+      <span class="toast-icon">
+        @switch (toast.type) {
+          @case ("success") {
+            ✓
+          }
+          @case ("info") {
+            ⓘ
+          }
+          @case ("danger") {
+            ⚠
+          }
+        }
+      </span>
+
+      <span>{{ toast.message }}</span>
+    </div>
+  }
+</div>

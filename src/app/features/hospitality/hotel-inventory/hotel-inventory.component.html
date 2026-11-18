@@ -1,0 +1,1115 @@
+<main class="inventory-page">
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="bi bi-buildings"></i>
+      </div>
+
+      <div>
+        <span class="eyebrow">HOTEL MANAGEMENT</span>
+        <h1>Hotel Inventory</h1>
+        <p>
+          Manage your room categories, pricing, availability and physical rooms.
+        </p>
+      </div>
+    </div>
+
+    <div class="header-stats">
+      <div class="stat-card">
+        <span class="stat-icon"><i class="bi bi-door-open"></i></span>
+        <div>
+          <strong>{{ roomTypes.length }}</strong>
+          <small>Room Types</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon"><i class="bi bi-house-check"></i></span>
+        <div>
+          <strong>{{ rooms.length }}</strong>
+          <small>Physical Rooms</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon"><i class="bi bi-tags"></i></span>
+        <div>
+          <strong>{{ rates.length }}</strong>
+          <small>Rate Plans</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ALERTS -->
+  <div class="alert-message alert-error" *ngIf="error">
+    <i class="bi bi-exclamation-circle"></i>
+    <span>{{ error }}</span>
+    <button type="button" (click)="error = ''">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="alert-message alert-success" *ngIf="success">
+    <i class="bi bi-check-circle"></i>
+    <span>{{ success }}</span>
+    <button type="button" (click)="success = ''">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- ================================================= -->
+  <!-- ROOM TYPES -->
+  <!-- ================================================= -->
+
+  <section class="inventory-section">
+    <div class="section-heading">
+      <div class="section-title">
+        <span class="section-icon"><i class="bi bi-grid-1x2"></i></span>
+        <div>
+          <h2>Room Types</h2>
+          <p>Define room categories, facilities and guest capacity.</p>
+        </div>
+      </div>
+
+      <span class="count-badge">{{ roomTypes.length }} types</span>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-heading">
+        <div>
+          <h3>{{ editingTypeId ? "Update Room Type" : "Create Room Type" }}</h3>
+          <p>Enter the room category information below.</p>
+        </div>
+
+        <span class="form-status" *ngIf="editingTypeId">
+          <i class="bi bi-pencil-square"></i> Editing
+        </span>
+      </div>
+
+      <form #typeForm="ngForm" (ngSubmit)="saveType()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Hotel <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="hotelId"
+              [(ngModel)]="typeDraft.hotelId"
+            >
+              <option [ngValue]="0" disabled>Select hotel</option>
+              <option *ngFor="let hotel of hotels" [ngValue]="hotel.id">
+                {{ hotel.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Room Type Name <span>*</span></label>
+            <input
+              class="form-control"
+              required
+              maxlength="100"
+              name="typeName"
+              [(ngModel)]="typeDraft.name"
+              placeholder="e.g. Deluxe Ocean View"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Category <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="category"
+              [(ngModel)]="typeDraft.category"
+            >
+              <option value="STANDARD">Standard</option>
+              <option value="SUPERIOR">Superior</option>
+              <option value="DELUXE">Deluxe</option>
+              <option value="EXECUTIVE">Executive</option>
+              <option value="JUNIOR_SUITE">Junior Suite</option>
+              <option value="SUITE">Suite</option>
+              <option value="FAMILY">Family</option>
+              <option value="VILLA">Villa</option>
+              <option value="PRESIDENTIAL_SUITE">Presidential Suite</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Bed Type <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="bedType"
+              [(ngModel)]="typeDraft.bedType"
+            >
+              <option value="SINGLE">Single</option>
+              <option value="DOUBLE">Double</option>
+              <option value="TWIN">Twin</option>
+              <option value="KING">King</option>
+              <option value="QUEEN">Queen</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Maximum Guests <span>*</span></label>
+            <input
+              class="form-control"
+              type="number"
+              min="1"
+              required
+              name="occupancy"
+              [(ngModel)]="typeDraft.maxOccupancy"
+              placeholder="e.g. 3"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Room Size (m²)</label>
+            <input
+              class="form-control"
+              type="number"
+              min="0.01"
+              step="0.01"
+              name="size"
+              [(ngModel)]="typeDraft.sizeSquareMeters"
+              placeholder="e.g. 35"
+            />
+          </div>
+
+          <div class="form-field full-width">
+            <label>Description</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              name="description"
+              [(ngModel)]="typeDraft.description"
+              placeholder="Describe the room, its features and experience..."
+            ></textarea>
+          </div>
+
+          <div class="form-field full-width">
+            <label>Room Amenities</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              name="roomTypeAmenities"
+              [(ngModel)]="roomAmenitiesText"
+              maxlength="2500"
+              placeholder="Wi-Fi, Air conditioning, Smart TV, Mini bar..."
+            ></textarea>
+            <small class="field-hint">
+              <i class="bi bi-info-circle"></i>
+              Separate amenities with commas. Maximum 30 amenities, 80
+              characters each.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label>Air Conditioning</label>
+            <select
+              class="form-control"
+              required
+              name="airConditioned"
+              [(ngModel)]="typeDraft.airConditioned"
+            >
+              <option [ngValue]="true">Air-conditioned</option>
+              <option [ngValue]="false">Non-AC</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Listing Status</label>
+            <select
+              class="form-control"
+              required
+              name="listingStatus"
+              [(ngModel)]="typeDraft.listingStatus"
+            >
+              <option value="DRAFT">Draft</option>
+              <option value="PENDING_REVIEW">Pending Review</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </div>
+
+          <!-- ROOM TYPE IMAGES -->
+          <div class="form-field full-width">
+            <label>Room Photos</label>
+
+            <div class="upload-area">
+              <input
+                type="file"
+                id="roomTypeImages"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                (change)="selectRoomTypeImages($event)"
+              />
+
+              <label for="roomTypeImages" class="upload-label">
+                <span class="upload-icon">
+                  <i class="bi bi-cloud-arrow-up"></i>
+                </span>
+                <strong>Choose room photos</strong>
+                <small>JPG, PNG or WebP images</small>
+              </label>
+            </div>
+
+            <div class="image-gallery" *ngIf="roomImagePreviews.length">
+              <div
+                class="image-preview"
+                *ngFor="let preview of roomImagePreviews"
+              >
+                <img [src]="preview" alt="Room photo preview" />
+              </div>
+            </div>
+
+            <div class="image-gallery" *ngIf="editingTypeImages.length">
+              <div
+                class="image-preview existing-image"
+                *ngFor="let image of editingTypeImages"
+              >
+                <img
+                  *ngIf="image.previewUrl as preview"
+                  [src]="preview"
+                  [alt]="image.altText || 'Room photo'"
+                />
+
+                <button
+                  type="button"
+                  class="image-remove"
+                  (click)="deleteRoomTypeImage(image.id)"
+                  aria-label="Remove room photo"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="typeForm.invalid || busy"
+          >
+            <i
+              class="bi"
+              [ngClass]="editingTypeId ? 'bi-check2-circle' : 'bi-plus-circle'"
+            ></i>
+            {{ editingTypeId ? "Update Room Type" : "Create Room Type" }}
+          </button>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            *ngIf="editingTypeId"
+            (click)="cancelTypeEdit()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ROOM TYPE TABLE -->
+    <div class="table-card">
+      <div class="table-heading">
+        <div>
+          <h3>Room Type Directory</h3>
+          <p>All configured room categories.</p>
+        </div>
+        <span class="count-badge">{{ roomTypes.length }} records</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th>Room Type</th>
+              <th>Hotel</th>
+              <th>Category</th>
+              <th>Capacity</th>
+              <th>Amenities</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let type of roomTypes">
+              <td>
+                <div class="primary-cell">
+                  <strong>{{ type.name }}</strong>
+                  <small>#{{ type.id }}</small>
+                </div>
+              </td>
+              <td>#{{ type.hotelId }}</td>
+              <td>{{ type.category }} · {{ type.bedType }}</td>
+              <td>
+                <span class="capacity-badge">
+                  <i class="bi bi-people"></i>
+                  {{ type.maxOccupancy }}
+                </span>
+              </td>
+              <td>
+                <span class="amenities-text">
+                  {{ (type.amenities || []).join(", ") || "—" }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="'status-' + type.listingStatus.toLowerCase()"
+                >
+                  {{ type.listingStatus.replace("_", " ") }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    type="button"
+                    class="icon-button edit-button"
+                    (click)="editType(type)"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-button delete-button"
+                    (click)="removeType(type.id)"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="roomTypes.length === 0">
+              <td colspan="7">
+                <div class="empty-state">
+                  <i class="bi bi-grid"></i>
+                  <strong>No room types found</strong>
+                  <span>Create your first room type to get started.</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- ROOM RATES -->
+  <!-- ================================================= -->
+
+  <section class="inventory-section">
+    <div class="section-heading">
+      <div class="section-title">
+        <span class="section-icon"
+          ><i class="bi bi-currency-exchange"></i
+        ></span>
+        <div>
+          <h2>Room Rates</h2>
+          <p>Configure pricing, rate plans and validity periods.</p>
+        </div>
+      </div>
+
+      <span class="count-badge">{{ rates.length }} rates</span>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-heading">
+        <div>
+          <h3>{{ editingRateId ? "Update Room Rate" : "Create Room Rate" }}</h3>
+          <p>Set the nightly price and the period when this rate applies.</p>
+        </div>
+
+        <span class="form-status" *ngIf="editingRateId">
+          <i class="bi bi-pencil-square"></i> Editing
+        </span>
+      </div>
+
+      <form #rateForm="ngForm" (ngSubmit)="saveRate()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Room Type <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="rateRoomTypeId"
+              [(ngModel)]="rateDraft.roomTypeId"
+            >
+              <option [ngValue]="0" disabled>Select room type</option>
+              <option *ngFor="let type of roomTypes" [ngValue]="type.id">
+                #{{ type.id }} — {{ type.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Rate Plan <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="ratePlanType"
+              [(ngModel)]="rateDraft.ratePlanType"
+            >
+              <option value="FLEXIBLE">Flexible</option>
+              <option value="NON_REFUNDABLE">Non-refundable</option>
+              <option value="PACKAGE">Package</option>
+              <option value="CORPORATE">Corporate</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Nightly Rate <span>*</span></label>
+            <input
+              class="form-control"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+              name="nightlyRate"
+              [(ngModel)]="rateDraft.nightlyRate"
+              placeholder="Enter price"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Currency <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="currency"
+              [(ngModel)]="rateDraft.currency"
+            >
+              <option value="BDT">BDT</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Valid From <span>*</span></label>
+            <input
+              class="form-control"
+              type="datetime-local"
+              required
+              name="validFrom"
+              [(ngModel)]="rateDraft.validFrom"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Valid Until <span>*</span></label>
+            <input
+              class="form-control"
+              type="datetime-local"
+              required
+              name="validUntil"
+              [(ngModel)]="rateDraft.validUntil"
+            />
+          </div>
+
+          <div class="form-field full-width">
+            <label class="toggle-field">
+              <input
+                type="checkbox"
+                name="rateActive"
+                [(ngModel)]="rateDraft.active"
+              />
+              <span class="toggle-ui"></span>
+              <span>
+                <strong>Active Rate</strong>
+                <small>Make this rate available for applicable bookings.</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="
+              rateForm.invalid ||
+              busy ||
+              rateDraft.roomTypeId < 1 ||
+              rateDraft.nightlyRate <= 0 ||
+              rateDraft.validUntil < rateDraft.validFrom
+            "
+          >
+            <i
+              class="bi"
+              [ngClass]="editingRateId ? 'bi-check2-circle' : 'bi-plus-circle'"
+            ></i>
+            {{ editingRateId ? "Update Rate" : "Create Rate" }}
+          </button>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            *ngIf="editingRateId"
+            (click)="cancelRateEdit()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- RATE TABLE -->
+    <div class="table-card">
+      <div class="table-heading">
+        <div>
+          <h3>Pricing Directory</h3>
+          <p>Configured room pricing and validity.</p>
+        </div>
+        <span class="count-badge">{{ rates.length }} records</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th>Rate ID</th>
+              <th>Room Type</th>
+              <th>Plan</th>
+              <th>Nightly Rate</th>
+              <th>Valid From</th>
+              <th>Valid Until</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let rate of rates">
+              <td>#{{ rate.id }}</td>
+              <td>{{ roomTypeName(rate.roomTypeId) }}</td>
+              <td>{{ rate.ratePlanType.replace("_", " ") }}</td>
+              <td>
+                <strong class="price-text">
+                  {{ rate.nightlyRate | number: "1.2-2" }} {{ rate.currency }}
+                </strong>
+              </td>
+              <td>{{ rate.validFrom }}</td>
+              <td>{{ rate.validUntil }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    rate.active ? 'status-published' : 'status-suspended'
+                  "
+                >
+                  {{ rate.active ? "Active" : "Inactive" }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    type="button"
+                    class="icon-button edit-button"
+                    (click)="editRate(rate)"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-button delete-button"
+                    (click)="removeRate(rate.id)"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="rates.length === 0">
+              <td colspan="8">
+                <div class="empty-state">
+                  <i class="bi bi-currency-exchange"></i>
+                  <strong>No room rates found</strong>
+                  <span>Create a rate plan for your room types.</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- DATE-WISE AVAILABILITY -->
+  <!-- ================================================= -->
+
+  <section class="inventory-section">
+    <div class="section-heading">
+      <div class="section-title">
+        <span class="section-icon"><i class="bi bi-calendar2-check"></i></span>
+        <div>
+          <h2>Date-wise Availability</h2>
+          <p>Control physical room availability for individual dates.</p>
+        </div>
+      </div>
+
+      <span class="count-badge">{{ availability.length }} records</span>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-heading">
+        <div>
+          <h3>
+            {{
+              editingAvailabilityId
+                ? "Update Availability"
+                : "Configure Availability"
+            }}
+          </h3>
+          <p>Set a room as available or blocked for a selected date.</p>
+        </div>
+
+        <span class="form-status" *ngIf="editingAvailabilityId">
+          <i class="bi bi-pencil-square"></i> Editing
+        </span>
+      </div>
+
+      <form #availabilityForm="ngForm" (ngSubmit)="saveAvailability()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Physical Room <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="availabilityRoomId"
+              [(ngModel)]="availabilityDraft.roomId"
+            >
+              <option [ngValue]="0" disabled>Select room</option>
+              <option *ngFor="let room of rooms" [ngValue]="room.id">
+                {{ roomTypeName(room.roomTypeId) }} · {{ room.roomNumber }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Availability Date <span>*</span></label>
+            <input
+              class="form-control"
+              type="date"
+              required
+              name="availableOn"
+              [(ngModel)]="availabilityDraft.availableOn"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Available Units <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="availableUnits"
+              [(ngModel)]="availabilityDraft.availableUnits"
+            >
+              <option [ngValue]="1">Available (1)</option>
+              <option [ngValue]="0">Blocked (0)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="
+              availabilityForm.invalid || busy || availabilityDraft.roomId < 1
+            "
+          >
+            <i class="bi bi-calendar-check"></i>
+            {{
+              editingAvailabilityId
+                ? "Update Availability"
+                : "Save Availability"
+            }}
+          </button>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            *ngIf="editingAvailabilityId"
+            (click)="cancelAvailabilityEdit()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- AVAILABILITY TABLE -->
+    <div class="table-card">
+      <div class="table-heading">
+        <div>
+          <h3>Availability Schedule</h3>
+          <p>Date-specific physical room availability.</p>
+        </div>
+        <span class="count-badge">{{ availability.length }} records</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Physical Room</th>
+              <th>Availability</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of availability">
+              <td>
+                <strong>{{ item.availableOn }}</strong>
+              </td>
+              <td>{{ roomLabel(item.roomId) }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    item.availableUnits === 1
+                      ? 'status-published'
+                      : 'status-suspended'
+                  "
+                >
+                  {{ item.availableUnits === 1 ? "Available" : "Blocked" }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    type="button"
+                    class="icon-button edit-button"
+                    (click)="editAvailability(item)"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-button delete-button"
+                    (click)="removeAvailability(item.id)"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="availability.length === 0">
+              <td colspan="4">
+                <div class="empty-state">
+                  <i class="bi bi-calendar-x"></i>
+                  <strong>No availability records</strong>
+                  <span>Configure room availability to get started.</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- PHYSICAL ROOMS -->
+  <!-- ================================================= -->
+
+  <section class="inventory-section">
+    <div class="section-heading">
+      <div class="section-title">
+        <span class="section-icon"><i class="bi bi-door-closed"></i></span>
+        <div>
+          <h2>Physical Rooms</h2>
+          <p>Manage individual rooms, their location and operational status.</p>
+        </div>
+      </div>
+
+      <span class="count-badge">{{ rooms.length }} rooms</span>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-heading">
+        <div>
+          <h3>
+            {{
+              editingRoomId ? "Update Physical Room" : "Register Physical Room"
+            }}
+          </h3>
+          <p>Add an actual room under one of your hotel room categories.</p>
+        </div>
+
+        <span class="form-status" *ngIf="editingRoomId">
+          <i class="bi bi-pencil-square"></i> Editing
+        </span>
+      </div>
+
+      <form #roomForm="ngForm" (ngSubmit)="saveRoom()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Hotel 55 <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="roomHotelId"
+              [(ngModel)]="roomDraft.hotelId"
+            >
+              <option [ngValue]="0" disabled>Select hotel</option>
+              <option *ngFor="let hotel of hotels" [ngValue]="hotel.id">
+                {{ hotel.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Room Type <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="roomTypeId"
+              [(ngModel)]="roomDraft.roomTypeId"
+              (ngModelChange)="syncRoomHotel($event)"
+            >
+              <option [ngValue]="0" disabled>Select room type</option>
+              <option *ngFor="let type of roomTypes" [ngValue]="type.id">
+                #{{ type.id }} — {{ type.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Room Number <span>*</span></label>
+            <input
+              class="form-control"
+              required
+              name="roomNumber"
+              [(ngModel)]="roomDraft.roomNumber"
+              placeholder="e.g. 301"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Floor</label>
+            <input
+              class="form-control"
+              name="roomFloor"
+              maxlength="40"
+              [(ngModel)]="roomDraft.floorLabel"
+              placeholder="e.g. 3rd Floor"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Room View</label>
+            <input
+              class="form-control"
+              name="roomView"
+              maxlength="120"
+              [(ngModel)]="roomDraft.viewDescription"
+              placeholder="e.g. Sea View"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Operational Status <span>*</span></label>
+            <select
+              class="form-control"
+              required
+              name="roomStatus"
+              [(ngModel)]="roomDraft.status"
+            >
+              <option value="AVAILABLE">Available</option>
+              <option value="OCCUPIED">Occupied</option>
+              <option value="MAINTENANCE">Maintenance</option>
+              <option value="OUT_OF_SERVICE">Out of Service</option>
+            </select>
+          </div>
+
+          <!-- PHYSICAL ROOM IMAGES -->
+          <div class="form-field full-width">
+            <label>Physical Room Photos</label>
+
+            <div class="upload-area">
+              <input
+                type="file"
+                id="physicalRoomImages"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                (change)="selectPhysicalRoomImages($event)"
+              />
+
+              <label for="physicalRoomImages" class="upload-label">
+                <span class="upload-icon">
+                  <i class="bi bi-images"></i>
+                </span>
+                <strong>Upload physical room photos</strong>
+                <small>JPG, PNG or WebP images</small>
+              </label>
+            </div>
+
+            <div
+              class="image-gallery"
+              *ngIf="physicalRoomPreviews.length || editingRoomImages.length"
+            >
+              <div
+                class="image-preview"
+                *ngFor="let preview of physicalRoomPreviews"
+              >
+                <img [src]="preview" alt="Physical room preview" />
+              </div>
+
+              <div
+                class="image-preview existing-image"
+                *ngFor="let image of editingRoomImages"
+              >
+                <img
+                  [src]="
+                    image.previewUrl || media.resolveMediaUrl(image.publicUrl)
+                  "
+                  [alt]="image.altText || 'Physical room photo'"
+                />
+
+                <button
+                  type="button"
+                  class="image-remove"
+                  (click)="deletePhysicalRoomImage(image.id)"
+                  aria-label="Remove physical room photo"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="roomForm.invalid || busy"
+          >
+            <i
+              class="bi"
+              [ngClass]="editingRoomId ? 'bi-check2-circle' : 'bi-plus-circle'"
+            ></i>
+            {{ editingRoomId ? "Update Room" : "Register Room" }}
+          </button>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            *ngIf="editingRoomId"
+            (click)="cancelRoomEdit()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- PHYSICAL ROOM TABLE -->
+    <div class="table-card">
+      <div class="table-heading">
+        <div>
+          <h3>Physical Room Directory</h3>
+          <p>All registered rooms and their current operational status.</p>
+        </div>
+        <span class="count-badge">{{ rooms.length }} records</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Hotel</th>
+              <th>Room Type</th>
+              <th>Floor / View</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let room of rooms">
+              <td>
+                <div class="primary-cell">
+                  <strong>{{ room.roomNumber }}</strong>
+                  <small>Room #{{ room.id }}</small>
+                </div>
+              </td>
+              <td>#{{ room.hotelId }}</td>
+              <td>{{ roomTypeName(room.roomTypeId) }}</td>
+              <td>{{ roomFloorView(room) }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="'status-' + room.status.toLowerCase()"
+                >
+                  {{ room.status.replace("_", " ") }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    type="button"
+                    class="icon-button edit-button"
+                    (click)="editRoom(room)"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-button delete-button"
+                    (click)="removeRoom(room.id)"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="rooms.length === 0">
+              <td colspan="6">
+                <div class="empty-state">
+                  <i class="bi bi-door-closed"></i>
+                  <strong>No physical rooms found</strong>
+                  <span>Register your first physical room.</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="inventory-footer">
+    <span><i class="bi bi-shield-check"></i> Hotel Inventory Management</span>
+    <span>TRAVIXA · Hospitality Operations</span>
+  </footer>
+</main>

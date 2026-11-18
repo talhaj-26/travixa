@@ -1,0 +1,673 @@
+
+<main class="sovereign-page">
+  <div class="sovereign-shell">
+
+    <!-- HERO -->
+    <section class="sovereign-hero">
+      <div class="hero-background" aria-hidden="true">
+        <span class="hero-orb hero-orb-one"></span>
+        <span class="hero-orb hero-orb-two"></span>
+        <span class="hero-grid-lines"></span>
+      </div>
+
+      <div class="hero-content">
+        <div class="sovereign-eyebrow">
+          <span class="status-indicator"></span>
+          TRAVIXA · SOVEREIGN ACCESS
+        </div>
+
+        <h1>Super Admin<br /><span>Command Center</span></h1>
+
+        <p>
+          Your central workspace for platform oversight, partner governance
+          and critical operational decisions.
+        </p>
+
+        <div class="hero-meta">
+          <span class="meta-item">
+            <span class="meta-icon">◈</span>
+            Highest access level
+          </span>
+          <span class="meta-divider"></span>
+          <span class="meta-item">
+            <span class="meta-icon">◎</span>
+            Platform overview
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-emblem" aria-hidden="true">
+        <div class="emblem-ring ring-outer"></div>
+        <div class="emblem-ring ring-middle"></div>
+        <div class="emblem-ring ring-inner"></div>
+        <div class="emblem-center">
+          <span>✧</span>
+          <small>TX</small>
+        </div>
+        <span class="emblem-point point-one"></span>
+        <span class="emblem-point point-two"></span>
+        <span class="emblem-point point-three"></span>
+      </div>
+    </section>
+
+    <!-- LIVE PLATFORM METRICS -->
+    <section class="metrics-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">PLATFORM INTELLIGENCE</span>
+          <h2>Platform overview</h2>
+          <p>Current figures retrieved from the backend.</p>
+        </div>
+
+        <button
+          type="button"
+          class="refresh-button"
+          [disabled]="dashboardLoading"
+          (click)="loadPlatformMetrics()">
+          <span [class.refreshing]="dashboardLoading">↻</span>
+          {{ dashboardLoading ? 'Refreshing...' : 'Refresh metrics' }}
+        </button>
+      </div>
+
+      @if (dashboardLoading && !dashboardData) {
+      <div class="metrics-state" aria-live="polite">
+        <span class="loading-spinner"></span>
+        <div>
+          <strong>Loading platform data</strong>
+          <p>Connecting to TRAVIXA services...</p>
+        </div>
+      </div>
+      } @else if (dashboardError && !dashboardData) {
+      <div class="metrics-state error-state" role="alert">
+        <span class="state-symbol">!</span>
+        <div>
+          <strong>Platform metrics unavailable</strong>
+          <p>{{ dashboardError }}</p>
+          <button
+            type="button"
+            class="inline-action"
+            (click)="loadPlatformMetrics()">
+            Try again
+          </button>
+        </div>
+      </div>
+      } @else if (dashboardData !== null) {
+      @if (dashboardError) {
+      <p class="refresh-warning" role="status">
+        Latest refresh failed. Showing the previously loaded figures.
+      </p>
+      }
+
+      <div class="metrics-grid">
+        <article class="metric-card metric-users">
+          <div class="metric-top">
+            <span class="metric-icon">◎</span>
+            <span class="metric-label">Total users</span>
+          </div>
+          <strong>{{ dashboardData.totalUsers | number }}</strong>
+          <div class="metric-footer">
+            <span class="metric-dot"></span>
+            {{ dashboardData.activeUsers | number }} enabled accounts
+          </div>
+        </article>
+
+        <article class="metric-card metric-bookings">
+          <div class="metric-top">
+            <span class="metric-icon">▤</span>
+            <span class="metric-label">Total bookings</span>
+          </div>
+          <strong>{{ dashboardData.totalBookings | number }}</strong>
+          <div class="metric-footer">
+            <span class="metric-dot"></span>
+            {{ dashboardData.confirmedBookings | number }} confirmed bookings
+          </div>
+        </article>
+
+        <article class="metric-card metric-revenue">
+          <div class="metric-top">
+            <span class="metric-icon">৳</span>
+            <span class="metric-label">Successful payments</span>
+          </div>
+          <strong class="revenue-value">
+            {{ formatPlatformCurrency(dashboardData.paidRevenueBdt) }}
+          </strong>
+          <div class="metric-footer">
+            <span class="metric-dot"></span>
+            BDT payments only
+          </div>
+        </article>
+
+        <article class="metric-card metric-partners">
+          <div class="metric-top">
+            <span class="metric-icon">◇</span>
+            <span class="metric-label">Partner organizations</span>
+          </div>
+          <strong>{{ dashboardData.totalPartnerOrganizations | number
+            }}</strong>
+          <div class="metric-footer">
+            <span class="metric-dot"></span>
+            {{ dashboardData.pendingPartnerOrganizations | number }} awaiting
+            review
+          </div>
+        </article>
+      </div>
+
+      <div class="inventory-strip">
+        <div class="inventory-heading">
+          <span class="inventory-symbol">✧</span>
+          <div>
+            <strong>Service inventory</strong>
+            <span>Current database records</span>
+          </div>
+        </div>
+
+        <div class="inventory-item">
+          <span>Hotels</span>
+          <strong>{{ dashboardData.totalHotels | number }}</strong>
+        </div>
+
+        <div class="inventory-item">
+          <span>Restaurants</span>
+          <strong>{{ dashboardData.totalRestaurants | number }}</strong>
+        </div>
+
+        <div class="inventory-item">
+          <span>Tour packages</span>
+          <strong>{{ dashboardData.totalTourPackages | number }}</strong>
+        </div>
+
+        <div class="inventory-item">
+          <span>Tour guides</span>
+          <strong>{{ dashboardData.totalTourGuides | number }}</strong>
+        </div>
+
+        <div class="inventory-item">
+          <span>Transport routes</span>
+          <strong>{{ dashboardData.totalTransportRoutes | number }}</strong>
+        </div>
+      </div>
+
+      <div class="operations-grid">
+        <article class="operations-panel">
+          <div class="operations-heading">
+            <div><span class="section-kicker">BOOKING OPERATIONS</span><h3>Booking pipeline</h3></div>
+            <a routerLink="/admin-booking-management">Manage bookings ↗</a>
+          </div>
+          <div class="operations-stats">
+            <div><span>Awaiting payment</span><strong>{{ dashboardData.pendingBookings | number }}</strong></div>
+            <div><span>Confirmed</span><strong>{{ dashboardData.confirmedBookings | number }}</strong></div>
+            <div><span>Completed</span><strong>{{ dashboardData.completedBookings | number }}</strong></div>
+            <div><span>Cancelled</span><strong>{{ dashboardData.cancelledBookings | number }}</strong></div>
+          </div>
+          <div class="recent-bookings-heading"><strong>Latest bookings</strong><span>Most recent five records</span></div>
+          @if (dashboardData.recentBookings.length) {
+          <div class="recent-bookings">
+            @for (booking of dashboardData.recentBookings; track booking.id) {
+            <div class="recent-booking"><div><strong>{{ booking.referenceNumber }}</strong><span>{{ booking.placedAt ? (booking.placedAt | date:'medium') : 'Date unavailable' }}</span></div><span class="booking-status" [class.status-pending]="booking.status === 'PENDING_PAYMENT'" [class.status-confirmed]="booking.status === 'CONFIRMED'" [class.status-complete]="booking.status === 'COMPLETED'" [class.status-cancelled]="booking.status === 'CANCELLED'">{{ booking.status.replaceAll('_', ' ') }}</span><strong>{{ formatPlatformCurrency(booking.totalAmount) }}</strong></div>
+            }
+          </div>
+          } @else { <p class="no-records">No bookings have been recorded yet.</p> }
+        </article>
+        <article class="operations-panel payment-operations">
+          <div class="operations-heading"><div><span class="section-kicker">FINANCE OPERATIONS</span><h3>Payment health</h3></div><a routerLink="/admin-payment-management">Review payments ↗</a></div>
+          <div class="payment-total"><span>Successful payment volume · BDT</span><strong>{{ formatPlatformCurrency(dashboardData.paidRevenueBdt) }}</strong></div>
+          <div class="operations-stats payment-counts"><div><span>Total payments</span><strong>{{ dashboardData.totalPayments | number }}</strong></div><div><span>Successful</span><strong>{{ dashboardData.successfulPayments | number }}</strong></div><div><span>Failed</span><strong>{{ dashboardData.failedPayments | number }}</strong></div></div>
+          <div class="review-callout"><span>Listings awaiting review</span><strong>{{ dashboardData.pendingListings | number }}</strong><a routerLink="/listing-approvals">Open listing approvals ↗</a></div>
+        </article>
+      </div>
+      }
+    </section>
+
+    <!-- ADMINISTRATION SHORTCUTS -->
+    <section class="governance-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">CONTROL &amp; GOVERNANCE</span>
+          <h2>Administration</h2>
+          <p>Navigate to your available management workspaces.</p>
+        </div>
+      </div>
+
+      <div class="governance-grid">
+        <a routerLink="/user-management" class="governance-card">
+          <span class="governance-icon icon-blue">◎</span>
+          <span class="governance-copy">
+            <strong>User management</strong>
+            <span>Manage accounts and access roles.</span>
+          </span>
+          <span class="governance-arrow">↗</span>
+        </a>
+
+        <a routerLink="/partner-management" class="governance-card">
+          <span class="governance-icon icon-teal">◇</span>
+          <span class="governance-copy">
+            <strong>Partner management</strong>
+            <span>Access partner organization workflows.</span>
+          </span>
+          <span class="governance-arrow">↗</span>
+        </a>
+
+        <a routerLink="/listing-approvals" class="governance-card">
+          <span class="governance-icon icon-purple">✧</span>
+          <span class="governance-copy">
+            <strong>Listing approvals</strong>
+            <span>Review available listing workflows.</span>
+          </span>
+          <span class="governance-arrow">↗</span>
+        </a>
+
+        <a routerLink="/admin-audit" class="governance-card">
+          <span class="governance-icon icon-amber">◷</span>
+          <span class="governance-copy">
+            <strong>Audit ledger</strong>
+            <span>Open the existing audit workspace.</span>
+          </span>
+          <span class="governance-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- PARTNER REVIEW QUEUE -->
+    <section class="applications-section">
+      <div class="section-heading application-heading">
+        <div>
+          <span class="section-kicker">PARTNER GOVERNANCE</span>
+          <h2>Application review queue</h2>
+          <p>Review submitted business applications and record decisions.</p>
+        </div>
+
+        <span class="queue-count">
+          {{ filteredApplications.length }} records
+        </span>
+      </div>
+
+      @if (feedback) {
+      <div class="feedback-banner" role="status">
+        <span class="feedback-symbol">✓</span>
+        <span>{{ feedback }}</span>
+      </div>
+      }
+
+      <div class="queue-summary">
+        <article class="summary-card">
+          <span class="summary-label">Pending review</span>
+          <strong>{{ pendingCount }}</strong>
+          <span class="summary-caption">Awaiting a decision</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="summary-label">Reviewed</span>
+          <strong>{{ reviewedCount }}</strong>
+          <span class="summary-caption">Already reviewed</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="summary-label">Total applications</span>
+          <strong>{{ applications.length }}</strong>
+          <span class="summary-caption">Loaded application records</span>
+        </article>
+      </div>
+
+      <div class="application-workspace">
+
+        <!-- APPLICATION LIST -->
+        <div class="queue-panel">
+          <div class="queue-toolbar">
+            <div class="queue-title">
+              <h3>Submitted applications</h3>
+              <span>Select an application to inspect its details.</span>
+            </div>
+
+            <label class="filter-control">
+              <span>Filter</span>
+              <select
+                [(ngModel)]="filter"
+                aria-label="Filter applications">
+                <option value="ALL">All applications</option>
+                <option value="PENDING_REVIEW">Pending review</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="NEEDS_INFORMATION">Needs information</option>
+              </select>
+            </label>
+          </div>
+
+          @if (applications.length === 0) {
+          <div class="queue-empty">
+            <span class="empty-symbol">◇</span>
+            <h3>No applications available</h3>
+            <p>
+              Applications will appear here when the service returns records.
+            </p>
+          </div>
+          } @else if (filteredApplications.length === 0) {
+          <div class="queue-empty">
+            <span class="empty-symbol">⌕</span>
+            <h3>No matching applications</h3>
+            <p>Try another filter to view available applications.</p>
+          </div>
+          } @else {
+          <div class="application-list">
+            @for (application of filteredApplications; track application.id) {
+            <button
+              type="button"
+              class="application-item"
+              [class.application-selected]="selected?.id === application.id"
+              (click)="select(application)">
+
+              <span class="application-avatar">
+                {{
+                (application.tradingName || application.legalBusinessName ||
+                'P').charAt(0)
+                | uppercase
+                }}
+              </span>
+
+              <span class="application-info">
+                <strong>
+                  {{ application.tradingName || application.legalBusinessName }}
+                </strong>
+
+                <span>
+                  {{ application.businessType }} · {{ application.district }}
+                </span>
+
+                <span class="application-date">
+                  Submitted
+                  @if (application.submittedAt) {
+                  {{ application.submittedAt | date:'mediumDate' }}
+                  } @else {
+                  date unavailable
+                  }
+                </span>
+              </span>
+
+              <span
+                class="status-badge"
+                [ngClass]="application.status.toLowerCase().replace('_', '-')">
+                {{ statusLabel(application.status) }}
+              </span>
+            </button>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- APPLICATION DETAILS -->
+        <aside class="details-panel">
+          @if (selected; as application) {
+          <div class="details-header">
+            <div>
+              <span class="section-kicker">APPLICATION DETAILS</span>
+              <h3>
+                {{ application.tradingName || application.legalBusinessName }}
+              </h3>
+              <p>{{ application.legalBusinessName }}</p>
+            </div>
+
+            <span
+              class="status-badge"
+              [ngClass]="application.status.toLowerCase().replace('_', '-')">
+              {{ statusLabel(application.status) }}
+            </span>
+          </div>
+
+          <div class="details-content">
+            <div class="detail-group">
+              <h4>Business information</h4>
+
+              <div class="detail-row">
+                <span>Business type</span>
+                <strong>{{ application.businessType || 'Not provided'
+                  }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Years operating</span>
+                <strong>{{ application.yearsOperating }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>District</span>
+                <strong>{{ application.district || 'Not provided' }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Division</span>
+                <strong>{{ application.division || 'Not provided' }}</strong>
+              </div>
+
+              <div class="detail-row detail-column">
+                <span>Business address</span>
+                <strong>{{ application.address || 'Not provided' }}</strong>
+              </div>
+
+              @if (application.website) {
+              <div class="detail-row detail-column">
+                <span>Website</span>
+                <a
+                  [href]="application.website"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="website-link">
+                  {{ application.website }} ↗
+                </a>
+              </div>
+              }
+            </div>
+
+            <div class="detail-group">
+              <h4>Contact person</h4>
+
+              <div class="detail-row">
+                <span>Name</span>
+                <strong>{{ application.contactName || 'Not provided' }}</strong>
+              </div>
+
+              <div class="detail-row detail-column">
+                <span>Email</span>
+                <strong>{{ application.contactEmail || 'Not provided'
+                  }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Phone</span>
+                <strong>{{ application.contactPhone || 'Not provided'
+                  }}</strong>
+              </div>
+            </div>
+
+            <div class="detail-group">
+              <h4>Verification information</h4>
+
+              <div class="detail-row detail-column">
+                <span>Trade license number</span>
+                <strong>
+                  {{ application.tradeLicenseNumber || 'Not provided' }}
+                </strong>
+              </div>
+
+              <div class="detail-row detail-column">
+                <span>Tax identification number</span>
+                <strong>
+                  {{ application.taxIdentificationNumber || 'Not provided' }}
+                </strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Submitted on</span>
+                <strong>
+                  @if (application.submittedAt) {
+                  {{ application.submittedAt | date:'mediumDate' }}
+                  } @else {
+                  Not provided
+                  }
+                </strong>
+              </div>
+            </div>
+
+            @if (application.services.length) {
+            <div class="detail-group">
+              <h4>Services offered</h4>
+              <div class="service-tags">
+                @for (service of application.services; track service) {
+                <span>{{ service }}</span>
+                }
+              </div>
+            </div>
+            }
+
+            @if (application.businessDescription) {
+            <div class="detail-group">
+              <h4>Business description</h4>
+              <p class="description-text">
+                {{ application.businessDescription }}
+              </p>
+            </div>
+            }
+
+            @if (application.reviewNotes) {
+            <div class="review-note">
+              <span class="review-note-label">Previous review notes</span>
+              <p>{{ application.reviewNotes }}</p>
+            </div>
+            }
+          </div>
+
+          <div class="review-actions">
+            <label class="notes-label" for="review-notes">
+              Review notes
+              <span>Optional</span>
+            </label>
+
+            <textarea
+              id="review-notes"
+              [(ngModel)]="reviewNotes"
+              rows="3"
+              maxlength="2000"
+              placeholder="Add findings or explain the decision..."
+              [disabled]="isSaving"></textarea>
+
+            @if (application.status === 'PENDING_REVIEW') {
+            <div class="decision-buttons">
+              <button
+                type="button"
+                class="decision-button approve-button"
+                [disabled]="isSaving"
+                (click)="requestReview('APPROVED')">
+                <span>✓</span> Approve
+              </button>
+
+              <button
+                type="button"
+                class="decision-button info-button"
+                [disabled]="isSaving"
+                (click)="requestReview('NEEDS_INFORMATION')">
+                <span>↻</span> Request info
+              </button>
+
+              <button
+                type="button"
+                class="decision-button reject-button"
+                [disabled]="isSaving"
+                (click)="requestReview('REJECTED')">
+                <span>×</span> Reject
+              </button>
+            </div>
+            } @else {
+            <p class="decision-locked">
+              This application has already been reviewed. Review actions
+              are available only for pending applications.
+            </p>
+            }
+          </div>
+          } @else {
+          <div class="details-empty">
+            <span class="empty-symbol">⌑</span>
+            <h3>Select an application</h3>
+            <p>
+              Choose an application from the queue to view its business
+              information and available review actions.
+            </p>
+          </div>
+          }
+        </aside>
+      </div>
+    </section>
+
+    <!-- REVIEW CONFIRMATION -->
+    @if (pendingAction && selected) {
+    <div class="dialog-backdrop" (click)="closeReviewDialog()">
+      <section
+        class="review-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="review-dialog-title"
+        (click)="$event.stopPropagation()">
+
+        <div
+          class="dialog-symbol"
+          [class.dialog-danger]="pendingAction === 'REJECTED'">
+          @if (pendingAction === 'APPROVED') {
+          ✓
+          } @else if (pendingAction === 'REJECTED') {
+          ×
+          } @else {
+          ↻
+          }
+        </div>
+
+        <span class="section-kicker">CONFIRM YOUR DECISION</span>
+        <h2 id="review-dialog-title">
+          {{ actionLabel(pendingAction) }}?
+        </h2>
+
+        <p>
+          You are about to
+          {{
+          pendingAction === 'APPROVED'
+          ? 'approve'
+          : pendingAction === 'REJECTED'
+          ? 'reject'
+          : 'request additional information for'
+          }}
+          <strong>
+            {{ selected.tradingName || selected.legalBusinessName }}
+          </strong>.
+        </p>
+
+        @if (reviewNotes.trim()) {
+        <div class="dialog-notes">
+          <span>Review notes</span>
+          <p>{{ reviewNotes }}</p>
+        </div>
+        }
+
+        <div class="dialog-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            [disabled]="isSaving"
+            (click)="closeReviewDialog()">
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="confirm-button"
+            [class.confirm-danger]="pendingAction === 'REJECTED'"
+            [disabled]="isSaving"
+            (click)="confirmReview()">
+            @if (isSaving) {
+            <span class="button-spinner"></span>
+            Processing...
+            } @else {
+            Confirm {{ actionLabel(pendingAction) }}
+            }
+          </button>
+        </div>
+      </section>
+    </div>
+    }
+  </div>
+</main>

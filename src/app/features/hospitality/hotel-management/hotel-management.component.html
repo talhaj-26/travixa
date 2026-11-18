@@ -1,0 +1,882 @@
+<section class="hotel-management-page">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="page-header-content">
+      <div class="page-eyebrow">TRAVIXA ADMINISTRATION</div>
+      <h1>Hotel Management</h1>
+      <p>
+        Manage hotel properties, partner organizations, destinations and listing
+        publication status from one place.
+      </p>
+    </div>
+
+    <div class="page-header-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="loadOptions(); load()"
+        [disabled]="loading || loadingOptions"
+      >
+        <span *ngIf="!loading && !loadingOptions">↻ Refresh Data</span>
+        <span *ngIf="loading || loadingOptions">Loading...</span>
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="cancelEdit()">
+        + Add New Hotel
+      </button>
+    </div>
+  </header>
+
+  <!-- API Feedback -->
+  <div *ngIf="error" class="alert alert-error" role="alert" aria-live="polite">
+    <span class="alert-icon">!</span>
+    <div class="alert-content">
+      <strong>Action could not be completed</strong>
+      <p>{{ error }}</p>
+    </div>
+    <button
+      type="button"
+      class="alert-close"
+      aria-label="Dismiss error"
+      (click)="error = ''"
+    >
+      ×
+    </button>
+  </div>
+
+  <div
+    *ngIf="success"
+    class="alert alert-success"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="alert-icon">✓</span>
+    <div class="alert-content">
+      <strong>Success</strong>
+      <p>{{ success }}</p>
+    </div>
+    <button
+      type="button"
+      class="alert-close"
+      aria-label="Dismiss success"
+      (click)="success = ''"
+    >
+      ×
+    </button>
+  </div>
+
+  <!-- Statistics -->
+  <section class="stats-grid" aria-label="Hotel statistics">
+    <article class="stat-card">
+      <div class="stat-icon stat-icon-total">⌂</div>
+      <div class="stat-content">
+        <span class="stat-label">Total Hotels</span>
+        <strong class="stat-value">{{ totalHotels }}</strong>
+        <span class="stat-description">All registered properties</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon stat-icon-published">✓</div>
+      <div class="stat-content">
+        <span class="stat-label">Published</span>
+        <strong class="stat-value">{{ publishedHotels }}</strong>
+        <span class="stat-description">Published hotel listings</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon stat-icon-draft">✎</div>
+      <div class="stat-content">
+        <span class="stat-label">Drafts</span>
+        <strong class="stat-value">{{ draftHotels }}</strong>
+        <span class="stat-description">Not yet published</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon stat-icon-pending">◷</div>
+      <div class="stat-content">
+        <span class="stat-label">Pending Review</span>
+        <strong class="stat-value">{{ pendingHotels }}</strong>
+        <span class="stat-description">Awaiting review</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- Hotel Editor -->
+  <section
+    class="editor-card"
+    id="hotel-editor"
+    aria-labelledby="hotel-editor-title"
+  >
+    <div class="section-header">
+      <div>
+        <span class="section-eyebrow">PROPERTY CONFIGURATION</span>
+        <h2 id="hotel-editor-title">
+          {{ editingId !== null ? "Edit Hotel" : "Register a Hotel" }}
+        </h2>
+        <p>
+          Enter the property information and link it to an existing partner
+          organization and destination.
+        </p>
+      </div>
+
+      <span class="editor-mode">
+        {{ editingId !== null ? "EDIT MODE" : "NEW PROPERTY" }}
+      </span>
+    </div>
+
+    <form #hotelForm="ngForm" (ngSubmit)="save()" novalidate>
+      <!-- Organization & Destination -->
+      <div class="form-section">
+        <div class="form-section-heading">
+          <span class="section-number">01</span>
+          <div>
+            <h3>Property Relationships</h3>
+            <p>
+              Select existing database records. IDs are assigned automatically
+              from your selections.
+            </p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <!-- Organization Dropdown -->
+          <div class="form-group">
+            <label for="organizationId">
+              Partner Organization <span class="required">*</span>
+            </label>
+
+            <select
+              id="organizationId"
+              name="organizationId"
+              class="form-control"
+              [(ngModel)]="draft.organizationId"
+              required
+              [disabled]="saving || loadingOptions"
+              #organizationId="ngModel"
+            >
+              <option [ngValue]="0" disabled>
+                {{
+                  loadingOptions
+                    ? "Loading organizations..."
+                    : "Select partner organization"
+                }}
+              </option>
+
+              <option
+                *ngFor="
+                  let organization of organizations;
+                  trackBy: trackByOrganizationId
+                "
+                [ngValue]="organization.id"
+              >
+                {{ organization.name }} — {{ organization.businessType }}
+              </option>
+            </select>
+
+            <small
+              class="field-hint"
+              *ngIf="!loadingOptions && organizations.length === 0"
+            >
+              No organizations found. Create an organization first.
+            </small>
+
+            <small
+              class="field-error"
+              *ngIf="
+                organizationId.invalid &&
+                (organizationId.touched || hotelForm.submitted)
+              "
+            >
+              Select a valid partner organization.
+            </small>
+          </div>
+
+          <!-- Destination Dropdown -->
+          <div class="form-group">
+            <label for="destinationId">
+              Destination <span class="required">*</span>
+            </label>
+
+            <select
+              id="destinationId"
+              name="destinationId"
+              class="form-control"
+              [(ngModel)]="draft.destinationId"
+              required
+              [disabled]="saving || loadingOptions"
+              #destinationId="ngModel"
+            >
+              <option [ngValue]="0" disabled>
+                {{
+                  loadingOptions
+                    ? "Loading destinations..."
+                    : "Select destination"
+                }}
+              </option>
+
+              <option
+                *ngFor="
+                  let destination of destinations;
+                  trackBy: trackByDestinationId
+                "
+                [ngValue]="destination.id"
+              >
+                {{ destination.name }} — {{ destination.countryCode }}
+                {{ destination.published ? "(Published)" : "(Unpublished)" }}
+              </option>
+            </select>
+
+            <small
+              class="field-hint"
+              *ngIf="!loadingOptions && destinations.length === 0"
+            >
+              No destinations found. Create a destination first.
+            </small>
+
+            <small
+              class="field-error"
+              *ngIf="
+                destinationId.invalid &&
+                (destinationId.touched || hotelForm.submitted)
+              "
+            >
+              Select a valid destination.
+            </small>
+
+            <small class="field-hint">
+              A destination must be published before its hotel can be published.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="form-section">
+        <div class="form-section-heading">
+          <span class="section-number">02</span>
+          <div>
+            <h3>Basic Information</h3>
+            <p>Provide the hotel's name, URL slug and description.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="hotelName">
+              Hotel Name <span class="required">*</span>
+            </label>
+
+            <input
+              id="hotelName"
+              name="name"
+              type="text"
+              class="form-control"
+              [(ngModel)]="draft.name"
+              required
+              maxlength="180"
+              placeholder="e.g. Grand Palace Dhaka"
+              [disabled]="saving"
+              #hotelName="ngModel"
+            />
+
+            <small
+              class="field-error"
+              *ngIf="
+                hotelName.invalid && (hotelName.touched || hotelForm.submitted)
+              "
+            >
+              Hotel name is required (maximum 180 characters).
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="hotelSlug">
+              URL Slug <span class="required">*</span>
+            </label>
+
+            <input
+              id="hotelSlug"
+              name="slug"
+              type="text"
+              class="form-control"
+              [(ngModel)]="draft.slug"
+              required
+              maxlength="200"
+              placeholder="grand-palace-dhaka"
+              [disabled]="saving"
+              #hotelSlug="ngModel"
+            />
+
+            <small class="field-hint">
+              Use a URL-friendly slug. It will be converted to lowercase before
+              submission.
+            </small>
+
+            <small
+              class="field-error"
+              *ngIf="
+                hotelSlug.invalid && (hotelSlug.touched || hotelForm.submitted)
+              "
+            >
+              A hotel slug is required (maximum 200 characters).
+            </small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="hotelDescription">Description</label>
+
+            <textarea
+              id="hotelDescription"
+              name="description"
+              class="form-control"
+              [(ngModel)]="draft.description"
+              maxlength="10000"
+              rows="4"
+              placeholder="Describe the hotel, facilities and guest experience..."
+              [disabled]="saving"
+            ></textarea>
+
+            <small class="field-hint">
+              Optional. Maximum 10,000 characters.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-section">
+        <div class="form-section-heading">
+          <span class="section-number">03</span>
+          <div>
+            <h3>Contact & Location</h3>
+            <p>Set the hotel's contact details and geographical coordinates.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group form-group-full">
+            <label for="hotelAddress">
+              Street Address <span class="required">*</span>
+            </label>
+
+            <input
+              id="hotelAddress"
+              name="address"
+              type="text"
+              class="form-control"
+              [(ngModel)]="draft.address"
+              required
+              maxlength="500"
+              placeholder="Full hotel address"
+              [disabled]="saving"
+              #hotelAddress="ngModel"
+            />
+
+            <small
+              class="field-error"
+              *ngIf="
+                hotelAddress.invalid &&
+                (hotelAddress.touched || hotelForm.submitted)
+              "
+            >
+              Hotel address is required (maximum 500 characters).
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="contactEmail">
+              Contact Email <span class="required">*</span>
+            </label>
+
+            <input
+              id="contactEmail"
+              name="contactEmail"
+              type="email"
+              class="form-control"
+              [(ngModel)]="draft.contactEmail"
+              required
+              maxlength="254"
+              email
+              placeholder="reservations@example.com"
+              [disabled]="saving"
+              #contactEmail="ngModel"
+            />
+
+            <small
+              class="field-error"
+              *ngIf="
+                contactEmail.invalid &&
+                (contactEmail.touched || hotelForm.submitted)
+              "
+            >
+              Enter a valid contact email address.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="contactPhone">Contact Phone</label>
+
+            <input
+              id="contactPhone"
+              name="contactPhone"
+              type="tel"
+              class="form-control"
+              [(ngModel)]="draft.contactPhone"
+              maxlength="40"
+              placeholder="+8801XXXXXXXXX"
+              [disabled]="saving"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="latitude">Latitude</label>
+
+            <input
+              id="latitude"
+              name="latitude"
+              type="number"
+              class="form-control"
+              [(ngModel)]="draft.latitude"
+              min="-90"
+              max="90"
+              step="any"
+              placeholder="23.8103"
+              [disabled]="saving"
+              #latitude="ngModel"
+            />
+
+            <small
+              class="field-error"
+              *ngIf="
+                latitude.invalid && (latitude.touched || hotelForm.submitted)
+              "
+            >
+              Latitude must be between -90 and 90.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="longitude">Longitude</label>
+
+            <input
+              id="longitude"
+              name="longitude"
+              type="number"
+              class="form-control"
+              [(ngModel)]="draft.longitude"
+              min="-180"
+              max="180"
+              step="any"
+              placeholder="90.4125"
+              [disabled]="saving"
+              #longitude="ngModel"
+            />
+
+            <small
+              class="field-error"
+              *ngIf="
+                longitude.invalid && (longitude.touched || hotelForm.submitted)
+              "
+            >
+              Longitude must be between -180 and 180.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guest Policies -->
+      <div class="form-section">
+        <div class="form-section-heading">
+          <span class="section-number">04</span>
+          <div>
+            <h3>Guest Policies</h3>
+            <p>Share arrival times, cancellation terms and additional charges with guests.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="checkInTime">Check-in time</label>
+            <input id="checkInTime" name="checkInTime" type="time" class="form-control"
+              [(ngModel)]="draft.checkInTime" [disabled]="saving" />
+          </div>
+          <div class="form-group">
+            <label for="checkOutTime">Check-out time</label>
+            <input id="checkOutTime" name="checkOutTime" type="time" class="form-control"
+              [(ngModel)]="draft.checkOutTime" [disabled]="saving" />
+          </div>
+          <div class="form-group form-group--full">
+            <label for="cancellationPolicy">Cancellation policy</label>
+            <textarea id="cancellationPolicy" name="cancellationPolicy" class="form-control" rows="3"
+              maxlength="5000" [(ngModel)]="draft.cancellationPolicy" [disabled]="saving"
+              placeholder="Explain cancellation and refund terms."></textarea>
+          </div>
+          <div class="form-group form-group--full">
+            <label for="childPolicy">Child policy</label>
+            <textarea id="childPolicy" name="childPolicy" class="form-control" rows="2"
+              maxlength="2000" [(ngModel)]="draft.childPolicy" [disabled]="saving"
+              placeholder="Describe child and extra-bed rules."></textarea>
+          </div>
+          <div class="form-group form-group--full">
+            <label for="additionalCharges">Additional charges</label>
+            <textarea id="additionalCharges" name="additionalCharges" class="form-control" rows="2"
+              maxlength="2000" [(ngModel)]="draft.additionalCharges" [disabled]="saving"
+              placeholder="List taxes, deposits or optional charges; keep rates in Room Rate Management."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing Configuration -->
+      <div class="form-section">
+        <div class="form-section-heading">
+          <span class="section-number">05</span>
+          <div>
+            <h3>Listing Configuration</h3>
+            <p>Configure the star rating and publication status.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="starRating">
+              Star Rating <span class="required">*</span>
+            </label>
+
+            <select
+              id="starRating"
+              name="starRating"
+              class="form-control"
+              [(ngModel)]="draft.starRating"
+              required
+              [disabled]="saving"
+            >
+              <option [ngValue]="0">0 — Unrated</option>
+              <option [ngValue]="1">1 Star</option>
+              <option [ngValue]="2">2 Stars</option>
+              <option [ngValue]="3">3 Stars</option>
+              <option [ngValue]="4">4 Stars</option>
+              <option [ngValue]="5">5 Stars</option>
+            </select>
+
+            <small class="field-hint"> Choose a rating from 0 to 5. </small>
+          </div>
+
+          <div class="form-group">
+            <label for="listingStatus">
+              Listing Status <span class="required">*</span>
+            </label>
+
+            <select
+              id="listingStatus"
+              name="listingStatus"
+              class="form-control"
+              [(ngModel)]="draft.listingStatus"
+              required
+              [disabled]="saving"
+            >
+              <option value="DRAFT">Draft</option>
+              <option value="PENDING_REVIEW">Pending Review</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+
+            <small class="field-hint">
+              Publishing is subject to backend validation and destination
+              status.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelEdit()"
+          [disabled]="saving"
+        >
+          Reset Form
+        </button>
+
+        <button
+          *ngIf="editingId !== null"
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelEdit()"
+          [disabled]="saving"
+        >
+          Cancel Edit
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="
+            saving ||
+            loadingOptions ||
+            organizations.length === 0 ||
+            destinations.length === 0
+          "
+        >
+          <span *ngIf="!saving">
+            {{ editingId !== null ? "Save Changes" : "Create Hotel" }}
+          </span>
+
+          <span *ngIf="saving">
+            {{ editingId !== null ? "Updating Hotel..." : "Creating Hotel..." }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section *ngIf="editingId !== null" class="editor-card" aria-label="Hotel image gallery">
+    <div class="section-header"><div><span class="section-eyebrow">HOTEL GALLERY</span><h2>Photos</h2><p>Upload JPEG, PNG or WebP photos. Up to 10 images, 5 MB each.</p></div></div>
+    <div class="form-grid">
+      <label class="form-group">Select images<input class="form-control" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="selectHotelImages($event)"></label>
+      <label class="form-group">Alt text<input class="form-control" maxlength="160" [(ngModel)]="imageAltText" [ngModelOptions]="{standalone:true}" placeholder="Describe the selected photos"></label>
+      <div class="form-group"><button type="button" class="btn btn-primary" [disabled]="saving || !selectedImages.length" (click)="uploadHotelImages()">Upload photos</button></div>
+    </div>
+    <div class="hotel-photo-grid" *ngIf="selectedImagePreviews.length"><article *ngFor="let image of selectedImagePreviews" class="hotel-photo-card"><img [src]="image.url" [alt]="image.alt"><small>Selected photo</small></article></div>
+    <div class="hotel-photo-grid"><article *ngFor="let image of hotelImages" class="hotel-photo-card"><img *ngIf="hotelImagePreviews[image.id] as preview" [src]="preview" [alt]="image.altText || draft.name" (error)="handleHotelImageError($event)"><small>{{ image.coverImage ? 'Cover photo' : 'Gallery photo' }}</small><button type="button" class="btn btn-sm btn-outline-danger mt-1" (click)="deleteHotelImage(image.id)">Delete photo</button></article></div>
+  </section>
+
+  <section *ngIf="editingId !== null" class="editor-card" aria-label="Hotel facilities">
+    <div class="section-header"><div><span class="section-eyebrow">HOTEL FACILITIES</span><h2>Amenities</h2><p>Manage facilities shown on the published hotel detail page.</p></div></div>
+    <form class="form-grid" (ngSubmit)="saveAmenity()">
+      <label class="form-group">Facility name<input class="form-control" name="amenityName" [(ngModel)]="amenityDraft.name" maxlength="100" required placeholder="e.g. Swimming pool"></label>
+      <label class="form-group">Description<input class="form-control" name="amenityDescription" [(ngModel)]="amenityDraft.description" maxlength="300" placeholder="Optional guest-facing details"></label>
+      <label class="form-group amenity-included"><input type="checkbox" name="amenityIncluded" [(ngModel)]="amenityDraft.included"> Included in the room rate</label>
+      <div class="form-group"><button type="submit" class="btn btn-primary" [disabled]="savingAmenity || !amenityDraft.name.trim()">{{ savingAmenity ? 'Saving…' : editingAmenityId === null ? 'Add facility' : 'Update facility' }}</button></div>
+      <div class="form-group" *ngIf="editingAmenityId !== null"><button type="button" class="btn btn-outline-secondary" (click)="resetAmenityForm()">Cancel edit</button></div>
+    </form>
+    <div class="amenity-list">
+      <article *ngFor="let amenity of hotelAmenities" class="amenity-row">
+        <div><strong>{{ amenity.name }}</strong><p *ngIf="amenity.description">{{ amenity.description }}</p><small>{{ amenity.included ? 'Included' : 'Additional charge' }}</small></div>
+        <div class="amenity-actions"><button type="button" class="btn btn-sm btn-outline-secondary" (click)="editAmenity(amenity)">Edit</button><button type="button" class="btn btn-sm btn-outline-danger" (click)="removeAmenity(amenity)">Delete</button></div>
+      </article>
+      <p *ngIf="hotelAmenities.length === 0" class="text-muted">No hotel facilities added yet.</p>
+    </div>
+  </section>
+
+  <!-- Hotel Inventory -->
+  <section class="inventory-card">
+    <div class="section-header inventory-header">
+      <div>
+        <span class="section-eyebrow">PROPERTY DIRECTORY</span>
+        <h2>Hotel Inventory</h2>
+        <p>Search, filter, edit and manage registered hotel listings.</p>
+      </div>
+
+      <span class="inventory-count">
+        {{ filteredHotels.length }} result{{
+          filteredHotels.length === 1 ? "" : "s"
+        }}
+      </span>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="inventory-toolbar">
+      <div class="search-box">
+        <label class="visually-hidden" for="hotelSearch"> Search hotels </label>
+
+        <span class="search-icon" aria-hidden="true">⌕</span>
+
+        <input
+          id="hotelSearch"
+          name="hotelSearch"
+          type="search"
+          class="form-control"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="Search by hotel, address, destination or slug..."
+        />
+      </div>
+
+      <div class="filter-box">
+        <label for="statusFilter">Status</label>
+
+        <select
+          id="statusFilter"
+          name="statusFilter"
+          class="form-control"
+          [(ngModel)]="statusFilter"
+          (ngModelChange)="applyFilters()"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="DRAFT">Draft</option>
+          <option value="PENDING_REVIEW">Pending Review</option>
+          <option value="PUBLISHED">Published</option>
+          <option value="SUSPENDED">Suspended</option>
+          <option value="ARCHIVED">Archived</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="table-state" *ngIf="loading">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <h3>Loading hotel inventory</h3>
+      <p>Retrieving hotel records from the server...</p>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="table-responsive" *ngIf="!loading && filteredHotels.length > 0">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th scope="col">Hotel</th>
+            <th scope="col">Destination</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let hotel of filteredHotels; trackBy: trackByHotelId">
+            <td>
+              <div class="hotel-cell">
+                <div class="hotel-avatar" aria-hidden="true">
+                  {{ hotel.name ? hotel.name.charAt(0).toUpperCase() : "H" }}
+                </div>
+
+                <div class="hotel-cell-info">
+                  <strong>{{ hotel.name }}</strong>
+                  <span>{{ hotel.slug }}</span>
+                  <small>{{ hotel.address }}</small>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="destination-cell">
+                <strong>{{
+                  hotel.destinationName || "Destination #" + hotel.destinationId
+                }}</strong>
+                <span>Organization #{{ hotel.organizationId }}</span>
+              </div>
+            </td>
+
+            <td>
+              <div class="contact-cell">
+                <span>{{ hotel.contactEmail }}</span>
+                <small>{{ hotel.contactPhone || "No phone provided" }}</small>
+              </div>
+            </td>
+
+            <td>
+              <span class="rating-value">
+                <span aria-hidden="true">★</span>
+                {{ hotel.starRating }}/5
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-published': hotel.listingStatus === 'PUBLISHED',
+                  'status-draft': hotel.listingStatus === 'DRAFT',
+                  'status-pending': hotel.listingStatus === 'PENDING_REVIEW',
+                  'status-suspended': hotel.listingStatus === 'SUSPENDED',
+                  'status-archived': hotel.listingStatus === 'ARCHIVED',
+                }"
+              >
+                {{ hotel.listingStatus.replace("_", " ") }}
+              </span>
+            </td>
+
+            <td>
+              <div class="table-actions">
+                <button
+                  type="button"
+                  class="btn btn-small btn-secondary"
+                  (click)="edit(hotel)"
+                  [disabled]="saving || deletingId !== null"
+                  [attr.aria-label]="'Edit ' + hotel.name"
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-small btn-danger"
+                  (click)="remove(hotel)"
+                  [disabled]="deletingId !== null || saving"
+                  [attr.aria-label]="'Delete ' + hotel.name"
+                >
+                  {{ deletingId === hotel.id ? "Deleting..." : "Delete" }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      class="table-state empty-state"
+      *ngIf="!loading && filteredHotels.length === 0"
+    >
+      <div class="empty-state-icon" aria-hidden="true">⌂</div>
+
+      <h3>
+        {{
+          hotels.length === 0
+            ? "No hotels registered yet"
+            : "No matching hotels found"
+        }}
+      </h3>
+
+      <p>
+        {{
+          hotels.length === 0
+            ? "Create your first hotel using the form above."
+            : "Try another search term or change the status filter."
+        }}
+      </p>
+
+      <button
+        *ngIf="hotels.length > 0"
+        type="button"
+        class="btn btn-secondary"
+        (click)="searchTerm = ''; statusFilter = 'ALL'; applyFilters()"
+      >
+        Clear Filters
+      </button>
+
+      <button
+        *ngIf="hotels.length === 0"
+        type="button"
+        class="btn btn-primary"
+        (click)="cancelEdit()"
+      >
+        + Register First Hotel
+      </button>
+    </div>
+
+    <!-- Inventory Footer -->
+    <footer class="inventory-footer" *ngIf="!loading && hotels.length > 0">
+      <span>
+        Showing {{ filteredHotels.length }} of {{ totalHotels }} hotel records
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-secondary btn-small"
+        (click)="load()"
+        [disabled]="loading"
+      >
+        Refresh Inventory
+      </button>
+    </footer>
+  </section>
+</section>

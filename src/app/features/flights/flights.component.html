@@ -1,0 +1,870 @@
+<div class="flights-page">
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO + SEARCH                                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-hero">
+    <div class="flights-hero-bg">
+      <img
+        src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=90"
+        alt=""
+      />
+      <div class="flights-hero-overlay"></div>
+    </div>
+
+    <div class="flights-hero-orb flights-hero-orb-one"></div>
+    <div class="flights-hero-orb flights-hero-orb-two"></div>
+
+    <div class="container flights-hero-container">
+      <div class="flights-hero-content">
+        <div class="flights-hero-badge">
+          <span class="badge-dot"></span>
+          <span>TRAVIXA FLIGHTS</span>
+        </div>
+
+        <h1 class="flights-hero-title">
+          Your journey begins
+          <span>above the clouds.</span>
+        </h1>
+
+        <p class="flights-hero-desc">
+          Discover flights, compare fares and plan your next adventure with
+          TRAVIXA — one search, endless possibilities.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEARCH CARD                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-search-section">
+    <div class="container">
+      <div class="search-card">
+        <!-- Trip Type -->
+        <div class="trip-types">
+          <button
+            type="button"
+            class="trip-type-btn"
+            [class.active]="tripType === 'ROUND_TRIP'"
+            (click)="tripType = 'ROUND_TRIP'"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path d="M17 1l4 4-4 4" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <path d="M7 23l-4-4 4-4" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+            <span>Round Trip</span>
+          </button>
+
+          <button
+            type="button"
+            class="trip-type-btn"
+            [class.active]="tripType === 'ONE_WAY'"
+            (click)="tripType = 'ONE_WAY'"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+            <span>One Way</span>
+          </button>
+
+          <button
+            type="button"
+            class="trip-type-btn"
+            [class.active]="tripType === 'MULTI_CITY'"
+            (click)="tripType = 'MULTI_CITY'"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <circle cx="5" cy="6" r="3" />
+              <circle cx="19" cy="18" r="3" />
+              <path d="M8 6h11a2 2 0 0 1 2 2v4" />
+              <path d="M16 18H5a2 2 0 0 1-2-2v-4" />
+            </svg>
+            <span>Multi-City</span>
+          </button>
+        </div>
+
+        <!-- Search Fields -->
+        <div class="search-fields">
+          <!-- From -->
+          <div class="search-field search-field-location">
+            <label>From</label>
+            <div class="search-field-input">
+              <span class="field-icon-svg">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+              <div class="field-content">
+                <input
+                  type="text"
+                  [(ngModel)]="from"
+                  placeholder="Departure city"
+                />
+                <small>Airport or city</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Swap -->
+          <button
+            type="button"
+            class="swap-btn"
+            (click)="swapLocations()"
+            title="Swap"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+          </button>
+
+          <!-- To -->
+          <div class="search-field search-field-location">
+            <label>To</label>
+            <div class="search-field-input">
+              <span class="field-icon-svg">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+              <div class="field-content">
+                <input
+                  type="text"
+                  [(ngModel)]="to"
+                  placeholder="Arrival city"
+                />
+                <small>Airport or city</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Departure -->
+          <div class="search-field">
+            <label>Departure</label>
+            <div class="search-field-input">
+              <span class="field-icon-svg">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </span>
+              <div class="field-content">
+                <input type="date" [(ngModel)]="departureDate" />
+                <small>Choose date</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Return -->
+          @if (tripType === "ROUND_TRIP") {
+            <div class="search-field">
+              <label>Return</label>
+              <div class="search-field-input">
+                <span class="field-icon-svg">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </span>
+                <div class="field-content">
+                  <input type="date" [(ngModel)]="returnDate" />
+                  <small>Choose date</small>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Passengers -->
+          <div class="search-field">
+            <label>Passengers</label>
+            <div class="search-field-input">
+              <span class="field-icon-svg">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+              <div class="field-content">
+                <input type="number" min="1" max="9" [(ngModel)]="passengers" />
+                <small>Traveler(s)</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Class -->
+          <div class="search-field">
+            <label>Class</label>
+            <div class="search-field-input">
+              <span class="field-icon-svg">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M3 6h18v12H3z" />
+                  <path d="M7 10h4" />
+                </svg>
+              </span>
+              <div class="field-content">
+                <select [(ngModel)]="cabinClass">
+                  <option>Economy</option>
+                  <option>Premium Economy</option>
+                  <option>Business</option>
+                  <option>First Class</option>
+                </select>
+                <small>Cabin</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Button -->
+        <div class="search-action">
+          <button type="button" class="search-btn" (click)="searchFlights()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <span>Search Flights</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- POPULAR ROUTES                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-popular-section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            EXPLORE MORE
+          </span>
+          <h2 class="section-title">
+            Popular flight
+            <em>routes.</em>
+          </h2>
+          <p class="section-desc">
+            Start your journey from some of the most loved destinations.
+          </p>
+        </div>
+      </div>
+
+      <div class="routes-grid">
+        @for (route of popularRoutes; track route.code) {
+          <button
+            type="button"
+            class="route-card"
+            (click)="selectRoute(route.from, route.to)"
+          >
+            <div class="route-image">
+              <img [src]="route.image" [alt]="route.to" loading="lazy" />
+              <div class="route-overlay"></div>
+
+              <span class="route-code">{{ route.code }}</span>
+            </div>
+
+            <div class="route-body">
+              <h4>{{ route.from }} → {{ route.to }}</h4>
+              <p>{{ route.duration }} · Non-stop</p>
+
+              <div class="route-footer">
+                <span class="route-from">From</span>
+                <strong>৳{{ route.price | number }}</strong>
+              </div>
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- RESULTS + FILTERS                               -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-results-section results-section">
+    <div class="container">
+      <div class="results-head">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            TRAVIXA FLIGHTS
+          </span>
+          <h2 class="section-title">
+            @if (searchPerformed() && from && to) {
+              Available flights
+              <em>{{ from }} → {{ to }}</em>
+            } @else {
+              Recommended
+              <em>flights.</em>
+            }
+          </h2>
+          <p class="section-desc">
+            Compare schedules and fares before booking your journey.
+          </p>
+        </div>
+
+        <div class="results-actions">
+          @if (searchPerformed()) {
+            <button type="button" class="reset-btn" (click)="resetSearch()">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              >
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+              <span>Reset</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="results-layout">
+        <!-- Filters sidebar -->
+        <aside class="filters-sidebar" [class.open]="showFiltersMobile()">
+          <div class="filter-header">
+            <h3>
+              Filters
+              @if (activeFilterCount > 0) {
+                <span class="filter-count">{{ activeFilterCount }}</span>
+              }
+            </h3>
+            @if (activeFilterCount > 0) {
+              <button
+                type="button"
+                class="filter-clear"
+                (click)="clearFilters()"
+              >
+                Clear
+              </button>
+            }
+          </div>
+
+          <!-- Stops -->
+          <div class="filter-block">
+            <h4>Stops</h4>
+            @for (opt of stopsOptions; track opt.value) {
+              <label class="filter-radio">
+                <input
+                  type="radio"
+                  [name]="'stops'"
+                  [value]="opt.value"
+                  [(ngModel)]="selectedStops"
+                />
+                <span class="radio-mark"></span>
+                <span>{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+
+          <!-- Departure Time -->
+          <div class="filter-block">
+            <h4>Departure Time</h4>
+            @for (opt of departureTimeOptions; track opt.value) {
+              <label class="filter-radio">
+                <input
+                  type="radio"
+                  [name]="'depTime'"
+                  [value]="opt.value"
+                  [(ngModel)]="selectedDepartureTime"
+                />
+                <span class="radio-mark"></span>
+                <span>{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+
+          <!-- Airlines -->
+          <div class="filter-block">
+            <h4>Airlines</h4>
+            @for (airline of airlines; track airline.code) {
+              <label class="filter-check">
+                <input
+                  type="checkbox"
+                  [checked]="isAirlineSelected(airline.code)"
+                  (change)="toggleAirline(airline.code)"
+                />
+                <span class="checkbox-mark"></span>
+                <span class="filter-label-text">{{ airline.name }}</span>
+                <span class="filter-count-text">{{
+                  airlineCounts[airline.code] || 0
+                }}</span>
+              </label>
+            }
+          </div>
+        </aside>
+
+        <!-- Results -->
+        <div class="results-main">
+          <!-- Results top bar -->
+          <div class="results-toolbar">
+            <div class="results-count">
+              <strong>{{ flights.length }}</strong>
+              <span>flights found</span>
+            </div>
+
+            <div class="results-sort">
+              <label>Sort</label>
+              <select [(ngModel)]="sortBy">
+                @for (opt of sortOptions; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+
+            <button
+              type="button"
+              class="filters-toggle-mobile"
+              (click)="showFiltersMobile.set(!showFiltersMobile())"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </svg>
+              <span>Filters</span>
+              @if (activeFilterCount > 0) {
+                <span class="filter-count">{{ activeFilterCount }}</span>
+              }
+            </button>
+          </div>
+
+          <!-- Flight list -->
+          @if (flights.length > 0) {
+            <div class="flights-list">
+              @for (flight of flights; track flight.id; let i = $index) {
+                <article
+                  class="flight-card"
+                  [style.animation-delay.ms]="i * 60"
+                  [class.flight-comparing]="isComparing(flight.id)"
+                >
+                  <!-- Left: airline + badge -->
+                  <div class="flight-left">
+                    <div class="flight-airline">
+                      <div
+                        class="flight-airline-logo"
+                        [style.background]="getAirlineColor(flight.airlineCode)"
+                      >
+                        <span>{{ flight.airlineCode }}</span>
+                      </div>
+                      <div class="flight-airline-info">
+                        <strong>{{ flight.airline }}</strong>
+                        <small
+                          >{{ flight.flightNumber }} ·
+                          {{ flight.aircraft }}</small
+                        >
+                      </div>
+                    </div>
+
+                    @if (flight.badge) {
+                      <span class="flight-badge">{{ flight.badge }}</span>
+                    }
+                  </div>
+
+                  <!-- Middle: route -->
+                  <div class="flight-route">
+                    <div class="flight-time-block">
+                      <strong>{{ flight.departure }}</strong>
+                      <span>{{ flight.fromCode }}</span>
+                      <small>{{ flight.from }}</small>
+                    </div>
+
+                    <div class="flight-line">
+                      <span class="line-duration">{{ flight.duration }}</span>
+                      <div class="line-visual">
+                        <span class="line-dot"></span>
+                        <span class="line-bar"></span>
+                        <span class="line-plane">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="line-bar"></span>
+                        <span class="line-dot"></span>
+                      </div>
+                      <span class="line-stops">{{ flight.stopsLabel }}</span>
+                    </div>
+
+                    <div class="flight-time-block">
+                      <strong>{{ flight.arrival }}</strong>
+                      <span>{{ flight.toCode }}</span>
+                      <small>{{ flight.to }}</small>
+                    </div>
+                  </div>
+
+                  <!-- Right: price + action -->
+                  <div class="flight-right">
+                    <div class="flight-price-block">
+                      <small>Starting from</small>
+                      <div class="flight-price-row">
+                        <strong>৳{{ flight.price | number }}</strong>
+                        @if (flight.originalPrice > flight.price) {
+                          <del>৳{{ flight.originalPrice | number }}</del>
+                        }
+                      </div>
+                      <span>per traveler</span>
+                    </div>
+
+                    @if (flight.seatsLeft <= 10) {
+                      <span class="flight-seats">
+                        Only {{ flight.seatsLeft }} seats left
+                      </span>
+                    }
+
+                    <button
+                      type="button"
+                      class="flight-select"
+                      (click)="selectFlight(flight)"
+                    >
+                      <span>Select</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Compare checkbox -->
+                  <label
+                    class="flight-compare"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isComparing(flight.id)"
+                      (change)="toggleCompare(flight.id, $event)"
+                    />
+                    <span class="compare-check"></span>
+                    <span>Compare</span>
+                  </label>
+                </article>
+              }
+            </div>
+
+            <!-- Compare bar -->
+            @if (comparingFlights().length > 0) {
+              <div class="compare-bar">
+                <div class="compare-bar-content">
+                  <span class="compare-bar-count">
+                    {{ comparingFlights().length }} flight(s) selected
+                  </span>
+                  <div class="compare-bar-actions">
+                    <button
+                      type="button"
+                      class="compare-clear"
+                      (click)="comparingFlights.set([])"
+                    >
+                      Clear
+                    </button>
+                    <button type="button" class="compare-btn">
+                      Compare
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="flights-empty">
+              <div class="empty-icon">✈️</div>
+              <h3>No flights found</h3>
+              <p>
+                Try another departure or arrival city, or adjust your filters.
+              </p>
+              <button type="button" class="empty-reset" (click)="resetSearch()">
+                <span>Reset search</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                >
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- WHY TRAVIXA                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-why-section">
+    <div class="container">
+      <div class="why-head">
+        <span class="section-kicker">
+          <span class="eyebrow-line"></span>
+          WHY TRAVIXA
+        </span>
+        <h2 class="section-title">
+          Fly smarter.
+          <em>Travel better.</em>
+        </h2>
+        <p class="section-desc">
+          Everything you need to make your journey simple and memorable.
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <h4>Easy Comparison</h4>
+          <p>Compare flight schedules, routes and fares in one place.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="1" y="4" width="22" height="16" rx="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+          </div>
+          <h4>Secure Booking</h4>
+          <p>Enjoy a simple and secure booking experience with TRAVIXA.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              />
+            </svg>
+          </div>
+          <h4>One Travel Ecosystem</h4>
+          <p>Flights, hotels, tours and experiences connected together.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h4>Best Price Guarantee</h4>
+          <p>Find a lower price elsewhere? We'll match it for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- AI PLANNER CTA                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="flights-cta-section">
+    <div class="container">
+      <div class="flights-cta">
+        <div class="flights-cta-bg">
+          <img
+            src="https://images.unsplash.com/photo-1544016768-982d1554f0b9?w=1600&q=85"
+            alt=""
+          />
+          <div class="flights-cta-overlay"></div>
+        </div>
+
+        <div class="flights-cta-glow"></div>
+
+        <div class="flights-cta-content">
+          <span class="flights-cta-badge">
+            <span>✦</span>
+            TRAVIXA SMART PLANNER
+          </span>
+
+          <h2 class="flights-cta-title">
+            Not sure which
+            <em>flight to book?</em>
+          </h2>
+
+          <p class="flights-cta-desc">
+            Let TRAVIXA's smart trip planner find the perfect flight for your
+            budget, schedule and travel style.
+          </p>
+
+          <button type="button" class="flights-cta-btn" (click)="openPlanner()">
+            <span>Plan my trip</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flights-cta-mark">
+          <span>✈</span>
+          <small>TRAVIXA AI</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

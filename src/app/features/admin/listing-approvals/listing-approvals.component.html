@@ -1,0 +1,439 @@
+
+<main class="approval-page">
+    <div class="approval-shell">
+        <header class="page-header">
+            <div class="header-copy">
+                <div class="breadcrumb">
+                    <span>ADMIN</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>LISTING MANAGEMENT</span>
+                </div>
+
+                <h1>Listing approvals<span>.</span></h1>
+                <p>
+                    Review submissions, verify listing details, and manage what
+                    appears
+                    across the TRAVIXA platform.
+                </p>
+            </div>
+
+            <div class="header-status">
+                <span class="status-pulse"></span>
+                Review workspace
+            </div>
+        </header>
+
+        <section class="welcome-banner">
+            <div class="banner-content">
+                <span class="banner-kicker">YOUR REVIEW DESK</span>
+                <h2>Quality starts with every listing.</h2>
+                <p>
+                    Keep the platform reliable by reviewing hotels, restaurants,
+                    and
+                    tour experiences before they go live.
+                </p>
+            </div>
+
+            <div class="banner-art" aria-hidden="true">
+                <div class="art-ring ring-one"></div>
+                <div class="art-ring ring-two"></div>
+                <div class="art-center">T<span>✓</span></div>
+                <div class="art-spark spark-one">✦</div>
+                <div class="art-spark spark-two">✧</div>
+            </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Listing statistics">
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Total listings</span>
+                    <span class="stat-icon icon-total">▤</span>
+                </div>
+                <strong class="stat-value">{{ totalCount }}</strong>
+                <span class="stat-caption">Across all service categories</span>
+            </article>
+
+            <article class="stat-card pending-stat">
+                <div class="stat-top">
+                    <span class="stat-label">Pending review</span>
+                    <span class="stat-icon icon-pending">◷</span>
+                </div>
+                <strong class="stat-value">{{ pendingCount }}</strong>
+                <span class="stat-caption">Awaiting an admin decision</span>
+            </article>
+
+            <article class="stat-card approved-stat">
+                <div class="stat-top">
+                    <span class="stat-label">Approved</span>
+                    <span class="stat-icon icon-approved">✓</span>
+                </div>
+                <strong class="stat-value">{{ approvedCount }}</strong>
+                <span class="stat-caption">Cleared for the platform</span>
+            </article>
+
+            <article class="stat-card rejected-stat">
+                <div class="stat-top">
+                    <span class="stat-label">Rejected</span>
+                    <span class="stat-icon icon-rejected">×</span>
+                </div>
+                <strong class="stat-value">{{ rejectedCount }}</strong>
+                <span class="stat-caption">Not approved for publication</span>
+            </article>
+        </section>
+
+        <section class="category-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">BROWSE INVENTORY</span>
+                    <h2>Service categories</h2>
+                </div>
+                <span class="section-description">Choose a category to
+                    review</span>
+            </div>
+
+            <div class="category-grid">
+                <button
+                    type="button"
+                    class="category-card"
+                    [class.category-active]="activeCategory === 'HOTEL'"
+                    [attr.aria-pressed]="activeCategory === 'HOTEL'"
+                    (click)="setCategory('HOTEL')">
+                    <span class="category-icon hotel-icon">⌂</span>
+                    <span class="category-copy">
+                        <strong>Hotels</strong>
+                        <small>Accommodation listings</small>
+                    </span>
+                    <span class="category-count">{{ categoryCounts.HOTEL
+                        }}</span>
+                    <span class="category-arrow">↗</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    [class.category-active]="activeCategory === 'RESTAURANT'"
+                    [attr.aria-pressed]="activeCategory === 'RESTAURANT'"
+                    (click)="setCategory('RESTAURANT')">
+                    <span class="category-icon restaurant-icon">♨</span>
+                    <span class="category-copy">
+                        <strong>Restaurants</strong>
+                        <small>Dining and food venues</small>
+                    </span>
+                    <span class="category-count">{{ categoryCounts.RESTAURANT
+                        }}</span>
+                    <span class="category-arrow">↗</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    [class.category-active]="activeCategory === 'TOUR_PACKAGE'"
+                    [attr.aria-pressed]="activeCategory === 'TOUR_PACKAGE'"
+                    (click)="setCategory('TOUR_PACKAGE')">
+                    <span class="category-icon tour-icon">✧</span>
+                    <span class="category-copy">
+                        <strong>Tour packages</strong>
+                        <small>Trips and experiences</small>
+                    </span>
+                    <span class="category-count">{{ categoryCounts.TOUR_PACKAGE
+                        }}</span>
+                    <span class="category-arrow">↗</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="listings-section">
+            <div class="section-heading listings-heading">
+                <div>
+                    <span class="section-kicker">SUBMISSIONS</span>
+                    <h2>Review listings</h2>
+                    <p class="section-description">
+                        Search submissions and inspect their current approval
+                        status.
+                    </p>
+                </div>
+
+                <button type="button" class="reset-button"
+                    (click)="resetFilters()">
+                    <span>↺</span> Reset filters
+                </button>
+            </div>
+
+            <div class="filter-toolbar">
+                <label class="search-box">
+                    <span class="search-icon" aria-hidden="true">⌕</span>
+                    <input
+                        type="search"
+                        [(ngModel)]="searchTerm"
+                        placeholder="Search by name, owner, location or ID..."
+                        aria-label="Search listings" />
+                    <kbd>SEARCH</kbd>
+                </label>
+
+                <label class="status-select-wrap">
+                    <span>Status</span>
+                    <select
+                        [ngModel]="activeStatus"
+                        (ngModelChange)="setStatus($event)"
+                        aria-label="Filter by status">
+                        <option value="ALL">All statuses</option>
+                        <option value="PENDING">Pending review</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="active-filters">
+                <div class="filter-tabs" aria-label="Filter by category">
+                    <button
+                        type="button"
+                        [class.filter-active]="activeCategory === 'ALL'"
+                        [attr.aria-pressed]="activeCategory === 'ALL'"
+                        (click)="setCategory('ALL')">
+                        All listings <span>{{ categoryCounts.ALL }}</span>
+                    </button>
+                    <button
+                        type="button"
+                        [class.filter-active]="activeCategory === 'HOTEL'"
+                        [attr.aria-pressed]="activeCategory === 'HOTEL'"
+                        (click)="setCategory('HOTEL')">
+                        Hotels <span>{{ categoryCounts.HOTEL }}</span>
+                    </button>
+                    <button
+                        type="button"
+                        [class.filter-active]="activeCategory === 'RESTAURANT'"
+                        [attr.aria-pressed]="activeCategory === 'RESTAURANT'"
+                        (click)="setCategory('RESTAURANT')">
+                        Restaurants <span>{{ categoryCounts.RESTAURANT }}</span>
+                    </button>
+                    <button
+                        type="button"
+                        [class.filter-active]="activeCategory === 'TOUR_PACKAGE'"
+                        [attr.aria-pressed]="activeCategory === 'TOUR_PACKAGE'"
+                        (click)="setCategory('TOUR_PACKAGE')">
+                        Tour packages <span>{{ categoryCounts.TOUR_PACKAGE
+                            }}</span>
+                    </button>
+                </div>
+
+                <span class="result-count">
+                    Showing <strong>{{ filteredListings.length }}</strong> of
+                    {{ totalCount }}
+                </span>
+            </div>
+
+            @if (error) {
+            <div class="empty-state" role="alert"><h3>Listings could not be loaded</h3><p>{{ error }}</p></div>
+            } @else if (loading) {
+            <div class="empty-state" role="status"><h3>Loading listings…</h3></div>
+            } @else if (filteredListings.length > 0) {
+            <div class="listing-grid">
+                @for (listing of filteredListings; track trackById($index,
+                listing)) {
+                <article class="listing-card">
+                    <div class="listing-cover" [ngClass]="listing.coverClass">
+                        <span class="cover-reference">{{ listing.reference
+                            }}</span>
+                        <span class="cover-symbol">{{ listing.icon }}</span>
+                        <span class="category-chip">
+                            {{ categoryLabel(listing.category) }}
+                        </span>
+                        <span class="cover-decoration decoration-one"></span>
+                        <span class="cover-decoration decoration-two"></span>
+                    </div>
+
+                    <div class="listing-body">
+                        <div class="listing-title-row">
+                            <h3>{{ listing.name }}</h3>
+                            <span
+                                class="status-badge"
+                                [ngClass]="'status-' + listing.status.toLowerCase()">
+                                <span class="badge-dot"></span>
+                                {{ statusLabel(listing.status) }}
+                            </span>
+                        </div>
+
+                        <p class="listing-location">
+                            <span aria-hidden="true">⌖</span>
+                            {{ listing.location }}
+                        </p>
+
+                        <p class="listing-description">{{ listing.description
+                            }}</p>
+
+                        <div class="listing-meta">
+                            <div class="owner-avatar">
+                                {{ listing.owner.charAt(0).toUpperCase() }}
+                            </div>
+                            <div class="owner-copy">
+                                <small>Submitted by</small>
+                                <strong>{{ listing.owner }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="listing-footer">
+                            <div class="price-copy">
+                                <small>Listed price</small>
+                                <strong>{{ listing.priceLabel }}</strong>
+                            </div>
+                            <span class="submitted-date">{{ listing.submittedAt
+                                }}</span>
+                        </div>
+
+                        <div class="card-actions">
+                            <button
+                                type="button"
+                                class="details-button"
+                                (click)="openDetails(listing)">
+                                View details <span>↗</span>
+                            </button>
+
+                            @if (listing.status === 'PENDING') {
+                            <button
+                                type="button"
+                                class="approve-button"
+                                (click)="updateStatus(listing, 'APPROVED')"
+                                [attr.aria-label]="'Approve ' + listing.name">
+                                ✓ Approve
+                            </button>
+                            <button
+                                type="button"
+                                class="reject-button"
+                                (click)="updateStatus(listing, 'REJECTED')"
+                                [attr.aria-label]="'Reject ' + listing.name">
+                                ×
+                            </button>
+                            } @else {
+                            <button
+                                type="button"
+                                class="reopen-button"
+                                (click)="updateStatus(listing, 'PENDING')">
+                                Return to review
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </article>
+                }
+            </div>
+            } @else {
+            <div class="empty-state">
+                <div class="empty-icon">⌕</div>
+                <h3>No matching listings</h3>
+                <p>
+                    Try a different search term or adjust the category and
+                    status filters.
+                </p>
+                <button type="button" class="reset-button"
+                    (click)="resetFilters()">
+                    Clear all filters
+                </button>
+            </div>
+            }
+        </section>
+
+        @if (feedback) {
+        <div class="feedback-message" role="status">
+            <span>✓</span> {{ feedback }}
+            <button type="button" (click)="feedback = ''"
+                aria-label="Dismiss message">
+                ×
+            </button>
+        </div>
+        }
+    </div>
+
+    @if (selectedListing; as selected) {
+    <div class="modal-backdrop" (click)="closeDetails()">
+        <section
+            class="details-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="details-title"
+            (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <span class="section-kicker">LISTING DETAILS</span>
+                    <h2 id="details-title">Review submission</h2>
+                </div>
+                <button
+                    type="button"
+                    class="modal-close"
+                    (click)="closeDetails()"
+                    aria-label="Close listing details">
+                    ×
+                </button>
+            </div>
+
+            <div class="modal-cover" [ngClass]="selected.coverClass">
+                <span class="modal-cover-icon">{{ selected.icon }}</span>
+                <span class="category-chip">{{ categoryLabel(selected.category)
+                    }}</span>
+            </div>
+
+            <div class="modal-listing-title">
+                <div>
+                    <h3>{{ selected.name }}</h3>
+                    <p>{{ selected.reference }}</p>
+                </div>
+                <span
+                    class="status-badge"
+                    [ngClass]="'status-' + selected.status.toLowerCase()">
+                    <span class="badge-dot"></span>
+                    {{ statusLabel(selected.status) }}
+                </span>
+            </div>
+
+            <p class="modal-description">{{ selected.description }}</p>
+
+            <div class="detail-facts">
+                <div>
+                    <small>Location</small>
+                    <strong>{{ selected.location }}</strong>
+                </div>
+                <div>
+                    <small>Submitted by</small>
+                    <strong>{{ selected.owner }}</strong>
+                </div>
+                <div>
+                    <small>Submitted on</small>
+                    <strong>{{ selected.submittedAt }}</strong>
+                </div>
+                <div>
+                    <small>Listed price</small>
+                    <strong>{{ selected.priceLabel }}</strong>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="details-button"
+                    (click)="closeDetails()">
+                    Close
+                </button>
+                @if (selected.status === 'PENDING') {
+                <button
+                    type="button"
+                    class="reject-modal-button"
+                    (click)="updateStatus(selected, 'REJECTED'); closeDetails()">
+                    Reject
+                </button>
+                <button
+                    type="button"
+                    class="approve-button"
+                    (click)="updateStatus(selected, 'APPROVED'); closeDetails()">
+                    ✓ Approve listing
+                </button>
+                } @else {
+                <button
+                    type="button"
+                    class="reopen-button"
+                    (click)="updateStatus(selected, 'PENDING'); closeDetails()">
+                    Return to review
+                </button>
+                }
+            </div>
+        </section>
+    </div>
+    }
+</main>

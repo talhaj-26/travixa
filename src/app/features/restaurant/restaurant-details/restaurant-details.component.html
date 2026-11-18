@@ -1,0 +1,488 @@
+<div class="restaurant-page">
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="restaurant-nav">
+    <div class="nav-shell">
+      <a class="brand-mark" (click)="goToHome()">
+        <span class="brand-icon">🍽️</span>
+        <span>
+          <span class="brand-title">TRAVIXA</span>
+          <span class="brand-sub">DINING DISCOVERY</span>
+        </span>
+      </a>
+
+      <div class="nav-actions">
+        <a class="nav-chip" (click)="goToRestaurants()">Restaurants</a>
+        <a class="nav-chip" (click)="goToDiscover()">Discover</a>
+        <a class="nav-main" (click)="goToMyBookings()">My Bookings →</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-xl-custom">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-row">
+      <a (click)="goToHome()">Home</a>
+      <span class="sep">/</span>
+      <a (click)="goToRestaurants()">Restaurants</a>
+      <span class="sep">/</span>
+      <span class="current">{{ restaurant.name }}</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HERO
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="hero-card">
+      <!-- Background slideshow -->
+      @for (img of heroSlides; track img; let i = $index) {
+        <img
+          class="hero-image"
+          [class.hero-image--active]="i === currentHeroSlide"
+          [src]="img"
+          [alt]="restaurant.name"
+        />
+      }
+
+      <div class="hero-overlay"></div>
+
+      <!-- Slide dots -->
+      <div class="hero-dots">
+        @for (img of heroSlides; track img; let i = $index) {
+          <button
+            type="button"
+            class="hero-dot"
+            [class.hero-dot--active]="i === currentHeroSlide"
+            (click)="currentHeroSlide = i"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        }
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-kicker">
+          <span class="hero-kicker__dot"></span>
+          ✦ {{ restaurant.tagline }}
+        </div>
+
+        <h1 class="hero-title">{{ restaurant.name }}</h1>
+
+        <p class="hero-description">{{ restaurant.description }}</p>
+
+        <div class="rating-line">
+          <span class="rating-pill">{{ restaurant.cuisine }}</span>
+          <span class="rating-sep">•</span>
+          <span class="rating-location">📍 {{ restaurant.location }}</span>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        <button type="button" class="hero-button" (click)="shareRestaurant()">
+          ↗ Share
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         QUICK INFO
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="info-strip">
+      <div class="info-card">
+        <div class="info-icon">🥘</div>
+        <div class="info-label">Cuisine</div>
+        <div class="info-value">{{ restaurant.cuisine }}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">৳</div>
+        <div class="info-label">Menu</div>
+        <div class="info-value">{{ menuItems.length }} available items</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">🕐</div>
+        <div class="info-label">Opening Hours</div>
+        <div class="info-value">{{ restaurant.openingHours }}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div class="info-label">Location</div>
+        <div class="info-value">{{ restaurant.area }}</div>
+      </div>
+    </section>
+
+    @if (buffetSchedules.length > 0) {
+      <section class="panel buffet-panel" aria-labelledby="buffet-heading">
+        <div class="section-kicker">UPCOMING DINING</div>
+        <h2 class="panel-title" id="buffet-heading">Buffet schedule</h2>
+        <div class="buffet-card-grid">
+          @for (buffet of buffetSchedules; track buffet.id) {
+            <article class="buffet-card">
+              <strong>{{ buffet.buffetDate | date:'mediumDate' }}</strong>
+              <span>{{ buffet.startsAt }}–{{ buffet.endsAt }}</span>
+              <span>Adult {{ formatCurrency(buffet.adultPrice, buffet.currency) }}@if (buffet.childPrice !== null) { · Child {{ formatCurrency(buffet.childPrice, buffet.currency) }} }</span>
+              @if (buffet.menuSummary) { <p>{{ buffet.menuSummary }}</p> }
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════════
+         GALLERY
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="gallery-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">VISUAL TOUR</div>
+          <h2 class="section-title">Inside {{ restaurant.name }}</h2>
+        </div>
+
+        <p class="section-copy">
+          Explore the atmosphere, dining spaces and signature moments before you
+          reserve your table.
+        </p>
+      </div>
+
+      <div class="gallery-grid">
+        @for (item of gallery; track item.image; let i = $index) {
+          <div class="gallery-item" [class.gallery-item--main]="i === 0">
+            <img [src]="item.image" [alt]="item.label" loading="lazy" />
+            <div class="gallery-item__overlay"></div>
+            <span class="gallery-label">{{ item.label }}</span>
+          </div>
+        }
+        @if (gallery.length === 0) { <p class="panel-subtitle">Restaurant photos have not been added yet.</p> }
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MAIN CONTENT + RESERVATION
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="content-grid">
+      <main>
+        <!-- ─── MENU ─── -->
+        <section class="panel">
+          <div class="section-kicker">CURATED MENU</div>
+          <h2 class="panel-title">What would you like to taste?</h2>
+          <p class="panel-subtitle">
+            A selection of {{ restaurant.name }}'s most-loved dishes.
+          </p>
+
+          <!-- Category tabs -->
+          <div class="menu-tabs">
+            @for (cat of menuCategories; track cat.value) {
+              <button
+                type="button"
+                class="menu-tab"
+                [class.menu-tab--active]="activeMenuCategory === cat.value"
+                (click)="setMenuCategory(cat.value)"
+              >
+                <span class="menu-tab__icon">{{ cat.icon }}</span>
+                <span class="menu-tab__label">{{ cat.label }}</span>
+              </button>
+            }
+          </div>
+
+          <!-- Menu items -->
+          <div class="menu-list">
+            @for (item of filteredMenu; track item.id) {
+              <article class="menu-card">
+                <div class="menu-card__image">
+                  @if (item.image) { <img [src]="item.image" [alt]="item.name" loading="lazy" (error)="$any($event.target).hidden = true" /> }
+                  @else { <div class="menu-photo-placeholder" role="img" [attr.aria-label]="item.name + ' photo unavailable'">🍽</div> }
+                  <div class="menu-card__overlay"></div>
+                  @if (item.tag) {
+                    <span class="menu-card__tag">{{ item.tag }}</span>
+                  }
+                  <div class="menu-card__badges">
+                    @if (item.spicy) {
+                      <span class="food-badge food-badge--spicy">🌶 Spicy</span>
+                    }
+                    @if (item.vegetarian) {
+                      <span class="food-badge food-badge--veg">🥗 Veg</span>
+                    }
+                  </div>
+                </div>
+
+                <div class="menu-card__body">
+                  <div class="menu-card__head">
+                    <div class="menu-card__icon">{{ item.icon }}</div>
+                    <div>
+                      <h3 class="menu-card__name">{{ item.name }}</h3>
+                      <p class="menu-card__desc">{{ item.description }}</p>
+                      @if (item.dietaryInformation) { <small class="dietary-note">{{ item.dietaryInformation }}</small> }
+                      @if (item.allergenInformation) { <small class="allergen-note">Allergens: {{ item.allergenInformation }}</small> }
+                    </div>
+                  </div>
+
+                  <div class="menu-card__foot">
+                    <div class="menu-card__price">
+                      {{ formatCurrency(item.price, item.currency) }}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            }
+            @if (filteredMenu.length === 0) { <p class="panel-subtitle">No available menu items have been published for this restaurant yet.</p> }
+          </div>
+        </section>
+
+        <!-- ─── AMENITIES ─── -->
+        <section class="panel">
+          <div class="section-kicker">DINING EXPERIENCE</div>
+          <h2 class="panel-title">Dining details</h2>
+
+          <div class="amenities">
+            @for (a of amenities; track a.label) {
+              <div class="amenity">
+                <span class="amenity-icon">{{ a.icon }}</span>
+                <span class="amenity-label">{{ a.label }}</span>
+              </div>
+            }
+          </div>
+          @if (amenities.length === 0) { <p class="panel-subtitle">Contact the restaurant for additional dining facilities.</p> }
+        </section>
+
+        @if (reviews.length > 0) {
+          <section class="panel">
+            <div class="section-kicker">GUEST VOICE</div>
+            <h2 class="panel-title">What diners say</h2>
+            <p class="panel-subtitle">Published diner reviews.</p>
+            <div class="review-card" *ngFor="let review of reviews">
+              <strong>{{ review.name }}</strong><span> · {{ review.date }}</span>
+              <p class="review-text">{{ review.text }}</p>
+            </div>
+          </section>
+        } @else {
+          <section class="panel">
+            <div class="section-kicker">GUEST VOICE</div>
+            <h2 class="panel-title">Guest reviews</h2>
+            <p class="panel-subtitle">Reviews have not been published for this restaurant yet.</p>
+          </section>
+        }
+
+        <!-- ─── LOCATION ─── -->
+        <section class="panel">
+          <div class="section-kicker">FIND US</div>
+          <h2 class="panel-title">Location &amp; directions</h2>
+          <p class="panel-subtitle">
+            {{ restaurant.location }}
+          </p>
+
+          <div class="location-grid">
+            <div class="location-details">
+              <h4>{{ restaurant.area }}</h4>
+              <p>Use the restaurant's registered address for directions.</p>
+
+              @if (nearby.length > 0) { <div class="nearby">
+                @for (place of nearby; track place.name) {
+                  <div class="nearby-row">
+                    <span class="nearby-icon">{{ place.icon }}</span>
+                    <span class="nearby-name">{{ place.name }}</span>
+                    <strong class="nearby-distance">{{
+                      place.distance
+                    }}</strong>
+                  </div>
+                }
+              </div>
+              }
+            </div>
+
+            <div class="location-map-card">
+              <span class="location-pin" aria-hidden="true">⌖</span>
+              <span class="section-kicker">RESTAURANT ADDRESS</span>
+              <strong>{{ restaurant.name }}</strong>
+              <p>{{ restaurant.location }}</p>
+              <a [href]="mapsUrl" target="_blank" rel="noopener">Get directions ↗</a>
+            </div>
+          </div>
+
+          <div class="map-actions">
+            <button type="button" class="nav-main" (click)="goToMaps()">
+              Open in TRAVIXA Maps →
+            </button>
+              <a
+              class="nav-chip"
+              [href]="mapsUrl"
+              target="_blank"
+              rel="noopener"
+            >
+              Google Maps ↗
+            </a>
+          </div>
+        </section>
+
+
+      </main>
+
+      <!-- ═══════════════════════════════════════════════════════
+           RESERVATION SIDEBAR
+           ═══════════════════════════════════════════════════════ -->
+      <aside>
+        <section class="panel reservation-panel">
+          <div class="reservation-glow"></div>
+
+          <div class="section-kicker">RESERVE YOUR TABLE</div>
+          <h2 class="panel-title">Your evening starts here.</h2>
+
+          <p class="panel-subtitle">Choose a date and an available table time from the restaurant's current schedule.</p>
+
+          <div class="availability">
+            <span class="availability__left">
+              <span class="available-dot"></span>
+              {{ availableSlots.length }} available table slots
+            </span>
+          </div>
+
+          <!-- Date -->
+          <div class="booking-field">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="reservation.date" (ngModelChange)="onReservationDateChange()" [min]="minReservationDate" />
+          </div>
+
+          <!-- Guests -->
+          <div class="booking-field">
+            <label>Guests</label>
+            <div class="guest-counter">
+              <button
+                type="button"
+                (click)="decrementGuests()"
+                [disabled]="reservation.guests <= 1"
+              >
+                −
+              </button>
+              <strong>{{ reservation.guests }}</strong>
+              <button type="button" (click)="incrementGuests()">+</button>
+            </div>
+          </div>
+
+          <!-- Table selection -->
+          <div class="booking-field">
+            <label>Select a Table</label>
+            <div class="table-grid">
+              @for (t of availableSlots; track t.id) {
+                <button
+                  type="button"
+                  class="table-seat"
+                  [class.table-seat--selected]="selectedTableId === t.id"
+                  [class.table-seat--booked]="t.booked"
+                  [class.table-seat--premium]="t.premium"
+                  [disabled]="t.booked"
+                  (click)="selectTable(t)"
+                >
+                  <span class="table-id">{{ t.tableNumber }} · {{ t.startsAt }}</span>
+                  <span class="table-seats">{{ t.seats }} seats</span>
+                </button>
+              }
+            </div>
+
+            @if (availableSlots.length === 0) { <small class="panel-subtitle">No table time slots are available for this date and guest count.</small> }
+            <div class="table-legend">
+              <span class="legend-dot legend-dot--available"></span>
+              <small>Available seats at scheduled times</small>
+            </div>
+          </div>
+
+          <!-- Selected summary -->
+          @if (selectedTable) {
+            <div class="reservation-summary">
+              <div class="summary-row">
+                <span>Table</span>
+                <strong
+                  >{{ selectedTable.tableNumber }} ·
+                  {{ selectedTable.seats }} seats</strong
+                >
+              </div>
+              <div class="summary-row">
+                <span>Date &amp; Time</span>
+                <strong
+                  >{{ formatDate(reservation.date) }} ·
+                  {{ reservation.time }}</strong
+                >
+              </div>
+              <div class="summary-row">
+                <span>Guests</span>
+                <strong
+                  >{{ reservation.guests }} guest{{
+                    reservation.guests > 1 ? "s" : ""
+                  }}</strong
+                >
+              </div>
+            </div>
+          }
+
+          <button
+            type="button"
+            class="reservation-btn"
+            [disabled]="!reservationValid"
+            (click)="reserveTable()"
+          >
+            Reserve Table →
+          </button>
+
+          <div class="reservation-note">
+            <span class="note-icon">✓</span>
+            {{ restaurant.cancellationPolicy || 'Contact the restaurant for its cancellation policy.' }}
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         FINAL CTA
+         ═══════════════════════════════════════════════════════════ -->
+    <section class="final-cta">
+      <div class="cta-glow"></div>
+      <div class="cta-watermark">TRAVIXA</div>
+
+      <div class="cta-inner">
+        <div>
+          <span class="cta-kicker">TRAVIXA DINING</span>
+          <h2 class="cta-title">Turn dinner into a destination.</h2>
+          <p class="cta-copy">
+            Discover restaurants, compare experiences, reserve tables and manage
+            every dining plan from one smart travel platform.
+          </p>
+        </div>
+
+        <div class="cta-actions">
+          <button type="button" class="cta-button" (click)="goToRestaurants()">
+            Explore More Restaurants
+            <span>→</span>
+          </button>
+          <button
+            type="button"
+            class="cta-button cta-button--ghost"
+            (click)="goToMyBookings()"
+          >
+            My Bookings
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════════ -->
+  @if (toast.show) {
+    <div class="toast" [attr.data-type]="toast.type">
+      <span class="toast-icon">
+        @switch (toast.type) {
+          @case ("success") {
+            ✓
+          }
+          @case ("info") {
+            ⓘ
+          }
+          @case ("danger") {
+            ⚠
+          }
+        }
+      </span>
+      <span>{{ toast.message }}</span>
+    </div>
+  }
+</div>

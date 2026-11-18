@@ -1,0 +1,763 @@
+<!-- ========================================
+     TRAVIXA HOME — PREMIUM EXPERIENCE v3
+========================================= -->
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-background">
+    @for (slide of heroSlides; track slide.location; let i = $index) {
+      <div
+        class="hero-slide"
+        [class.active]="currentSlide === i"
+        [style.background-image]="slide.image ? 'url(' + slide.image + ')' : null"
+        [attr.data-slide]="i"
+      ></div>
+    }
+    <div class="hero-vignette"></div>
+  </div>
+
+  <div class="hero-orb hero-orb-one"></div>
+  <div class="hero-orb hero-orb-two"></div>
+  <div class="hero-orb hero-orb-three"></div>
+
+  <div class="container hero-container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-line"></span>
+        <span class="eyebrow-text">{{ activeHero.eyebrow }}</span>
+        <span class="eyebrow-pulse"></span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="hero-title-line">{{ activeHero.title }}</span>
+        <span class="hero-title-accent">{{ activeHero.titleAccent }}</span>
+      </h1>
+
+      <p class="hero-description">{{ activeHero.description }}</p>
+
+      <div class="hero-actions">
+        <a routerLink="/discover" class="hero-primary-btn">
+          <span>Explore TRAVIXA</span>
+          <span class="btn-arrow">↗</span>
+        </a>
+
+        <a routerLink="/ai-planner" class="hero-secondary-btn">
+          <span class="play-icon">✦</span>
+          <span>Plan with AI</span>
+        </a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="meta-icon">⌖</span>
+          <div>
+            <small>Featured destination</small>
+            <strong>{{ activeHero.location }}</strong>
+          </div>
+        </div>
+
+        <div class="meta-divider"></div>
+
+        <div class="hero-meta-item">
+          <span class="meta-icon">✦</span>
+          <div>
+            <small>Region</small>
+            <strong>{{ activeHero.eyebrow }}</strong>
+          </div>
+        </div>
+
+        <div class="meta-divider"></div>
+
+        <div class="hero-meta-item">
+            <span class="meta-icon">✈</span>
+          <div>
+            <small>Country</small>
+            <strong>{{ activeHero.country || 'Explore' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-visual-card">
+        <div class="visual-image-wrap">
+          @if (activeHero.image) {
+            <img [src]="activeHero.image" [alt]="activeHero.location" class="visual-image" />
+          } @else { <div class="visual-image visual-image-placeholder" aria-hidden="true"></div> }
+          <div class="visual-image-overlay"></div>
+        </div>
+
+        <div class="visual-top">
+          <span class="visual-brand">TRAVIXA</span>
+          <span class="visual-count">
+            {{ padNumber(heroSlides.length ? currentSlide + 1 : 1) }} / {{ padNumber(heroSlides.length || 1) }}
+          </span>
+        </div>
+
+        <div class="visual-bottom">
+          <div class="visual-info">
+            <small>PUBLISHED DESTINATION</small>
+            <strong>{{ activeHero.location }}</strong>
+            <span class="visual-country">{{ activeHero.country }}</span>
+          </div>
+
+          <a
+            [routerLink]="activeHero.link"
+            class="visual-cta"
+            aria-label="Explore destination"
+          >↗</a>
+        </div>
+      </div>
+
+      <div class="floating-card floating-card-discovery">
+        <span class="discovery-number">{{ activeHero.country }}</span>
+        <div>
+          <small>{{ activeHero.category }}</small>
+          <strong>{{ activeHero.location }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (heroSlides.length > 1) { <div class="hero-controls">
+    <button
+      type="button"
+      class="hero-control"
+      aria-label="Previous slide"
+      (click)="previousSlide()"
+    >←</button>
+
+    <div class="hero-indicators">
+      @for (slide of heroSlides; track slide.location; let i = $index) {
+        <button
+          type="button"
+          class="hero-indicator"
+          [class.active]="currentSlide === i"
+          [attr.aria-label]="'Go to slide ' + (i + 1)"
+          (click)="goToSlide(i)"
+        >
+          <span class="indicator-fill"></span>
+        </button>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="hero-control"
+      aria-label="Next slide"
+      (click)="nextSlide()"
+    >→</button>
+  </div> }
+
+  <div class="hero-scroll-hint">
+    <span>SCROLL TO EXPLORE</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- =========================================
+     SMART EXPLORE
+========================================= -->
+<section class="smart-explore-section">
+  <div class="container">
+    <div class="explore-header">
+      <div>
+        <span class="section-kicker">SMART EXPLORATION</span>
+        <h2>Where will you go next?</h2>
+      </div>
+
+      <a routerLink="/search-results" class="explore-link">
+        View all results <span>↗</span>
+      </a>
+    </div>
+
+    <div class="explore-panel">
+      <div class="explore-field">
+        <span class="explore-field-icon">⌖</span>
+        <div class="explore-field-content">
+          <span class="explore-label">Destination</span>
+          <strong>Anywhere you want</strong>
+          <small>Explore destinations worldwide</small>
+        </div>
+        <span class="explore-chevron">⌄</span>
+      </div>
+
+      <div class="explore-divider"></div>
+
+      <div class="explore-field">
+        <span class="explore-field-icon">◷</span>
+        <div class="explore-field-content">
+          <span class="explore-label">Travel dates</span>
+          <strong>Choose your dates</strong>
+          <small>Flexible or specific dates</small>
+        </div>
+        <span class="explore-chevron">⌄</span>
+      </div>
+
+      <div class="explore-divider"></div>
+
+      <div class="explore-field">
+        <span class="explore-field-icon">✦</span>
+        <div class="explore-field-content">
+          <span class="explore-label">Experience</span>
+          <strong>What inspires you?</strong>
+          <small>Stay, tour, food & adventure</small>
+        </div>
+        <span class="explore-chevron">⌄</span>
+      </div>
+
+      <a routerLink="/search-results" class="explore-search-btn">
+        <span>Search</span>
+        <span>→</span>
+      </a>
+    </div>
+
+    <div class="popular-explore">
+      <span class="popular-label">Popular right now</span>
+
+      <div class="popular-links">
+        @for (dest of featuredDestinations.slice(0, 5); track dest.name) {
+          <a [routerLink]="dest.link">{{ dest.name }}</a>
+        }
+        @if (!loadingCatalog && !featuredDestinations.length) {
+          <span class="popular-empty">Published destinations will appear here.</span>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     FEATURED DESTINATIONS
+========================================= -->
+<section class="featured-destinations-section">
+  <div class="container">
+    <div class="featured-header">
+      <div>
+        <span class="section-kicker">FEATURED DESTINATIONS</span>
+        <h2>Places to discover</h2>
+      </div>
+      <a routerLink="/destinations" class="explore-link">
+        View all destinations <span>↗</span>
+      </a>
+    </div>
+
+    @if (loadingCatalog) { <p class="catalog-state" role="status">Loading published destinations…</p> }
+    @if (catalogError) { <p class="catalog-state catalog-state-error" role="alert">{{ catalogError }}</p> }
+    @if (!loadingCatalog && !featuredDestinations.length) { <p class="catalog-state">No published destinations are available yet.</p> }
+    <div class="featured-grid">
+      @for (dest of featuredDestinations; track dest.name; let i = $index) {
+        <a
+          [routerLink]="dest.link"
+          class="featured-card"
+          [class.featured-card-large]="i === 0"
+        >
+          <div class="featured-image-wrap">
+            @if (dest.image) { <img [src]="dest.image" [alt]="dest.name" class="featured-image" loading="lazy" /> }
+            @else { <div class="featured-image-placeholder" role="img" [attr.aria-label]="dest.name + ' image unavailable'"></div> }
+            <div class="featured-overlay"></div>
+          </div>
+
+          <div class="featured-badge">
+            <span>{{ dest.badge }}</span>
+          </div>
+
+          <div class="featured-content">
+            <div class="featured-location">
+              <span>⌖</span>
+              <span>{{ dest.region }}</span>
+            </div>
+            <h3>{{ dest.name }}</h3>
+            <p>{{ dest.tagline }}</p>
+
+            <div class="featured-meta">
+              <div class="featured-arrow">↗</div>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     FEATURED EXPERIENCES
+========================================= -->
+<section class="featured-experiences-section">
+  <div class="container">
+    <div class="experiences-header">
+      <div class="experiences-header-left">
+        <span class="section-kicker">PUBLISHED TOUR PACKAGES</span>
+        <h2>Explore <span class="title-accent">tour packages</span></h2>
+      </div>
+
+      <div class="experiences-header-right">
+        <p>Compare published itineraries, destinations, durations and current package prices.</p>
+
+        <a routerLink="/tour-packages" class="section-link">
+          <span>View all experiences</span>
+          <span>↗</span>
+        </a>
+      </div>
+    </div>
+
+    @if (loadingCatalog) { <p class="catalog-state" role="status">Loading published tour packages…</p> }
+    @if (catalogError) { <p class="catalog-state catalog-state-error" role="alert">{{ catalogError }}</p> }
+    @if (!loadingCatalog && !catalogError && !featuredExperiences.length) { <p class="catalog-state">No published tour packages are available yet.</p> }
+
+    <div class="experiences-grid">
+      @for (exp of filteredExperiences; track exp.id) {
+        <article
+          class="experience-card"
+          [class.experience-card-large]="exp.size === 'large'"
+          [class.experience-card-medium]="exp.size === 'medium'"
+          [class.experience-card-small]="exp.size === 'small'"
+        >
+          <a
+            [routerLink]="exp.link"
+            class="experience-card-link"
+            [attr.aria-label]="'View ' + exp.title"
+          >
+            <div class="experience-image-wrap">
+              @if (exp.image) { <img [src]="exp.image" [alt]="exp.title" class="experience-image" loading="lazy" /> }
+              @else { <div class="experience-image experience-image-placeholder" role="img" [attr.aria-label]="exp.title + ' image unavailable'"></div> }
+              <div class="experience-overlay"></div>
+
+              <span class="experience-badge">{{ exp.badge }}</span>
+
+              <span class="experience-category">
+                <span class="experience-category-dot"></span>
+                TOUR PACKAGE
+              </span>
+            </div>
+
+            <div class="experience-content">
+              <div class="experience-location">
+                <span>⌖</span>
+                <span>{{ exp.location }}</span>
+              </div>
+
+              <h3 class="experience-title">{{ exp.title }}</h3>
+
+              <p class="experience-subtitle">{{ exp.subtitle }}</p>
+
+              <div class="experience-meta">
+                <span class="experience-duration">
+                  <span>◷</span>
+                  {{ exp.duration }}
+                </span>
+
+                <span class="experience-status">{{ exp.badge }}</span>
+              </div>
+
+              <div class="experience-footer">
+                <div class="experience-price">
+                  <small>From</small>
+                  <strong>{{ formatPrice(exp.price, exp.currency) }}</strong>
+                </div>
+
+                <span class="experience-arrow">↗</span>
+              </div>
+            </div>
+          </a>
+
+          <button
+            type="button"
+            class="experience-wishlist"
+            [class.active]="isWishlisted(exp.id)"
+            [attr.aria-pressed]="isWishlisted(exp.id)"
+            [attr.aria-label]="isWishlisted(exp.id) ? 'Remove from wishlist' : 'Add to wishlist'"
+            (click)="toggleWishlist(exp.id, $event)"
+          >
+            <span>{{ isWishlisted(exp.id) ? '♥' : '♡' }}</span>
+          </button>
+        </article>
+      }
+    </div>
+
+    <div class="experiences-stats">
+      <div class="stat-item">
+        <strong>{{ loadingCatalog ? '…' : featuredExperiences.length }}</strong>
+        <span>Packages shown</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <strong>{{ loadingCatalog ? '…' : featuredDestinations.length }}</strong>
+        <span>Destinations shown</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <strong>{{ loadingCatalog ? '…' : featuredExperiences.length }}</strong>
+        <span>Published tour packages</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <strong>TRAVIXA</strong>
+        <span>Explore · Book · Travel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     SERVICES
+========================================= -->
+<section class="services-section">
+  <div class="container">
+    <div class="services-header">
+      <div class="services-heading">
+        <span class="section-kicker">ONE PLATFORM</span>
+        <h2>Everything you need<br />for the journey.</h2>
+      </div>
+
+      <p>
+        From discovering destinations to booking stays, dining, transportation
+        and experiences — TRAVIXA brings your journey together in one place.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <a routerLink="/destinations" class="service-card service-card-large">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80" alt="Destinations" />
+          <div class="service-bg-overlay"></div>
+        </div>
+
+        <div class="service-card-top">
+          <span class="service-number">01</span>
+          <span class="service-icon">⌖</span>
+        </div>
+
+        <div class="service-card-content">
+          <span>EXPLORE</span>
+          <h3>Destinations</h3>
+          <p>Discover places worth experiencing.</p>
+        </div>
+
+        <span class="service-arrow">↗</span>
+      </a>
+
+      <a routerLink="/stays" class="service-card">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80" alt="Hotels" />
+          <div class="service-bg-overlay"></div>
+        </div>
+        <div class="service-card-top">
+          <span class="service-number">02</span>
+          <span class="service-icon">⌂</span>
+        </div>
+        <div class="service-card-content">
+          <span>STAY</span>
+          <h3>Hotels & Resorts</h3>
+          <p>Find the right stay for your journey.</p>
+        </div>
+        <span class="service-arrow">↗</span>
+      </a>
+
+      <a routerLink="/tour-packages" class="service-card">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80" alt="Tour Packages" />
+          <div class="service-bg-overlay"></div>
+        </div>
+        <div class="service-card-top">
+          <span class="service-number">03</span>
+          <span class="service-icon">✦</span>
+        </div>
+        <div class="service-card-content">
+          <span>EXPERIENCE</span>
+          <h3>Tour Packages</h3>
+          <p>Turn your plans into experiences.</p>
+        </div>
+        <span class="service-arrow">↗</span>
+      </a>
+
+      <a routerLink="/restaurants" class="service-card">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80" alt="Restaurants" />
+          <div class="service-bg-overlay"></div>
+        </div>
+        <div class="service-card-top">
+          <span class="service-number">04</span>
+          <span class="service-icon">♨</span>
+        </div>
+        <div class="service-card-content">
+          <span>TASTE</span>
+          <h3>Restaurants</h3>
+          <p>Discover memorable dining experiences.</p>
+        </div>
+        <span class="service-arrow">↗</span>
+      </a>
+
+      <a routerLink="/transportation" class="service-card">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80" alt="Transportation" />
+          <div class="service-bg-overlay"></div>
+        </div>
+        <div class="service-card-top">
+          <span class="service-number">05</span>
+          <span class="service-icon">⌁</span>
+        </div>
+        <div class="service-card-content">
+          <span>MOVE</span>
+          <h3>Transportation</h3>
+          <p>Move comfortably from place to place.</p>
+        </div>
+        <span class="service-arrow">↗</span>
+      </a>
+
+      <a routerLink="/tour-guides" class="service-card service-card-accent">
+        <div class="service-bg">
+          <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=800&q=80" alt="Tour Guides" />
+          <div class="service-bg-overlay"></div>
+        </div>
+        <div class="service-card-top">
+          <span class="service-number">06</span>
+          <span class="service-icon">◈</span>
+        </div>
+        <div class="service-card-content">
+          <span>CONNECT</span>
+          <h3>Tour Guides</h3>
+          <p>Meet local experts who know the destination.</p>
+        </div>
+        <span class="service-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     ECOSYSTEM
+========================================= -->
+<section class="ecosystem-section">
+  <div class="container">
+    <div class="ecosystem-header">
+      <div>
+        <span class="section-kicker">THE TRAVIXA WAY</span>
+        <h2>One journey.<br />Connected experiences.</h2>
+      </div>
+
+      <p>
+        TRAVIXA connects discovery, planning, services and experiences into one
+        seamless travel ecosystem.
+      </p>
+    </div>
+
+    <div class="ecosystem-flow">
+      <div class="ecosystem-step">
+        <div class="step-top">
+          <span class="step-number">01</span>
+          <span class="step-icon">⌖</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-content">
+          <span>DISCOVER</span>
+          <h3>Find your destination.</h3>
+          <p>Explore destinations, attractions and experiences that match your travel interests.</p>
+        </div>
+      </div>
+
+      <div class="ecosystem-connector"><span>→</span></div>
+
+      <div class="ecosystem-step">
+        <div class="step-top">
+          <span class="step-number">02</span>
+          <span class="step-icon">✦</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-content">
+          <span>PLAN</span>
+          <h3>Build your journey.</h3>
+          <p>Combine stays, tours, transport and dining around the way you want to travel.</p>
+        </div>
+      </div>
+
+      <div class="ecosystem-connector"><span>→</span></div>
+
+      <div class="ecosystem-step">
+        <div class="step-top">
+          <span class="step-number">03</span>
+          <span class="step-icon">◇</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-content">
+          <span>CONNECT</span>
+          <h3>Choose trusted services.</h3>
+          <p>Connect with hotels, restaurants, guides and transportation partners.</p>
+        </div>
+      </div>
+
+      <div class="ecosystem-connector"><span>→</span></div>
+
+      <div class="ecosystem-step">
+        <div class="step-top">
+          <span class="step-number">04</span>
+          <span class="step-icon">★</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-content">
+          <span>EXPERIENCE</span>
+          <h3>Enjoy the journey.</h3>
+          <p>Book, travel, experience and keep everything connected through TRAVIXA.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ecosystem-bottom">
+      <div class="ecosystem-stat">
+        <strong>01</strong>
+        <span>Connected platform</span>
+      </div>
+      <div class="ecosystem-stat">
+        <strong>∞</strong>
+        <span>Travel possibilities</span>
+      </div>
+      <div class="ecosystem-stat">
+        <strong>24/7</strong>
+        <span>Journey support</span>
+      </div>
+
+      <a routerLink="/discover" class="ecosystem-action-btn">
+        <span>Explore destinations</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     DIFFERENCE
+========================================= -->
+<section class="difference-section">
+  <div class="container">
+    <div class="difference-header">
+      <div>
+        <span class="travixa-section-label">MORE THAN BOOKING</span>
+        <h2 class="difference-title">
+          Travel is not a reservation.
+          <span>It's a story.</span>
+        </h2>
+      </div>
+
+      <p class="difference-description">
+        TRAVIXA connects discovery, planning, hospitality, transportation and
+        experiences into one seamless travel ecosystem.
+      </p>
+    </div>
+
+    <div class="difference-layout">
+      <div class="difference-intro">
+        <div class="difference-big-number">04</div>
+        <span class="difference-mini-label">THE TRAVIXA WAY</span>
+        <p>One journey. Multiple possibilities. Everything connected around you.</p>
+
+        <a routerLink="/discover" class="travixa-btn travixa-btn-primary">
+          Discover more
+          <span>↗</span>
+        </a>
+      </div>
+
+      <div class="difference-grid">
+        <a routerLink="/discover" class="difference-card">
+          <div class="difference-card-bg">
+            <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="Discover" />
+          </div>
+          <div class="difference-card-top">
+            <span>01</span>
+            <span>↗</span>
+          </div>
+          <div class="difference-card-content">
+            <h5>Discover</h5>
+            <p>Find destinations and experiences worth exploring.</p>
+          </div>
+        </a>
+
+        <a routerLink="/ai-planner" class="difference-card">
+          <div class="difference-card-bg">
+            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=80" alt="Plan" />
+          </div>
+          <div class="difference-card-top">
+            <span>02</span>
+            <span>↗</span>
+          </div>
+          <div class="difference-card-content">
+            <h5>Plan</h5>
+            <p>Build a journey around your time, interests and needs.</p>
+          </div>
+        </a>
+
+        <a routerLink="/stays" class="difference-card">
+          <div class="difference-card-bg">
+            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Connect" />
+          </div>
+          <div class="difference-card-top">
+            <span>03</span>
+            <span>↗</span>
+          </div>
+          <div class="difference-card-content">
+            <h5>Connect</h5>
+            <p>Bring stays, dining, transport and people together.</p>
+          </div>
+        </a>
+
+        <a routerLink="/booking" class="difference-card">
+          <div class="difference-card-bg">
+            <img src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=600&q=80" alt="Experience" />
+          </div>
+          <div class="difference-card-top">
+            <span>04</span>
+            <span>↗</span>
+          </div>
+          <div class="difference-card-content">
+            <h5>Experience</h5>
+            <p>Focus on the journey while TRAVIXA handles the rest.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     FINAL CTA
+========================================= -->
+<section class="travixa-final-cta">
+  <div class="container">
+    <div class="final-cta-box">
+      <div class="final-cta-bg">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80" alt="Beach" />
+        <div class="final-cta-overlay"></div>
+      </div>
+
+      <div class="final-cta-glow"></div>
+
+      <div class="final-cta-content">
+        <span class="travixa-section-label">YOUR NEXT JOURNEY</span>
+
+        <h2>
+          Don't just visit.
+          <span>Experience.</span>
+        </h2>
+
+        <p>Let TRAVIXA help you discover what comes next.</p>
+
+        <div class="final-cta-actions">
+          <a routerLink="/discover" class="travixa-btn travixa-btn-primary">
+            Start exploring
+            <span>↗</span>
+          </a>
+
+          <a routerLink="/ai-planner" class="final-ai-link">
+            <span>✦</span>
+            Plan my journey with AI
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="final-cta-mark">
+        <span>T</span>
+        <small>TRAVIXA</small>
+      </div>
+    </div>
+  </div>
+</section>

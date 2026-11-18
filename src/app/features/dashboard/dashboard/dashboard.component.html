@@ -1,0 +1,282 @@
+
+<main class="dashboard-page">
+  <div class="dashboard-shell">
+
+    <!-- Dashboard Hero -->
+    <section class="dashboard-hero">
+      <div class="hero-copy">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          TRAVIXA · YOUR SPACE
+        </span>
+
+        <h1>{{ pageTitle }}</h1>
+
+        <p>
+          {{ greeting }}. Here's the latest information available for your
+          account.
+        </p>
+      </div>
+
+      <div class="hero-mark" aria-hidden="true">
+        <span class="orbit orbit-one"></span>
+        <span class="orbit orbit-two"></span>
+        <span class="globe">✧</span>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    @if (loading) {
+    <section class="state-card" aria-live="polite">
+      <span class="loading-spinner"></span>
+      <h2>Loading your dashboard</h2>
+      <p>Getting the latest information from TRAVIXA.</p>
+    </section>
+    } @else if (errorMessage) {
+    <!-- Error State -->
+    <section class="state-card error-state" role="alert">
+      <span class="state-icon">!</span>
+      <h2>Dashboard unavailable</h2>
+      <p>{{ errorMessage }}</p>
+
+      <button
+        class="primary-button"
+        type="button"
+        (click)="retry()">
+        Try again
+      </button>
+    </section>
+    } @else if (data !== null) {
+
+    <!-- Account Scope -->
+    <div class="scope-line">
+      <span class="live-dot"></span>
+      <span>{{ data.scope }}</span>
+    </div>
+
+    <!-- Customer Metrics -->
+    @if (isCustomer) {
+    <section class="metric-grid">
+      <article class="metric-card">
+        <span class="metric-label">Total bookings</span>
+        <strong>{{ data.totalBookings }}</strong>
+        <span class="metric-foot">All your recorded bookings</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Confirmed</span>
+        <strong>{{ data.confirmedBookings }}</strong>
+        <span class="metric-foot">Confirmed reservations</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Completed trips</span>
+        <strong>{{ data.completedBookings }}</strong>
+        <span class="metric-foot">Completed bookings</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Paid in BDT</span>
+        <strong class="amount">
+          {{ formatCurrency(data.paidRevenueBdt) }}
+        </strong>
+        <span class="metric-foot">Successful payments only</span>
+      </article>
+    </section>
+
+    } @else if (isPartner) {
+    <!-- Partner Metrics -->
+    <section class="metric-grid">
+      <article class="metric-card">
+        <span class="metric-label">Hotels</span>
+        <strong>{{ data.totalHotels }}</strong>
+        <span class="metric-foot">Your linked organizations</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Restaurants</span>
+        <strong>{{ data.totalRestaurants }}</strong>
+        <span class="metric-foot">Your linked organizations</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Tour packages</span>
+        <strong>{{ data.totalTourPackages }}</strong>
+        <span class="metric-foot">Your linked organizations</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Pending listings</span>
+        <strong>{{ data.pendingListings }}</strong>
+        <span class="metric-foot">Awaiting review</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Tour guide profiles</span>
+        <strong>{{ data.totalTourGuides }}</strong>
+        <span class="metric-foot">Linked guide profiles</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Transport routes</span>
+        <strong>{{ data.totalTransportRoutes }}</strong>
+        <span class="metric-foot">Your linked organizations</span>
+      </article>
+    </section>
+
+    } @else if (isFinance) {
+    <!-- Finance Metrics -->
+    <section class="metric-grid">
+      <article class="metric-card">
+        <span class="metric-label">Payments</span>
+        <strong>{{ data.totalPayments }}</strong>
+        <span class="metric-foot">Payment records</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Successful</span>
+        <strong>{{ data.successfulPayments }}</strong>
+        <span class="metric-foot">Succeeded payments</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Failed</span>
+        <strong>{{ data.failedPayments }}</strong>
+        <span class="metric-foot">Failed payments</span>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Successful payments · BDT</span>
+        <strong class="amount">
+          {{ formatCurrency(data.paidRevenueBdt) }}
+        </strong>
+        <span class="metric-foot">Paid amount, BDT only</span>
+      </article>
+    </section>
+
+    } @else if (isContentManager) {
+    <!-- Content Manager Metrics -->
+    <section class="metric-grid">
+      <article class="metric-card">
+        <span class="metric-label">Listings pending review</span>
+        <strong>{{ data.pendingListings }}</strong>
+        <span class="metric-foot">Current review queue</span>
+      </article>
+    </section>
+
+    } @else if (isSupport) {
+    <!-- Support Workspace -->
+    <section class="notice-card">
+      <span class="notice-icon">◎</span>
+
+      <div>
+        <h2>Support workspace</h2>
+        <p>
+          Open the support center to access the tools currently
+          available to your account.
+        </p>
+      </div>
+    </section>
+    }
+
+    <!-- Role-based Shortcuts -->
+    <section class="workspace-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">GET THINGS DONE</span>
+          <h2>Your shortcuts</h2>
+        </div>
+
+        <span class="section-caption">
+          Based on your account role
+        </span>
+      </div>
+
+      <div class="action-grid">
+        @for (action of actions; track action.route) {
+        <a class="action-card" [routerLink]="action.route">
+          <span class="action-icon" aria-hidden="true">
+            {{ action.icon }}
+          </span>
+
+          <span class="action-content">
+            <strong>{{ action.label }}</strong>
+            <span>{{ action.description }}</span>
+          </span>
+
+          <span class="action-arrow" aria-hidden="true">↗</span>
+        </a>
+        }
+      </div>
+    </section>
+
+    <!-- Customer Recent Bookings -->
+    @if (isCustomer) {
+    <section class="workspace-section bookings-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">YOUR TRAVEL HISTORY</span>
+          <h2>Recent bookings</h2>
+        </div>
+
+        <a class="text-link" routerLink="/my-bookings">
+          View all <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      @if (data.recentBookings.length > 0) {
+      <div class="booking-list">
+        @for (booking of data.recentBookings; track booking.id) {
+        <article class="booking-row">
+          <div class="booking-symbol" aria-hidden="true">✧</div>
+
+          <div class="booking-main">
+            <strong>{{ booking.referenceNumber }}</strong>
+
+            <span>
+              @if (booking.placedAt) {
+              {{ booking.placedAt | date:'mediumDate' }}
+              } @else {
+              Date unavailable
+              }
+            </span>
+          </div>
+
+          <div class="booking-total">
+            <strong>
+              {{ formatCurrency(booking.totalAmount, booking.currency) }}
+            </strong>
+
+            <span
+              class="status-pill"
+              [class.status-confirmed]="booking.status === 'CONFIRMED'"
+              [class.status-completed]="booking.status === 'COMPLETED'"
+              [class.status-pending]="booking.status === 'PENDING_PAYMENT'"
+              [class.status-cancelled]="booking.status === 'CANCELLED'">
+              {{ bookingStatusLabel(booking.status) }}
+            </span>
+          </div>
+        </article>
+        }
+      </div>
+      } @else {
+      <!-- Empty Booking State -->
+      <div class="empty-state">
+        <span aria-hidden="true">✧</span>
+        <h3>Your next adventure starts here</h3>
+
+        <p>
+          Your real bookings will appear here after you make a
+          reservation.
+        </p>
+
+        <a class="primary-button" routerLink="/discover">
+          Explore destinations
+        </a>
+      </div>
+      }
+    </section>
+    }
+    }
+  </div>
+</main>

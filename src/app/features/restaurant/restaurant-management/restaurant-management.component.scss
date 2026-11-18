@@ -1,0 +1,151 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f5f7f4;
+  color: #173b35;
+}
+
+.restaurant-management-page {
+  width: min(1380px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 42px 0 64px;
+}
+
+.restaurant-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding: 30px 34px;
+  border-radius: 20px;
+  background: linear-gradient(118deg, #153e37 0%, #247a67 100%);
+  color: #fff;
+  box-shadow: 0 18px 44px rgb(21 62 55 / 16%);
+}
+
+.restaurant-page-header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+}
+
+.restaurant-page-header p {
+  max-width: 620px;
+  margin: 0;
+  color: rgb(255 255 255 / 75%);
+}
+
+.restaurant-page-header .btn {
+  flex: 0 0 auto;
+  min-height: 42px;
+  border-color: rgb(255 255 255 / 34%);
+  border-radius: 10px;
+  color: #fff;
+}
+
+.restaurant-management-page > .alert,
+.restaurant-management-page > .card,
+.restaurant-management-page > .table-responsive {
+  border: 1px solid #e0e8e2;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgb(26 59 48 / 5%);
+}
+
+.restaurant-management-page > .card {
+  padding: clamp(20px, 3vw, 32px);
+}
+
+.restaurant-management-page h2 {
+  color: #163c35;
+  font-weight: 720;
+  letter-spacing: -0.025em;
+}
+
+.restaurant-management-page .form-label {
+  margin-bottom: 7px;
+  color: #425d54;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.restaurant-management-page .form-control,
+.restaurant-management-page .form-select {
+  min-height: 44px;
+  border-color: #d8e3dc;
+  border-radius: 9px;
+  color: #173d36;
+  box-shadow: none;
+}
+
+.restaurant-management-page textarea.form-control {
+  min-height: 100px;
+}
+
+.restaurant-management-page .form-control:focus,
+.restaurant-management-page .form-select:focus {
+  border-color: #27816e;
+  box-shadow: 0 0 0 3px rgb(39 129 110 / 13%);
+}
+
+.restaurant-management-page .btn-primary {
+  border-color: #176f5d;
+  border-radius: 9px;
+  background: #176f5d;
+  font-weight: 650;
+}
+
+.restaurant-management-page .btn-outline-secondary,
+.restaurant-management-page .btn-outline-danger {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.restaurant-management-page .table-responsive {
+  overflow-x: auto;
+}
+
+.restaurant-management-page .table {
+  margin: 0;
+  color: #29483f;
+  font-size: 0.9rem;
+}
+
+.restaurant-management-page .table thead th {
+  padding: 15px 16px;
+  border-bottom: 1px solid #dce7e0;
+  background: #f2f7f3;
+  color: #667a71;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.restaurant-management-page .table tbody td {
+  padding: 14px 16px;
+  border-color: #edf1ee;
+  vertical-align: middle;
+}
+
+.listing-status {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #edf1ef;
+  color: #52645d;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.listing-status[data-status='PUBLISHED'] { background: #e4f5ec; color: #1b7651; }
+.listing-status[data-status='PENDING_REVIEW'] { background: #fff4dd; color: #936313; }
+.listing-status[data-status='SUSPENDED'] { background: #fff0ec; color: #a3432e; }
+
+@media (max-width: 720px) {
+  .restaurant-management-page { width: calc(100% - 28px); padding: 24px 0 42px; }
+  .restaurant-page-header { align-items: flex-start; flex-direction: column; padding: 24px; }
+}

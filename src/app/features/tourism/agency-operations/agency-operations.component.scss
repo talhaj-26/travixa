@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f5f7f5;
+  color: #182b27;
+}
+
+.agency-ops-page {
+  max-width: 1320px;
+  padding-block: 2.25rem 4rem !important;
+}
+
+.agency-ops-page > header {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(120deg, #123d35 0%, #1f6253 58%, #6d9c76 100%);
+  box-shadow: 0 18px 44px rgba(22, 62, 52, .14);
+}
+
+.agency-ops-page > header::after {
+  position: absolute;
+  inset: auto -3rem -7.5rem auto;
+  width: 18rem;
+  height: 18rem;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2rem rgba(255, 255, 255, .05), 0 0 0 4rem rgba(255, 255, 255, .035);
+  content: '';
+}
+
+.agency-ops-page > header h1 { position: relative; z-index: 1; font-weight: 750; letter-spacing: -.035em; }
+.agency-ops-page > header p { position: relative; z-index: 1; color: rgba(255,255,255,.78) !important; }
+.agency-ops-page .card { margin-bottom: 1.25rem; border: 1px solid #e4ebe6; border-radius: 18px; box-shadow: 0 8px 24px rgba(30, 57, 48, .045); }
+.agency-ops-page .card-body { padding: clamp(1rem, 2.5vw, 1.5rem); }
+.agency-ops-page h2 { color: #193c33; font-weight: 700; letter-spacing: -.02em; }
+.agency-ops-page .form-label { color: #3c514a; font-size: .86rem; font-weight: 650; }
+.agency-ops-page .form-control, .agency-ops-page .form-select { min-height: 44px; border-color: #dce6df; border-radius: 10px; background-color: #fff; }
+.agency-ops-page .form-control:focus, .agency-ops-page .form-select:focus { border-color: #4c8974; box-shadow: 0 0 0 .2rem rgba(57, 126, 101, .13); }
+.agency-ops-page .btn-primary { border-color: #205e4e; background: #205e4e; }
+.agency-ops-page .btn-primary:hover { border-color: #174b3e; background: #174b3e; }
+.agency-ops-page .table { --bs-table-bg: transparent; }
+.agency-ops-page .table thead th { padding-block: .8rem; color: #60746b; border-bottom-color: #e3ebe5; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+.agency-ops-page .table tbody td { padding-block: .85rem; border-color: #edf1ee; vertical-align: middle; }
+.agency-gallery-card { width: 156px; padding: .55rem; overflow: hidden; border: 1px solid #e2e9e3; border-radius: 14px; background: #fbfcfb; }
+.agency-gallery-card img { width: 100%; height: 96px; border-radius: 9px; background: linear-gradient(135deg, #dfe9e1, #eef2ed); object-fit: cover; }
+.agency-gallery-card small { display: block; margin-top: .4rem; overflow: hidden; color: #61736b; text-overflow: ellipsis; white-space: nowrap; }
+.agency-ops-page .alert { border: 0; border-radius: 12px; }
+
+@media (max-width: 575px) {
+  .agency-ops-page { padding-inline: 1rem; }
+  .agency-ops-page > header { border-radius: 18px; }
+  .agency-gallery-card { width: calc(50% - .5rem); }
+}

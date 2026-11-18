@@ -1,0 +1,1193 @@
+<!-- ═══════════════════════════════════════════════════════
+     TRAVIXA NAVBAR V4 — ULTRA PREMIUM GLASS
+═══════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <!-- Background animated orbs -->
+  <div class="navbar-bg">
+    <div class="navbar-orb navbar-orb-one"></div>
+    <div class="navbar-orb navbar-orb-two"></div>
+    <div class="navbar-orb navbar-orb-three"></div>
+  </div>
+
+  <div class="navbar-inner">
+    <!-- ══════════════════════════════════════════ -->
+    <!-- LOGO — Animated Compass + TRAVIXA           -->
+    <!-- ══════════════════════════════════════════ -->
+    <a class="brand" routerLink="/" aria-label="TRAVIXA Home">
+      <!-- Animated Compass Logo -->
+      <div class="brand-logo">
+        <!-- Rotating outer ring -->
+        <svg class="brand-ring" viewBox="0 0 60 60" aria-hidden="true">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1d4ed8" />
+              <stop offset="50%" stop-color="#60a5fa" />
+              <stop offset="100%" stop-color="#f59e0b" />
+            </linearGradient>
+            <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#1e40af" />
+            </linearGradient>
+          </defs>
+
+          <!-- Dashed outer ring -->
+          <circle
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="url(#ringGrad)"
+            stroke-width="1.5"
+            stroke-dasharray="4 6"
+            class="ring-rotate"
+          />
+
+          <!-- Tick marks -->
+          <g class="ring-ticks">
+            <line
+              x1="30"
+              y1="4"
+              x2="30"
+              y2="8"
+              stroke="url(#ringGrad)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <line
+              x1="30"
+              y1="52"
+              x2="30"
+              y2="56"
+              stroke="url(#ringGrad)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <line
+              x1="4"
+              y1="30"
+              x2="8"
+              y2="30"
+              stroke="url(#ringGrad)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <line
+              x1="52"
+              y1="30"
+              x2="56"
+              y2="30"
+              stroke="url(#ringGrad)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </g>
+
+          <!-- Center circle with T -->
+          <circle cx="30" cy="30" r="17" fill="url(#centerGrad)" />
+          <text
+            x="30"
+            y="38"
+            text-anchor="middle"
+            font-family="Fraunces, serif"
+            font-size="22"
+            font-weight="900"
+            fill="#ffffff"
+            letter-spacing="-1"
+          >
+            T
+          </text>
+
+          <!-- Orbiting plane -->
+          <g class="plane-orbit">
+            <path d="M 30 4 L 28 7 L 30 6 L 32 7 Z" fill="#fbbf24" />
+          </g>
+        </svg>
+
+        <!-- Flight trail -->
+        <svg class="brand-trail" viewBox="0 0 60 60" aria-hidden="true">
+          <path
+            d="M 8 52 Q 30 20 52 8"
+            fill="none"
+            stroke="#fbbf24"
+            stroke-width="1.2"
+            stroke-dasharray="3 5"
+            class="trail-path"
+            opacity="0.5"
+          />
+        </svg>
+      </div>
+
+      <!-- Brand text -->
+      <div class="brand-text">
+        <span class="brand-name">
+          <span class="letter">T</span>
+          <span class="letter">R</span>
+          <span class="letter">A</span>
+          <span class="letter">V</span>
+          <span class="letter">I</span>
+          <span class="letter">X</span>
+          <span class="letter">A</span>
+        </span>
+        <span class="brand-tagline">Travel • Experience</span>
+      </div>
+    </a>
+
+    @if (showBackButton) {
+      <button type="button" class="nav-back-button" (click)="goBack()" aria-label="Go back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        <span>Back</span>
+      </button>
+    }
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- MEGA NAVIGATION                             -->
+    <!-- ══════════════════════════════════════════ -->
+    <ul class="nav-mega">
+      @for (menu of visibleMegaMenus; track menu.id) {
+        <li
+          class="nav-item"
+          [class.active]="activeMegaMenu() === menu.id"
+          (mouseenter)="openMegaMenu(menu.id)"
+          (mouseleave)="closeMegaMenu()"
+        >
+          <button
+            type="button"
+            class="nav-trigger"
+            (click)="toggleMegaMenu(menu.id)"
+            [attr.aria-expanded]="activeMegaMenu() === menu.id"
+          >
+            <span class="nav-trigger-icon">
+              @switch (menu.icon) {
+                @case ("compass") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polygon
+                      points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"
+                    />
+                  </svg>
+                }
+                @case ("utensils") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                    <path d="M7 2v20" />
+                    <path d="M21 15V2v15a3 3 0 0 1-6 0V2" />
+                  </svg>
+                }
+                @case ("wand") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M12.2 11.8L11 13M12.2 6.2L11 5M3 21l9-9"
+                    />
+                  </svg>
+                }
+                @case ("ticket") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"
+                    />
+                    <path d="M13 5v2M13 17v2M13 11v2" />
+                  </svg>
+                }
+                @case ("users") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path
+                      d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                    />
+                  </svg>
+                }
+                @case ("briefcase") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                }
+                @case ("crown") {
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M2 20h20M2 20l2-9 5 4 3-7 3 7 5-4 2 9" />
+                  </svg>
+                }
+              }
+            </span>
+            <span class="nav-trigger-label">{{ menu.label }}</span>
+            <svg
+              class="nav-trigger-chev"
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- RIGHT ACTIONS                               -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nav-actions">
+      @if (isLoggedIn) {
+        <app-live-clock></app-live-clock>
+      }
+
+      <!-- SEARCH -->
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="openSearch()"
+        aria-label="Search"
+        title="Search (Ctrl+K)"
+      >
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </button>
+
+      <!-- AI PLANNER -->
+      <a class="ai-btn" routerLink="/ai-planner">
+        <span class="ai-btn-glow"></span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M12.2 11.8L11 13M12.2 6.2L11 5M3 21l9-9"
+          />
+        </svg>
+        <span class="ai-btn-text">Plan with AI</span>
+      </a>
+
+      <app-theme-toggle></app-theme-toggle>
+
+      <!-- LANGUAGE -->
+      <div class="language-wrapper">
+        <button
+          type="button"
+          class="icon-btn lang-btn"
+          (click)="toggleLanguage()"
+        >
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path
+              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            />
+          </svg>
+          <span class="lang-code">{{ language === 'bn' ? 'বাং' : 'EN' }}</span>
+        </button>
+
+        @if (isLanguageOpen) {
+          <div class="lang-panel">
+            <button
+              type="button"
+              class="lang-row"
+              [class.active]="language === 'en'"
+              (click)="selectLanguage('en')"
+            >
+              <span>🇬🇧</span><span>English</span
+              >@if (language === 'en') { <span class="lang-check">✓</span> }
+            </button>
+            <button type="button" class="lang-row" [class.active]="language === 'bn'" (click)="selectLanguage('bn')">
+              <span>🇧🇩</span><span>বাংলা</span>@if (language === 'bn') { <span class="lang-check">✓</span> }
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- AUTH ACTIONS -->
+      @if (!isLoggedIn) {
+        <a routerLink="/login" class="login-btn" (click)="closeMobileMenu()">
+          Sign in
+        </a>
+
+        <a
+          routerLink="/register"
+          class="signup-btn"
+          (click)="closeMobileMenu()"
+        >
+          Get Started
+        </a>
+      } @else {
+        <a
+          [routerLink]="dashboardRoute"
+          class="login-btn"
+          (click)="closeMobileMenu()"
+        >
+          {{ userDisplayName }}
+        </a>
+
+        <button type="button" class="signup-btn" (click)="logout()">
+          Logout
+        </button>
+      }
+
+      <!-- MOBILE TOGGLE -->
+      <button
+        type="button"
+        class="mobile-toggle"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="mobileMenuOpen"
+        aria-label="Menu"
+      >
+        <span class="mobile-bar" [class.open]="mobileMenuOpen"></span>
+        <span class="mobile-bar" [class.open]="mobileMenuOpen"></span>
+        <span class="mobile-bar" [class.open]="mobileMenuOpen"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MEGA PANEL                                  -->
+  <!-- ══════════════════════════════════════════ -->
+  @for (menu of visibleMegaMenus; track menu.id) {
+    @if (activeMegaMenu() === menu.id) {
+      <div
+        class="mega-panel"
+        (mouseenter)="keepMegaMenuOpen()"
+        (mouseleave)="closeMegaMenu()"
+      >
+        <div class="mega-panel-inner">
+          <div class="mega-head">
+            <div class="mega-head-left">
+              <span class="mega-kicker"
+                >TRAVIXA {{ menu.label | uppercase }}</span
+              >
+              <span class="mega-title">{{ menu.tagline }}</span>
+            </div>
+            <span class="mega-count">
+              {{ visibleItemCount(menu) }} options
+            </span>
+          </div>
+
+          <div class="mega-grid">
+            @for (group of visibleGroups(menu); track group.id) {
+              <div class="mega-col">
+                <div class="mega-col-head">
+                  <span class="mega-col-kicker">{{ group.kicker }}</span>
+                  <span class="mega-col-title">{{ group.title }}</span>
+                </div>
+
+                <div class="mega-items">
+                  @for (item of group.items; track item.route + item.label) {
+                    <a
+                      class="mega-item"
+                      [routerLink]="item.route"
+                      (click)="activeMegaMenu.set(null)"
+                    >
+                      <span class="mega-icon">
+                        @switch (item.icon) {
+                          @case ("sparkle") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M12 3l1.9 5.8L20 10.5l-5 3.8 1.9 5.8L12 16.4l-4.9 3.7 1.9-5.8-5-3.8 5.9-1.7z"
+                              />
+                            </svg>
+                          }
+                          @case ("pin") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                              />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                          }
+                          @case ("package") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                              />
+                              <polyline
+                                points="3.27 6.96 12 12.01 20.73 6.96"
+                              />
+                              <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg>
+                          }
+                          @case ("sun") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <circle cx="12" cy="12" r="4" />
+                              <line x1="12" y1="2" x2="12" y2="4" />
+                              <line x1="12" y1="20" x2="12" y2="22" />
+                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                              <line
+                                x1="18.36"
+                                y1="18.36"
+                                x2="19.78"
+                                y2="19.78"
+                              />
+                              <line x1="2" y1="12" x2="4" y2="12" />
+                              <line x1="20" y1="12" x2="22" y2="12" />
+                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                            </svg>
+                          }
+                          @case ("bed") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"
+                              />
+                              <path
+                                d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"
+                              />
+                              <path d="M2 18h20" />
+                            </svg>
+                          }
+                          @case ("plane") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"
+                              />
+                            </svg>
+                          }
+                          @case ("bus") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <rect x="3" y="4" width="18" height="14" rx="2" />
+                              <path d="M3 10h18" />
+                              <circle cx="7" cy="20" r="2" />
+                              <circle cx="17" cy="20" r="2" />
+                            </svg>
+                          }
+                          @case ("map") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <polygon
+                                points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+                              />
+                              <line x1="8" y1="2" x2="8" y2="18" />
+                              <line x1="16" y1="6" x2="16" y2="22" />
+                            </svg>
+                          }
+                          @case ("utensils") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                              />
+                              <path d="M7 2v20" />
+                              <path d="M21 15V2v15a3 3 0 0 1-6 0V2" />
+                            </svg>
+                          }
+                          @case ("coffee") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                              <path
+                                d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                              />
+                              <line x1="6" y1="1" x2="6" y2="4" />
+                              <line x1="10" y1="1" x2="10" y2="4" />
+                              <line x1="14" y1="1" x2="14" y2="4" />
+                            </svg>
+                          }
+                          @case ("bowl") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M4 12h16a8 8 0 0 1-16 0z" />
+                              <path d="M2 20h20" />
+                            </svg>
+                          }
+                          @case ("user") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                              />
+                              <circle cx="12" cy="7" r="4" />
+                            </svg>
+                          }
+                          @case ("building") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <rect x="4" y="2" width="16" height="20" rx="2" />
+                              <path
+                                d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"
+                              />
+                            </svg>
+                          }
+                          @case ("star") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                              />
+                            </svg>
+                          }
+                          @case ("wand") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M12.2 11.8L11 13M12.2 6.2L11 5M3 21l9-9"
+                              />
+                            </svg>
+                          }
+                          @case ("heart") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                              />
+                            </svg>
+                          }
+                          @case ("compare") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <polyline points="17 1 21 5 17 9" />
+                              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                              <polyline points="7 23 3 19 7 15" />
+                              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                            </svg>
+                          }
+                          @case ("search") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <circle cx="11" cy="11" r="8" />
+                              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                          }
+                          @case ("cloud") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"
+                              />
+                            </svg>
+                          }
+                          @case ("tag") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+                              />
+                              <line x1="7" y1="7" x2="7.01" y2="7" />
+                            </svg>
+                          }
+                          @case ("ticket") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"
+                              />
+                              <path d="M13 5v2M13 17v2M13 11v2" />
+                            </svg>
+                          }
+                          @case ("history") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M3 3v5h5" />
+                              <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+                              <path d="M12 7v5l4 2" />
+                            </svg>
+                          }
+                          @case ("wallet") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M20 12V8H6a2 2 0 0 1 0-4h12v4" />
+                              <path d="M4 6v12a2 2 0 0 0 2 2h14v-4" />
+                              <path d="M18 12a2 2 0 0 0 0 4h4v-4z" />
+                            </svg>
+                          }
+                          @case ("calendar") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <rect x="3" y="4" width="18" height="18" rx="2" />
+                              <line x1="16" y1="2" x2="16" y2="6" />
+                              <line x1="8" y1="2" x2="8" y2="6" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                          }
+                          @case ("card") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <rect x="1" y="4" width="22" height="16" rx="2" />
+                              <line x1="1" y1="10" x2="23" y2="10" />
+                            </svg>
+                          }
+                          @case ("shield") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                              />
+                            </svg>
+                          }
+                          @case ("bell") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
+                              />
+                              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                            </svg>
+                          }
+                          @case ("help") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                              <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
+                          }
+                          @case ("message") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                              />
+                            </svg>
+                          }
+                          @case ("handshake") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M11 17l-4-4-2 2 4 4z" />
+                              <path d="M13 7l4 4 2-2-4-4z" />
+                              <path d="M3 12h4M17 12h4" />
+                            </svg>
+                          }
+                          @case ("chart") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <line x1="18" y1="20" x2="18" y2="10" />
+                              <line x1="12" y1="20" x2="12" y2="4" />
+                              <line x1="6" y1="20" x2="6" y2="14" />
+                            </svg>
+                          }
+                          @case ("dashboard") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <rect x="3" y="3" width="7" height="9" />
+                              <rect x="14" y="3" width="7" height="5" />
+                              <rect x="14" y="12" width="7" height="9" />
+                              <rect x="3" y="16" width="7" height="5" />
+                            </svg>
+                          }
+                          @case ("users") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                              />
+                              <circle cx="9" cy="7" r="4" />
+                              <path
+                                d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                              />
+                            </svg>
+                          }
+                          @case ("book") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                              <path
+                                d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                              />
+                            </svg>
+                          }
+                          @case ("edit") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                              />
+                              <path
+                                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                              />
+                            </svg>
+                          }
+                          @case ("settings") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <circle cx="12" cy="12" r="3" />
+                              <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                              />
+                            </svg>
+                          }
+                          @case ("crown") {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M2 20h20M2 20l2-9 5 4 3-7 3 7 5-4 2 9" />
+                            </svg>
+                          }
+                          @default {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                            </svg>
+                          }
+                        }
+                      </span>
+
+                      <span class="mega-body">
+                        <span class="mega-label">
+                          {{ item.label }}
+                          @if (item.badge) {
+                            <span class="mega-badge">{{ item.badge }}</span>
+                          }
+                        </span>
+                        <span class="mega-desc">{{ item.description }}</span>
+                      </span>
+
+                      <svg
+                        class="mega-arrow"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </a>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</nav>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SEARCH OVERLAY                                  -->
+<!-- ═══════════════════════════════════════════════ -->
+@if (isSearchOpen) {
+  <div class="search-overlay" (click)="closeSearch()">
+    <div class="search-panel" (click)="$event.stopPropagation()">
+      <div class="search-head">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search destinations, tours, guides..."
+          [(ngModel)]="searchQuery"
+          (keydown.enter)="submitSearch()"
+          autofocus
+        />
+        <span class="search-hint">ESC</span>
+      </div>
+
+      <div class="search-body">
+        <div class="search-label">QUICK SUGGESTIONS</div>
+        <div class="search-chips">
+          <button
+            type="button"
+            class="search-chip"
+            (click)="searchQuery = 'Cox\'s Bazar'; submitSearch()"
+          >
+            Cox's Bazar
+          </button>
+          <button
+            type="button"
+            class="search-chip"
+            (click)="searchQuery = 'Sylhet'; submitSearch()"
+          >
+            Sylhet
+          </button>
+          <button
+            type="button"
+            class="search-chip"
+            (click)="searchQuery = 'Bandarban'; submitSearch()"
+          >
+            Bandarban
+          </button>
+          <button
+            type="button"
+            class="search-chip"
+            (click)="searchQuery = 'Saint Martin'; submitSearch()"
+          >
+            Saint Martin
+          </button>
+          <button
+            type="button"
+            class="search-chip"
+            (click)="searchQuery = 'Sundarbans'; submitSearch()"
+          >
+            Sundarbans
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- MOBILE DRAWER                                   -->
+<!-- ═══════════════════════════════════════════════ -->
+@if (mobileMenuOpen) {
+  <div class="mobile-backdrop" (click)="closeMobileMenu()"></div>
+
+  <aside class="mobile-drawer">
+    <div class="mobile-head">
+      <span class="mobile-brand-mark">T</span>
+      <span class="mobile-title">TRAVIXA</span>
+      <button
+        type="button"
+        class="mobile-close"
+        (click)="closeMobileMenu()"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="mobile-body">
+      @for (menu of visibleMegaMenus; track menu.id) {
+        <div class="mobile-section">
+          <div class="mobile-section-title">{{ menu.label }}</div>
+          <div class="mobile-items">
+            @for (group of visibleGroups(menu); track group.id) {
+              @for (item of group.items; track item.route + item.label) {
+                <a
+                  [routerLink]="item.route"
+                  class="mobile-item"
+                  (click)="closeMobileMenu()"
+                >
+                  <span>{{ item.label }}</span>
+                  @if (item.badge) {
+                    <span class="mobile-badge">{{ item.badge }}</span>
+                  }
+                </a>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="mobile-foot">
+      @if (!isLoggedIn) {
+        <a routerLink="/login" class="login-btn"> Sign in </a>
+
+        <a routerLink="/register" class="signup-btn"> Get Started </a>
+      } @else {
+        <a [routerLink]="dashboardRoute" class="login-btn">
+          {{ userDisplayName }}
+        </a>
+
+        <button type="button" class="signup-btn" (click)="logout()">
+          Logout
+        </button>
+      }
+    </div>
+  </aside>
+}

@@ -1,0 +1,387 @@
+<section class="destinations-page">
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO with slideshow                             -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="dest-hero">
+
+    <!-- Background slideshow -->
+    <div class="dest-hero-bg">
+      @for (slide of heroSlides; track slide.name; let i = $index) {
+        <div
+          class="dest-hero-slide"
+          [class.active]="currentSlide() === i"
+          [style.background-image]="slide.image ? 'url(' + slide.image + ')' : null"
+        ></div>
+      }
+      <div class="dest-hero-overlay"></div>
+    </div>
+
+    <!-- Orbs -->
+    <div class="dest-hero-orb dest-hero-orb-one"></div>
+    <div class="dest-hero-orb dest-hero-orb-two"></div>
+
+    <div class="container dest-hero-container">
+      <div class="dest-hero-content">
+
+        <div class="dest-hero-badge">
+          <span class="badge-dot"></span>
+          <span>TRAVIXA DESTINATIONS</span>
+        </div>
+
+        <h1 class="dest-hero-title">
+          Find your next
+          <span>beautiful escape.</span>
+        </h1>
+
+        <!-- Current slide info -->
+        @if (currentHero; as hero) {
+        <div class="dest-hero-current">
+          <span class="current-region">{{ hero.region }}</span>
+          <span class="current-sep">•</span>
+          <span class="current-name">{{ hero.name }}</span>
+        </div>
+
+        <p class="dest-hero-desc">
+          {{ hero.tagline }}
+        </p>
+        } @else {
+          <p class="dest-hero-desc">Discover published destinations and travel information from TRAVIXA.</p>
+        }
+
+        <!-- Search bar -->
+        <div class="dest-search">
+          <span class="dest-search-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search destinations, regions, experiences..."
+          />
+
+          @if (searchTerm) {
+            <button
+              type="button"
+              class="dest-search-clear"
+              (click)="searchTerm = ''"
+              aria-label="Clear"
+            >×</button>
+          }
+        </div>
+
+      </div>
+
+      <!-- Slide indicators -->
+      <div class="dest-hero-dots">
+        @for (slide of heroSlides; track slide.name; let i = $index) {
+          <button
+            type="button"
+            class="dest-hero-dot"
+            [class.active]="currentSlide() === i"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          >
+            <span class="dot-fill"></span>
+          </button>
+        }
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FILTER BAR                                      -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="dest-filter-section">
+    <div class="container">
+
+      <div class="dest-filter-header">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            EXPLORE BANGLADESH
+          </span>
+          <h2 class="section-title">
+            Where will you
+            <em>go next?</em>
+          </h2>
+        </div>
+
+        <div class="dest-filter-meta">
+          <span class="result-count">
+            <strong>{{ filteredDestinations.length }}</strong>
+            <span>destinations</span>
+          </span>
+
+          <div class="sort-dropdown">
+            <label for="sortBy" class="sort-label">Sort by</label>
+            <select
+              id="sortBy"
+              [(ngModel)]="sortBy"
+              class="sort-select"
+            >
+              <option value="featured">Featured first</option>
+              <option value="name">Name (A-Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dest-category-list">
+        @for (category of categories; track category.value) {
+          <button
+            type="button"
+            class="dest-category-pill"
+            [class.active]="selectedCategory === category.value"
+            (click)="selectCategory(category.value)"
+          >
+            <span class="pill-icon">{{ category.icon }}</span>
+            <span class="pill-label">{{ category.label }}</span>
+            <span class="pill-count">{{ categoryCounts[category.value] }}</span>
+          </button>
+        }
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- DESTINATIONS GRID                               -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="dest-grid-section">
+    <div class="container">
+
+      @if (loadingDestinations) {
+        <div class="dest-empty" aria-live="polite"><h3>Loading published destinations…</h3></div>
+      } @else if (destinationLoadError) {
+        <div class="dest-empty" role="alert"><h3>Destinations unavailable</h3><p>{{ destinationLoadError }}</p><button type="button" class="dest-reset-btn" (click)="loadDestinations()">Try again</button></div>
+      } @else if (filteredDestinations.length > 0) {
+        <div class="dest-grid">
+          @for (destination of filteredDestinations; track destination.id; let i = $index) {
+            <article
+              class="dest-card"
+              [class.dest-card-featured]="destination.featured"
+              [style.animation-delay.ms]="i * 60"
+              (click)="exploreDestination(destination)"
+            >
+              <div class="dest-card-image">
+                <img
+                  [src]="destination.image"
+                  [alt]="destination.name"
+                  loading="lazy"
+                  (error)="hideBrokenImage($event)"
+                />
+
+                <div class="dest-card-overlay"></div>
+
+                <!-- Top row: badges -->
+                <div class="dest-card-top">
+                  @if (destination.badge) {
+                    <span class="dest-badge">{{ destination.badge }}</span>
+                  }
+                </div>
+
+                <!-- Bottom content -->
+                <div class="dest-card-bottom">
+                  <div class="dest-card-location">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>{{ destination.region }}</span>
+                  </div>
+
+                  <h3>{{ destination.name }}</h3>
+
+                  <p>{{ destination.description }}</p>
+
+                  <div class="dest-card-meta">
+                    <div class="dest-meta-item">
+                      <span class="meta-label">Country</span>
+                      <span class="meta-value">{{ destination.country }}</span>
+                    </div>
+                    <div class="dest-meta-item">
+                      <span class="meta-label">Category</span>
+                      <span class="meta-value">{{ destination.categoryLabel }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hover CTA -->
+              <div class="dest-card-cta">
+                <span>Explore destination</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="dest-empty">
+          <div class="dest-empty-icon">🌍</div>
+          <h3>No destinations found</h3>
+          <p>Try another destination or choose a different category.</p>
+          <button type="button" class="dest-reset-btn" (click)="clearFilters()">
+            <span>Reset filters</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+          </button>
+        </div>
+      }
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FEATURED SPOTLIGHT                              -->
+  <!-- ═══════════════════════════════════════════════ -->
+  @if (selectedCategory === 'ALL' && !searchTerm && featuredDestinations.length) {
+    <section class="dest-featured-section">
+      <div class="container">
+        <div class="dest-featured-layout">
+
+          <div class="dest-featured-copy">
+            <span class="section-kicker">
+              <span class="eyebrow-line"></span>
+              TRAVIXA CURATED
+            </span>
+
+            <h2 class="dest-featured-title">
+              Places that
+              <em>stay with you.</em>
+            </h2>
+
+            <p class="dest-featured-desc">
+              Our hand-picked destinations are chosen for travelers looking
+              for memorable experiences, beautiful landscapes and authentic
+              local moments.
+            </p>
+
+            <div class="dest-featured-stats">
+              <div class="featured-stat">
+                <strong>{{ destinations.length }}</strong>
+                <span>Destinations</span>
+              </div>
+              <div class="featured-stat">
+                <strong>{{ featuredDestinations.length }}</strong>
+                <span>Featured places</span>
+              </div>
+              <div class="featured-stat">
+                <strong>{{ countryCount }}</strong>
+                <span>Countries</span>
+              </div>
+            </div>
+
+            <button type="button" class="dest-planner-btn" (click)="openPlanner()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M12.2 11.8L11 13M12.2 6.2L11 5M3 21l9-9"/>
+              </svg>
+              <span>Plan my trip with AI</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="dest-featured-grid">
+            @for (destination of featuredDestinations.slice(0, 4); track destination.id; let i = $index) {
+              <div
+                class="dest-featured-card"
+                [style.animation-delay.ms]="i * 100"
+                (click)="viewHotels(destination)"
+              >
+                <img [src]="destination.image" [alt]="destination.name" />
+
+                <div class="featured-mini-overlay"></div>
+
+                <span class="featured-mini-badge">{{ destination.categoryLabel }}</span>
+
+                <div class="featured-mini-content">
+                  <h4>{{ destination.name }}</h4>
+                  <span class="featured-mini-link">
+                    Explore stays
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FINAL CTA                                       -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="dest-cta-section">
+    <div class="container">
+      <div class="dest-cta">
+
+        <div class="dest-cta-bg">
+          <img
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=85"
+            alt=""
+          />
+          <div class="dest-cta-overlay"></div>
+        </div>
+
+        <div class="dest-cta-glow"></div>
+
+        <div class="dest-cta-content">
+          <span class="dest-cta-kicker">READY FOR YOUR NEXT JOURNEY?</span>
+
+          <h2 class="dest-cta-title">
+            Your next story
+            <em>starts here.</em>
+          </h2>
+
+          <p class="dest-cta-desc">
+            Let TRAVIXA help you discover the right destination, stay and
+            experience.
+          </p>
+
+          <div class="dest-cta-actions">
+            <button type="button" class="dest-cta-btn" (click)="openPlanner()">
+              <span>Build my trip</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+
+            <button type="button" class="dest-cta-ghost" (click)="goBack()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+              <span>Back to Discover</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="dest-cta-mark">
+          <span>✈</span>
+          <small>TRAVIXA</small>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</section>

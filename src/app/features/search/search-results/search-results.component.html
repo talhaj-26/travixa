@@ -1,0 +1,334 @@
+<div class="search-results-page">
+  <div class="search-shell">
+    <!-- ═══════════════ NAVBAR ═══════════════ -->
+    <nav class="search-nav">
+      <a class="search-brand" (click)="goToHome()">
+        <span class="brand-orb">⌕</span>
+        <span>TRAVIXA</span>
+      </a>
+
+      <div class="nav-route">
+        <a (click)="goToDiscover()">Discover</a>
+        <a (click)="goToDestinations()">Destinations</a>
+        <a (click)="goToTours()">Tours</a>
+        <a (click)="goToStays()">Stays</a>
+        <a (click)="goToRestaurants()">Dining</a>
+      </div>
+
+      <div class="nav-state">
+        <span class="nav-state-dot"></span> SEARCH ONLINE
+      </div>
+    </nav>
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="search-hero">
+      <div class="hero-blob"></div>
+
+      <div class="hero-content">
+        <div class="eyebrow">TRAVIXA UNIVERSAL SEARCH</div>
+
+        <h1>
+          Find your next
+          <span class="hero-accent">perfect experience.</span>
+        </h1>
+
+        <p>
+          Search destinations, hotels, tour packages, restaurants and local
+          guides from one intelligent travel discovery space.
+        </p>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            class="search-input"
+            type="search"
+            placeholder="Search destination, hotel, restaurant or experience..."
+            [(ngModel)]="searchTerm"
+            (keydown.enter)="submitSearch()"
+          />
+          @if (searchTerm) {
+            <button
+              type="button"
+              class="clear-search"
+              (click)="searchTerm = ''"
+            >
+              ×
+            </button>
+          }
+          <button class="search-button" (click)="submitSearch()">
+            Search <span>→</span>
+          </button>
+        </div>
+
+        <div class="search-tags">
+          <button class="search-tag" (click)="quickSearch('Cox\'s Bazar')">
+            🏖 Cox's Bazar
+          </button>
+          <button class="search-tag" (click)="quickSearch('Sajek Valley')">
+            ⛰ Sajek Valley
+          </button>
+          <button class="search-tag" (click)="quickSearch('Dhaka Hotels')">
+            🏨 Dhaka Hotels
+          </button>
+          <button class="search-tag" (click)="quickSearch('Restaurants')">
+            🍽 Restaurants
+          </button>
+          <button class="search-tag" (click)="quickSearch('Bandarban')">
+            🌿 Bandarban
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ TOOLBAR ═══════════════ -->
+    <div class="result-toolbar">
+      <div class="result-count">
+        <strong>{{ filteredResults.length }} results</strong>
+        <span> · for "{{ searchTerm || "All" }}"</span>
+      </div>
+
+      <div class="toolbar-actions">
+        <div class="sort-wrap">
+          <span class="sort-label">Sort:</span>
+          <select class="sort-select" [(ngModel)]="sortBy">
+            @for (opt of sortOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        @if (activeFilterCount > 0) {
+          <button class="toolbar-button" (click)="clearFilters()">
+            ✕ Clear ({{ activeFilterCount }})
+          </button>
+        }
+
+        <button class="toolbar-button" (click)="goToCompare()">
+          ⇄ Compare
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ LAYOUT ═══════════════ -->
+    <div class="results-layout">
+      <!-- ─── FILTER PANEL ─── -->
+      <aside class="filter-panel">
+        <div class="filter-head">
+          <span class="filter-title">Refine Search</span>
+          @if (activeFilterCount > 0) {
+            <span class="filter-badge">{{ activeFilterCount }}</span>
+          }
+        </div>
+
+        <div class="filter-group">
+          <strong class="filter-group-title">Category</strong>
+
+          @for (f of categoryFilters; track f.value) {
+            <label class="filter-item">
+              <span class="filter-item-label">
+                {{ f.icon }} {{ f.label }}
+                <small class="filter-count">{{ f.count }}</small>
+              </span>
+              <input
+                type="checkbox"
+                [checked]="f.active"
+                (change)="toggleCategory(f)"
+              />
+            </label>
+          }
+        </div>
+
+        <div class="filter-group">
+          <strong class="filter-group-title">Rating</strong>
+
+          @for (r of ratingFilters; track r.value) {
+            <label class="filter-item">
+              <span class="filter-item-label">{{ r.label }}</span>
+              <input
+                type="checkbox"
+                [checked]="r.active"
+                (change)="toggleRating(r)"
+              />
+            </label>
+          }
+        </div>
+
+        <div class="filter-group">
+          <strong class="filter-group-title">Price Range</strong>
+
+          @for (p of priceFilters; track p.key) {
+            <label class="filter-item">
+              <span class="filter-item-label">{{ p.label }}</span>
+              <input
+                type="checkbox"
+                [checked]="p.active"
+                (change)="togglePrice(p)"
+              />
+            </label>
+          }
+        </div>
+
+        <div class="filter-group">
+          <strong class="filter-group-title">Experience</strong>
+
+          @for (e of experienceFilters; track e.value) {
+            <label class="filter-item">
+              <span class="filter-item-label">{{ e.value }}</span>
+              <input
+                type="checkbox"
+                [checked]="e.active"
+                (change)="toggleExperience(e)"
+              />
+            </label>
+          }
+        </div>
+
+        <button class="filter-reset" (click)="clearFilters()">
+          ↻ Reset Filters
+        </button>
+      </aside>
+
+      <!-- ─── RESULTS ─── -->
+      <main class="results-list">
+        @if (loading) {
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton-result">
+              <div class="skeleton-image"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line skeleton-line--sm"></div>
+                <div class="skeleton-line skeleton-line--lg"></div>
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line skeleton-line--md"></div>
+              </div>
+            </div>
+          }
+        } @else if (loadError) {
+          <div class="empty-state" role="alert"><div class="empty-icon">!</div><h3>Listings unavailable</h3><p>{{ loadError }}</p></div>
+        } @else if (filteredResults.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No results found</h3>
+            <p>Try adjusting your search or filters to discover more options.</p>
+            <button class="btn-primary" (click)="clearFilters()">
+              Reset Filters
+            </button>
+          </div>
+        } @else {
+          @for (r of pagedResults; track r.type + '-' + r.id; let i = $index) {
+            <article
+              class="result-card"
+              [attr.data-type]="getTypeAccent(r.type)"
+              [style.animation-delay.ms]="i * 70"
+            >
+              <div class="result-image" (click)="openResult(r)">
+                @if (r.image) {
+                <img [src]="r.image" [alt]="r.name" loading="lazy" />
+                } @else {
+                  <div class="result-image-placeholder" role="img" [attr.aria-label]="r.name + ' photo unavailable'">{{ r.typeIcon }}</div>
+                }
+                <div class="result-image-overlay"></div>
+
+                <span class="result-type">
+                  {{ r.typeIcon }} {{ r.typeLabel }}
+                </span>
+
+                @if (r.rating > 0) { <span class="result-rating">⭐ {{ r.rating }}</span> }
+              </div>
+
+              <div class="result-info">
+                <div class="result-location">
+                  📍 {{ r.location }} · {{ r.area }}
+                </div>
+
+                <h3 (click)="openResult(r)">{{ r.name }}</h3>
+
+                <p class="result-description">{{ r.description }}</p>
+
+                <div class="result-meta">
+                  @if (r.rating > 0 && r.reviews > 0) { <span class="meta-chip meta-chip--rating">⭐ {{ r.rating }} · {{ r.reviews }} reviews</span> }
+                  @for (tag of r.tags; track tag) {
+                    <span class="meta-chip">{{ tag }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="result-side">
+                <button
+                  type="button"
+                  class="wishlist"
+                  [class.wishlist--active]="isWishlisted(r.id)"
+                  (click)="toggleWishlist(r, $event)"
+                  [attr.aria-label]="
+                    isWishlisted(r.id)
+                      ? 'Remove from wishlist'
+                      : 'Add to wishlist'
+                  "
+                >
+                  {{ isWishlisted(r.id) ? "♥" : "♡" }}
+                </button>
+
+                <div class="price-block">
+                  <div class="price-label">{{ r.priceLabel }}</div>
+                  @if (r.price > 0) { <div class="price">{{ formatPrice(r.price) }}</div> } @else { <div class="price">See details</div> }
+                  <div class="price-unit">{{ r.priceUnit }}</div>
+                </div>
+
+                <button
+                  class="result-action"
+                  (click)="openResult(r)"
+                >
+                  {{ r.actionLabel }} <span>→</span>
+                </button>
+              </div>
+            </article>
+          }
+
+          <div class="load-more">
+            <button class="load-more-btn" (click)="previousPage()" [disabled]="currentPage === 0">Previous</button>
+            <span>Page {{ currentPage + 1 }} of {{ pageCount }}</span>
+            <button class="load-more-btn" (click)="nextPage()" [disabled]="currentPage + 1 >= pageCount">Next</button>
+          </div>
+        }
+      </main>
+    </div>
+
+    <!-- ═══════════════ CATEGORY DISCOVERY ═══════════════ -->
+    <section class="category-strip">
+      <a class="category-card" (click)="goToStays()" data-accent="blue">
+        <div class="category-icon">🏨</div>
+        <div class="category-body">
+          <strong>Hotels &amp; Stays</strong>
+          <span>Find your perfect stay</span>
+        </div>
+        <span class="category-arrow">→</span>
+      </a>
+
+      <a class="category-card" (click)="goToTours()" data-accent="green">
+        <div class="category-icon">🎒</div>
+        <div class="category-body">
+          <strong>Tour Packages</strong>
+          <span>Ready-made adventures</span>
+        </div>
+        <span class="category-arrow">→</span>
+      </a>
+
+      <a class="category-card" (click)="goToRestaurants()" data-accent="orange">
+        <div class="category-icon">🍽️</div>
+        <div class="category-body">
+          <strong>Restaurants</strong>
+          <span>Discover local dining</span>
+        </div>
+        <span class="category-arrow">→</span>
+      </a>
+
+      <a class="category-card" (click)="goToGuides()" data-accent="purple">
+        <div class="category-icon">🧭</div>
+        <div class="category-body">
+          <strong>Tour Guides</strong>
+          <span>Meet local experts</span>
+        </div>
+        <span class="category-arrow">→</span>
+      </a>
+    </section>
+  </div>
+</div>

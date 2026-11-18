@@ -1,0 +1,605 @@
+<main class="users-page">
+  <!-- Page heading -->
+  <section class="users-hero">
+    <div class="hero-copy">
+      <span class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        TRAVIXA · ADMINISTRATION
+      </span>
+
+      <h1>People <span>&</span><br />platform access.</h1>
+
+      <p>
+        Manage user accounts, review permissions, and maintain a secure
+        tourism platform.
+      </p>
+
+      <div class="hero-meta">
+        <span><span class="live-dot"></span> User directory</span>
+        <span class="meta-divider"></span>
+        <span>Identity management</span>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="create-button"
+      (click)="openCreate()"
+      [disabled]="isLoading">
+      <span class="create-icon">+</span>
+      Create account
+      <span class="button-arrow">↗</span>
+    </button>
+  </section>
+
+  <!-- Notifications -->
+  <div *ngIf="errorMessage" class="notice notice--error" role="alert">
+    <span class="notice-icon">!</span>
+    <span>{{ errorMessage }}</span>
+    <button type="button" (click)="errorMessage = ''"
+      aria-label="Dismiss error">
+      ×
+    </button>
+  </div>
+
+  <div *ngIf="successMessage" class="notice notice--success" role="status">
+    <span class="notice-icon">✓</span>
+    <span>{{ successMessage }}</span>
+    <button
+      type="button"
+      (click)="successMessage = ''"
+      aria-label="Dismiss notification">
+      ×
+    </button>
+  </div>
+
+  <!-- Statistics -->
+  <section class="metrics" aria-label="User statistics">
+    <article class="metric-card metric-card--primary">
+      <div class="metric-top">
+        <span class="metric-label">TOTAL ACCOUNTS</span>
+        <span class="metric-symbol">◎</span>
+      </div>
+      <strong class="metric-value">{{ totalUsers }}</strong>
+      <span class="metric-foot">Accounts in directory</span>
+    </article>
+
+    <article class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">ENABLED ACCOUNTS</span>
+        <span class="metric-symbol metric-symbol--green">✓</span>
+      </div>
+      <strong class="metric-value">{{ activeUsers }}</strong>
+      <span class="metric-foot">{{ inactiveUsers }} disabled accounts</span>
+    </article>
+
+    <article class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">ADMINISTRATORS</span>
+        <span class="metric-symbol metric-symbol--gold">◇</span>
+      </div>
+      <strong class="metric-value">{{ administratorUsers }}</strong>
+      <span class="metric-foot">Admin and Super Admin</span>
+    </article>
+
+    <article class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">PARTNER ACCOUNTS</span>
+        <span class="metric-symbol metric-symbol--purple">⌘</span>
+      </div>
+      <strong class="metric-value">{{ partnerUsers }}</strong>
+      <span class="metric-foot">Tourism professionals</span>
+    </article>
+  </section>
+
+  <!-- Directory -->
+  <section class="directory-card">
+    <header class="directory-header">
+      <div class="directory-heading">
+        <span class="eyebrow">ACCOUNT DIRECTORY</span>
+        <h2>All platform users</h2>
+        <p>Search accounts and review assigned access roles.</p>
+      </div>
+
+      <span class="result-count">
+        <span class="result-count__dot"></span>
+        {{ filteredUsers.length }} results
+      </span>
+    </header>
+
+    <!-- Filters -->
+    <div class="filters">
+      <label class="search-field">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input
+          type="search"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Search username, name or email..."
+          aria-label="Search users" />
+        <button
+          *ngIf="searchTerm"
+          type="button"
+          class="clear-search"
+          (click)="clearFilters()"
+          aria-label="Clear search">
+          ×
+        </button>
+      </label>
+
+      <label class="filter-select">
+        <span>Status</span>
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange()"
+          aria-label="Filter by status">
+          <option value="ALL">All accounts</option>
+          <option value="ACTIVE">Enabled</option>
+          <option value="INACTIVE">Disabled</option>
+        </select>
+      </label>
+
+      <button
+        type="button"
+        class="refresh-button"
+        (click)="loadUsers()"
+        [disabled]="isLoading">
+        <span [class.refreshing]="isLoading">↻</span>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div
+      *ngIf="isLoading && users.length === 0; else directoryContent"
+      class="loading-state"
+      role="status"
+      aria-live="polite">
+      <span class="spinner"></span>
+      <strong>Loading directory</strong>
+      <p>Fetching account data from TRAVIXA...</p>
+    </div>
+
+    <ng-template #directoryContent>
+      <div class="table-scroll">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th scope="col">USER</th>
+              <th scope="col">ASSIGNED ROLES</th>
+              <th scope="col">STATUS</th>
+              <th scope="col">LAST UPDATED</th>
+              <th scope="col" class="actions-heading">ACTIONS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="filteredUsers.length === 0">
+              <td colspan="5">
+                <div class="empty-state">
+                  <span class="empty-icon">⌕</span>
+                  <h3>No accounts found</h3>
+                  <p>Try a different search or status filter.</p>
+                  <button
+                    type="button"
+                    class="text-button"
+                    (click)="clearFilters()">
+                    Clear filters
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngFor="let user of filteredUsers" class="user-row">
+              <td>
+                <div class="user-identity">
+                  <div class="avatar">{{ initials(user) }}</div>
+                  <div class="identity-copy">
+                    <strong>{{ fullName(user) }}</strong>
+                    <span class="username">&#64;{{ user.username }}</span>
+                    <span class="user-email">{{ user.email }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="role-list">
+                  <span
+                    *ngFor="let role of user.roles"
+                    class="role-pill"
+                    [class.role-pill--admin]="role === 'ADMIN'"
+                    [class.role-pill--super]="role === 'SUPER_ADMIN'">
+                    {{ roleLabel(role) }}
+                  </span>
+                  <span
+                    *ngIf="!user.roles || user.roles.length === 0"
+                    class="role-pill">
+                    No roles
+                  </span>
+                </div>
+              </td>
+
+              <td>
+                <div class="status-cell">
+                  <span
+                    class="status-pill"
+                    [class.status-pill--active]="user.enabled"
+                    [class.status-pill--inactive]="!user.enabled">
+                    <span class="status-dot"></span>
+                    {{ user.enabled ? 'Enabled' : 'Disabled' }}
+                  </span>
+
+                  <button
+                    *ngIf="canManage(user)"
+                    type="button"
+                    class="text-button status-action"
+                    (click)="toggleStatus(user)"
+                    [disabled]="isLoading">
+                    {{ user.enabled ? 'Disable' : 'Enable' }}
+                  </button>
+                </div>
+              </td>
+
+              <td>
+                <span class="date-value">
+                  {{ formatDate(user.lastUpdated) }}
+                </span>
+                <span class="date-caption">Last modified</span>
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="action-button action-button--view"
+                    (click)="viewUser(user)"
+                    aria-label="View account">
+                    View
+                  </button>
+
+                  <button
+                    *ngIf="canManage(user)"
+                    type="button"
+                    class="action-button action-button--edit"
+                    (click)="editUser(user)"
+                    [disabled]="isLoading"
+                    aria-label="Edit account">
+                    Edit
+                  </button>
+
+                  <button
+                    *ngIf="canDelete(user)"
+                    type="button"
+                    class="action-button action-button--delete"
+                    (click)="deleteUser(user)"
+                    [disabled]="isLoading"
+                    aria-label="Delete account">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-template>
+
+    <footer class="directory-footer">
+      <span>SECURE IDENTITY MANAGEMENT</span>
+      <span><span class="footer-dot"></span> TRAVIXA Admin Workspace</span>
+    </footer>
+  </section>
+</main>
+
+<!-- Create / Edit drawer -->
+<div
+  *ngIf="isEditorOpen"
+  class="editor-backdrop"
+  (click)="closeEditor()"></div>
+
+<aside
+  *ngIf="isEditorOpen"
+  class="user-editor"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="isEditMode ? 'Edit user account' : 'Create user account'">
+  <header class="editor-header">
+    <div>
+      <span class="eyebrow">
+        {{ isEditMode ? 'ACCOUNT SETTINGS' : 'NEW IDENTITY' }}
+      </span>
+      <h2>{{ isEditMode ? 'Edit account' : 'Create account' }}</h2>
+      <p>
+        {{
+        isEditMode
+        ? 'Update profile information.'
+        : 'Create an account with the appropriate access role.'
+        }}
+      </p>
+    </div>
+    <button
+      type="button"
+      class="close-button"
+      (click)="closeEditor()"
+      aria-label="Close editor">
+      ×
+    </button>
+  </header>
+
+  <form [formGroup]="userForm" (ngSubmit)="submitForm()" novalidate>
+    <section class="form-section">
+      <span class="section-number">01</span>
+      <div class="section-heading">
+        <h3>Identity information</h3>
+        <p>Basic account details</p>
+      </div>
+
+      <label class="form-field">
+        <span>Username <b>*</b></span>
+        <input
+          type="text"
+          formControlName="username"
+          placeholder="e.g. travixa_user"
+          autocomplete="username"
+          [readonly]="isEditMode" />
+        <small
+          *ngIf="f['username'].touched && f['username'].invalid"
+          class="field-error">
+          Enter a valid username (3–100 characters).
+        </small>
+      </label>
+
+      <div class="form-grid">
+        <label class="form-field">
+          <span>First name <b>*</b></span>
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="First name"
+            autocomplete="given-name" />
+          <small
+            *ngIf="f['firstName'].touched && f['firstName'].invalid"
+            class="field-error">
+            First name is required.
+          </small>
+        </label>
+
+        <label class="form-field">
+          <span>Last name <b>*</b></span>
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Last name"
+            autocomplete="family-name" />
+          <small
+            *ngIf="f['lastName'].touched && f['lastName'].invalid"
+            class="field-error">
+            Last name is required.
+          </small>
+        </label>
+      </div>
+
+      <label class="form-field">
+        <span>Email address <b>*</b></span>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="name@example.com"
+          autocomplete="email" />
+        <small
+          *ngIf="f['email'].touched && f['email'].invalid"
+          class="field-error">
+          Enter a valid email address.
+        </small>
+      </label>
+
+      <label *ngIf="!isEditMode" class="form-field">
+        <span>Initial password <b>*</b></span>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="At least 8 characters"
+          autocomplete="new-password" />
+        <small class="field-hint">
+          Use a strong password and never share it with the user.
+        </small>
+        <small
+          *ngIf="f['password'].touched && f['password'].invalid"
+          class="field-error">
+          Password must contain at least 8 characters.
+        </small>
+      </label>
+    </section>
+
+    <section class="form-section">
+      <span class="section-number">02</span>
+      <div class="section-heading">
+        <h3>Access permissions</h3>
+        <p>Select the account's assigned roles.</p>
+      </div>
+
+      <label class="form-field">
+        <span>Account roles <b>*</b></span>
+        <select
+          formControlName="roles"
+          multiple
+          size="6"
+          [disabled]="isEditMode || isLoading">
+          <option *ngFor="let role of availableRoles" [value]="role.value">
+            {{ role.label }}
+          </option>
+        </select>
+        <small class="field-hint">
+          Available roles depend on your administrator permissions.
+        </small>
+        <small
+          *ngIf="f['roles'].touched && f['roles'].invalid"
+          class="field-error">
+          Select at least one role.
+        </small>
+      </label>
+
+      <p *ngIf="isEditMode" class="security-note">
+        Role changes are unavailable through the current backend update
+        endpoint.
+      </p>
+    </section>
+
+    <div *ngIf="errorMessage" class="notice notice--error" role="alert">
+      <span class="notice-icon">!</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <footer class="editor-footer">
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="closeEditor()"
+        [disabled]="isLoading">
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        class="save-button"
+        [disabled]="isLoading || userForm.invalid">
+        <span *ngIf="isLoading" class="button-spinner"></span>
+        {{ isLoading ? 'Saving...' : isEditMode ? 'Save changes' :
+        'Create account' }}
+      </button>
+    </footer>
+  </form>
+</aside>
+
+<!-- View account drawer -->
+<div
+  *ngIf="isViewOpen && selectedUser"
+  class="editor-backdrop"
+  (click)="closeView()"></div>
+
+<aside
+  *ngIf="isViewOpen && selectedUser as account"
+  class="user-editor view-editor"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Account details">
+  <header class="editor-header">
+    <div>
+      <span class="eyebrow">ACCOUNT OVERVIEW</span>
+      <h2>User details</h2>
+      <p>Read-only identity and access information.</p>
+    </div>
+    <button
+      type="button"
+      class="close-button"
+      (click)="closeView()"
+      aria-label="Close">
+      ×
+    </button>
+  </header>
+
+  <div class="profile-summary">
+    <div class="profile-avatar">{{ initials(account) }}</div>
+    <h3>{{ fullName(account) }}</h3>
+    <p>&#64;{{ account.username }}</p>
+    <span
+      class="status-pill"
+      [class.status-pill--active]="account.enabled"
+      [class.status-pill--inactive]="!account.enabled">
+      <span class="status-dot"></span>
+      {{ account.enabled ? 'Enabled' : 'Disabled' }}
+    </span>
+  </div>
+
+  <div class="detail-list">
+    <div class="detail-item">
+      <span>Username</span>
+      <strong>{{ account.username }}</strong>
+    </div>
+    <div class="detail-item">
+      <span>Email address</span>
+      <strong>{{ account.email }}</strong>
+    </div>
+    <div class="detail-item">
+      <span>Assigned roles</span>
+      <div class="role-list">
+        <span
+          *ngFor="let role of account.roles"
+          class="role-pill"
+          [class.role-pill--admin]="role === 'ADMIN'"
+          [class.role-pill--super]="role === 'SUPER_ADMIN'">
+          {{ roleLabel(role) }}
+        </span>
+        <span
+          *ngIf="!account.roles || account.roles.length === 0"
+          class="role-pill">
+          No roles
+        </span>
+      </div>
+    </div>
+    <div class="detail-item">
+      <span>Account status</span>
+      <strong>{{ account.enabled ? 'Enabled' : 'Disabled' }}</strong>
+    </div>
+    <div class="detail-item">
+      <span>Created</span>
+      <strong>{{ formatDate(account.dateCreated) }}</strong>
+    </div>
+    <div class="detail-item">
+      <span>Last updated</span>
+      <strong>{{ formatDate(account.lastUpdated) }}</strong>
+    </div>
+  </div>
+
+  <footer class="editor-footer">
+    <button type="button" class="cancel-button" (click)="closeView()">
+      Close
+    </button>
+    <button
+      *ngIf="canManage(account)"
+      type="button"
+      class="save-button"
+      (click)="editUser(account)">
+      Edit account ↗
+    </button>
+  </footer>
+</aside>
+
+<!-- Delete confirmation -->
+<div *ngIf="pendingDelete as deleteTarget" class="confirm-backdrop">
+  <section
+    class="delete-dialog"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="delete-title"
+    aria-describedby="delete-description">
+    <div class="delete-icon">⌫</div>
+    <span class="eyebrow">CONFIRM ACCOUNT REMOVAL</span>
+    <h2 id="delete-title">Delete this account?</h2>
+    <p id="delete-description">
+      You are about to remove <strong>{{ deleteTarget.username }}</strong>.
+      This action may be irreversible.
+    </p>
+
+    <div class="delete-warning">
+      Make sure you selected the correct account before proceeding.
+    </div>
+
+    <footer class="delete-actions">
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancelDelete()"
+        [disabled]="isLoading">
+        Keep account
+      </button>
+      <button
+        type="button"
+        class="delete-confirm-button"
+        (click)="confirmDelete()"
+        [disabled]="isLoading">
+        {{ isLoading ? 'Removing...' : 'Delete account' }}
+      </button>
+    </footer>
+  </section>
+</div>

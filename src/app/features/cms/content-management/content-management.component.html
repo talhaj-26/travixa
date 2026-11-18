@@ -1,0 +1,56 @@
+<main class="cms-page">
+  <div class="cms-shell">
+    <header class="page-hero">
+      <div><span class="eyebrow">TRAVIXA · CONTENT STUDIO</span><h1>Manage platform pages</h1><p>Create and maintain CMS pages stored in the platform database.</p></div>
+      <button class="primary-button" type="button" (click)="startCreate()" [disabled]="!languages.length">＋ Create page</button>
+    </header>
+
+    @if (errorMessage) { <div class="notice notice--error" role="alert"><span>{{ errorMessage }}</span><button type="button" (click)="load()">Retry</button></div> }
+    @if (successMessage) { <div class="notice notice--success" role="status">{{ successMessage }}</div> }
+
+    @if (loading) {
+      <section class="state-card" aria-live="polite"><span class="spinner"></span><h2>Loading content</h2><p>Reading CMS pages and enabled languages from the backend.</p></section>
+    } @else {
+      <section class="toolbar">
+        <div><span class="count">{{ visiblePages.length }}</span><span>pages</span></div>
+        <label>Filter by status<select [(ngModel)]="filter"><option value="ALL">All statuses</option>@for (status of filters.slice(1); track status) { <option [value]="status">{{ statusLabel(status) }}</option> }</select></label>
+      </section>
+
+      @if (visiblePages.length) {
+        <section class="page-grid" aria-label="CMS pages">
+          @for (page of visiblePages; track trackById($index, page)) {
+            <article class="page-card">
+              <div class="card-top"><span class="status" [class]="'status status--' + page.status.toLowerCase()">{{ statusLabel(page.status) }}</span><span class="language">{{ languageName(page.languageId) }}</span></div>
+              <h2>{{ page.title }}</h2><p class="slug">/{{ page.slug }}</p>
+              <p class="excerpt">{{ page.content }}</p>
+              <div class="card-meta"><span>Updated content</span><span>{{ page.publishedAt ? (page.publishedAt | date:'mediumDate') : 'Not published' }}</span></div>
+              <div class="card-actions"><button type="button" class="secondary-button" (click)="startEdit(page)">Edit</button>@if (page.status !== 'ARCHIVED') { <button type="button" class="secondary-button" (click)="archive(page)">Archive</button> }<button type="button" class="delete-button" (click)="delete(page)">Delete</button></div>
+            </article>
+          }
+        </section>
+      } @else {
+        <section class="empty-state"><span class="empty-mark">✧</span><h2>{{ pages.length ? 'No pages match this filter' : 'Your content library is empty' }}</h2><p>{{ pages.length ? 'Choose another status to view saved pages.' : 'Create a page to add real content to the platform.' }}</p>@if (!pages.length) { <button class="primary-button" type="button" (click)="startCreate()" [disabled]="!languages.length">Create your first page</button> }</section>
+      }
+    }
+  </div>
+
+  @if (editorOpen) {
+    <div class="modal-backdrop" role="presentation" (click)="closeEditor()">
+      <section class="editor" role="dialog" aria-modal="true" aria-labelledby="editor-title" (click)="$event.stopPropagation()">
+        <header><div><span class="eyebrow">CONTENT EDITOR</span><h2 id="editor-title">{{ editingId === null ? 'Create a CMS page' : 'Edit CMS page' }}</h2></div><button type="button" class="close-button" aria-label="Close editor" (click)="closeEditor()">×</button></header>
+        @if (!languages.length) { <div class="notice notice--error">No enabled language exists. Add or enable a language before creating CMS pages.</div> }
+        <form #cmsForm="ngForm" (ngSubmit)="save()">
+          <div class="form-grid">
+            <label>Page title <input name="title" [(ngModel)]="form.title" maxlength="200" required placeholder="e.g. About TRAVIXA"></label>
+            <label>URL slug <input name="slug" [(ngModel)]="form.slug" maxlength="180" pattern="[a-zA-Z0-9][a-zA-Z0-9/-]*" required placeholder="about-travixa"></label>
+            <label>Language <select name="languageId" [(ngModel)]="form.languageId" required><option [ngValue]="0" disabled>Select language</option>@for (language of languages; track language.id) { <option [ngValue]="language.id">{{ language.nativeName }} · {{ language.code }}</option> }</select></label>
+            <label>Status <select name="status" [(ngModel)]="form.status"><option value="DRAFT">Draft</option><option value="PENDING_REVIEW">Pending review</option><option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option></select></label>
+            <label class="full-field">Page content <textarea name="content" [(ngModel)]="form.content" maxlength="30000" rows="12" required placeholder="Write the page content..."></textarea><small>{{ form.content.length }} / 30,000 characters</small></label>
+          </div>
+          @if (errorMessage) { <p class="form-error" role="alert">{{ errorMessage }}</p> }
+          <footer><button type="button" class="secondary-button" (click)="closeEditor()">Cancel</button><button class="primary-button" type="submit" [disabled]="cmsForm.invalid || saving || !form.languageId || !languages.length">{{ saving ? 'Saving…' : 'Save page' }}</button></footer>
+        </form>
+      </section>
+    </div>
+  }
+</main>

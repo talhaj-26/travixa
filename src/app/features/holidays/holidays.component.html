@@ -1,0 +1,705 @@
+<div class="holidays-page">
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO                                            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-hero">
+    <div class="hx-hero-bg">
+      @for (slide of heroSlides; track slide.title; let i = $index) {
+        <div
+          class="hx-hero-slide"
+          [class.active]="currentSlide() === i"
+          [style.background-image]="'url(' + slide.image + ')'"
+        ></div>
+      }
+      <div class="hx-hero-overlay"></div>
+    </div>
+
+    <div class="hx-hero-orb hx-hero-orb-one"></div>
+    <div class="hx-hero-orb hx-hero-orb-two"></div>
+
+    <div class="container hx-hero-container">
+      <div class="hx-hero-content">
+        <div class="hx-hero-badge">
+          <span class="badge-dot"></span>
+          <span>CURATED HOLIDAY EXPERIENCES</span>
+        </div>
+
+        <h1 class="hx-hero-title">
+          Escape the ordinary.
+          <span>Find your extraordinary.</span>
+        </h1>
+
+        <div class="hx-hero-current">
+          <span class="current-location">{{ currentHero.location }}</span>
+          <span class="current-sep">•</span>
+          <span class="current-name">{{ currentHero.title }}</span>
+          <span class="current-tag">{{ currentHero.subtitle }}</span>
+        </div>
+
+        <p class="hx-hero-desc">
+          Discover unforgettable destinations, carefully designed holiday
+          packages and experiences made for your next story.
+        </p>
+
+        <div class="hx-hero-actions">
+          <a routerLink="/tour-packages" class="hx-btn hx-btn-primary">
+            <span>Explore Holidays</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
+
+          <button
+            type="button"
+            class="hx-btn hx-btn-ghost"
+            (click)="openPlanner()"
+          >
+            <span class="hx-btn-icon">✦</span>
+            <span>AI Trip Planner</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="hx-countdown">
+        <div class="hx-countdown-head">
+          <span class="hx-countdown-icon">⏳</span>
+          <span class="hx-countdown-label">DEAL OF THE WEEK</span>
+        </div>
+        <div class="hx-countdown-grid">
+          <div class="hx-countdown-item">
+            <strong>{{ countdown().days.toString().padStart(2, "0") }}</strong>
+            <span>Days</span>
+          </div>
+          <span class="hx-countdown-sep">:</span>
+          <div class="hx-countdown-item">
+            <strong>{{ countdown().hours.toString().padStart(2, "0") }}</strong>
+            <span>Hours</span>
+          </div>
+          <span class="hx-countdown-sep">:</span>
+          <div class="hx-countdown-item">
+            <strong>{{
+              countdown().minutes.toString().padStart(2, "0")
+            }}</strong>
+            <span>Mins</span>
+          </div>
+          <span class="hx-countdown-sep">:</span>
+          <div class="hx-countdown-item">
+            <strong>{{
+              countdown().seconds.toString().padStart(2, "0")
+            }}</strong>
+            <span>Secs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide dots -->
+      <div class="hx-hero-dots">
+        @for (slide of heroSlides; track slide.title; let i = $index) {
+          <button
+            type="button"
+            class="hx-hero-dot"
+            [class.active]="currentSlide() === i"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          >
+            <span class="dot-fill"></span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO STATS STRIP                                -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-stats-strip">
+    <div class="container">
+      <div class="hx-stats-grid">
+        <div class="hx-stat">
+          <strong>64+</strong>
+          <span>Destinations</span>
+        </div>
+        <div class="hx-stat-divider"></div>
+        <div class="hx-stat">
+          <strong>120+</strong>
+          <span>Holiday Packages</span>
+        </div>
+        <div class="hx-stat-divider"></div>
+        <div class="hx-stat">
+          <strong>4.8★</strong>
+          <span>Average Rating</span>
+        </div>
+        <div class="hx-stat-divider"></div>
+        <div class="hx-stat">
+          <strong>10K+</strong>
+          <span>Happy Travelers</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- CATEGORY + FILTERS                              -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-filter-section">
+    <div class="container">
+      <div class="hx-filter-header">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            FIND YOUR VIBE
+          </span>
+          <h2 class="section-title">
+            Holidays made
+            <em>for you.</em>
+          </h2>
+          <p class="section-desc">
+            Choose an experience and let TRAVIXA take care of the rest.
+          </p>
+        </div>
+
+        <div class="hx-filter-actions">
+          <div class="hx-sort">
+            <label for="sortBy">Sort</label>
+            <select id="sortBy" [(ngModel)]="sortBy">
+              <option value="popular">Most Popular</option>
+              <option value="discount">Biggest Discount</option>
+              <option value="rating">Highest Rated</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="hx-search">
+        <span class="hx-search-icon">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search holiday packages, destinations..."
+        />
+        @if (searchTerm) {
+          <button
+            type="button"
+            class="hx-search-clear"
+            (click)="searchTerm = ''"
+          >
+            ×
+          </button>
+        }
+      </div>
+
+      <!-- Category chips -->
+      <div class="hx-category-chips">
+        @for (category of categories; track category.value) {
+          <button
+            type="button"
+            class="hx-chip"
+            [class.active]="selectedCategory === category.value"
+            (click)="selectCategory(category.value)"
+          >
+            <span class="chip-icon">{{ category.icon }}</span>
+            <span>{{ category.label }}</span>
+            <span class="chip-count">{{ categoryCounts[category.value] }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PACKAGES                                        -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-packages-section">
+    <div class="container">
+      <div class="hx-listing-head">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            CURATED FOR YOU
+          </span>
+          <h2 class="section-title">
+            Popular holiday
+            <em>packages.</em>
+          </h2>
+        </div>
+        <span class="result-count">
+          <strong>{{ filteredPackages.length }}</strong>
+          <span>packages</span>
+        </span>
+      </div>
+
+      @if (filteredPackages.length > 0) {
+        <div class="hx-grid">
+          @for (item of filteredPackages; track item.id; let i = $index) {
+            <article class="hx-card" [style.animation-delay.ms]="i * 60">
+              <!-- Image -->
+              <div class="hx-card-image">
+                <img [src]="item.image" [alt]="item.title" loading="lazy" />
+
+                <div class="hx-card-overlay"></div>
+
+                <!-- Top badges -->
+                <div class="hx-card-top">
+                  @if (item.badge) {
+                    <span class="hx-card-badge">{{ item.badge }}</span>
+                  }
+                  <span class="hx-card-rating">
+                    <span class="rating-star">★</span>
+                    {{ item.rating }}
+                  </span>
+                </div>
+
+                <!-- Discount -->
+                <span class="hx-card-discount">
+                  -{{ item.discountPercent }}%
+                </span>
+
+                <!-- Wishlist -->
+                <button
+                  type="button"
+                  class="hx-card-wishlist"
+                  (click)="$event.stopPropagation()"
+                  aria-label="Add to wishlist"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                    />
+                  </svg>
+                </button>
+
+                <!-- Bottom chips -->
+                <div class="hx-card-image-bottom">
+                  <span class="hx-image-chip">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    {{ item.duration }}
+                  </span>
+                  <span class="hx-image-chip">
+                    {{ item.categoryLabel }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Body -->
+              <div class="hx-card-body">
+                <div class="hx-card-location">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{{ item.destination }} • {{ item.region }}</span>
+                </div>
+
+                <h3 class="hx-card-title">{{ item.title }}</h3>
+
+                <p class="hx-card-desc">{{ item.description }}</p>
+
+                <!-- Inclusions -->
+                <div class="hx-card-inclusions">
+                  @for (inc of item.inclusions.slice(0, 3); track inc) {
+                    <span class="hx-inclusion">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      {{ inc }}
+                    </span>
+                  }
+                  @if (item.inclusions.length > 3) {
+                    <span class="hx-inclusion hx-inclusion-more">
+                      +{{ item.inclusions.length - 3 }} more
+                    </span>
+                  }
+                </div>
+
+                <!-- Meta row: reviews + seats left -->
+                <div class="hx-card-meta">
+                  <span class="hx-meta-reviews">
+                    <span class="rating-star">★</span>
+                    {{ item.rating }}
+                    <small>({{ item.reviews }} reviews)</small>
+                  </span>
+                  <span class="hx-meta-seats">
+                    <span class="seat-dot"></span>
+                    {{ item.seatsLeft }} seats left
+                  </span>
+                </div>
+
+                <!-- Footer: price + CTA -->
+                <div class="hx-card-footer">
+                  <div class="hx-price-block">
+                    <span class="hx-price-label">Starting from</span>
+                    <div class="hx-price-row">
+                      <strong class="hx-price"
+                        >৳{{ item.price | number }}</strong
+                      >
+                      <del class="hx-price-strike"
+                        >৳{{ item.oldPrice | number }}</del
+                      >
+                    </div>
+                    <span class="hx-savings">
+                      Save ৳{{ item.savings | number }}
+                    </span>
+                  </div>
+
+                  <div class="hx-card-actions">
+                    <button
+                      type="button"
+                      class="hx-btn-view"
+                      (click)="explorePackage(item)"
+                      aria-label="View details"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                      >
+                        <path
+                          d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="hx-btn-book"
+                      (click)="bookPackage(item)"
+                    >
+                      <span>Book</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="hx-empty">
+          <div class="hx-empty-icon">🌴</div>
+          <h3>No packages found</h3>
+          <p>Try another category or search term to discover more holidays.</p>
+          <button type="button" class="hx-reset-btn" (click)="clearFilters()">
+            <span>View all packages</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FEATURED DEALS                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  @if (selectedCategory === "All" && !searchTerm) {
+    <section class="hx-featured-section">
+      <div class="container">
+        <div class="hx-featured-head">
+          <div>
+            <span class="section-kicker">
+              <span class="eyebrow-line"></span>
+              LIMITED TIME
+            </span>
+            <h2 class="section-title">
+              Featured
+              <em>deals.</em>
+            </h2>
+            <p class="section-desc">
+              Handpicked holiday experiences with the biggest savings.
+            </p>
+          </div>
+        </div>
+
+        <div class="hx-featured-grid">
+          @for (item of featuredPackages; track item.id; let i = $index) {
+            <article
+              class="hx-featured-card"
+              [style.animation-delay.ms]="i * 80"
+              (click)="explorePackage(item)"
+            >
+              <div class="hx-featured-image">
+                <img [src]="item.image" [alt]="item.title" loading="lazy" />
+                <div class="hx-featured-overlay"></div>
+                <span class="hx-featured-discount">
+                  -{{ item.discountPercent }}% OFF
+                </span>
+              </div>
+
+              <div class="hx-featured-content">
+                <span class="hx-featured-location">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {{ item.destination }}
+                </span>
+
+                <h3>{{ item.title }}</h3>
+
+                <div class="hx-featured-meta">
+                  <span>{{ item.duration }}</span>
+                  <span class="hx-featured-rating">
+                    <span class="rating-star">★</span>
+                    {{ item.rating }}
+                  </span>
+                </div>
+
+                <div class="hx-featured-price">
+                  <strong>৳{{ item.price | number }}</strong>
+                  <del>৳{{ item.oldPrice | number }}</del>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PROMO / AI PLANNER                              -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-promo-section">
+    <div class="container">
+      <div class="hx-promo">
+        <div class="hx-promo-bg">
+          <img
+            src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=85"
+            alt=""
+          />
+          <div class="hx-promo-overlay"></div>
+        </div>
+
+        <div class="hx-promo-glow"></div>
+
+        <div class="hx-promo-content">
+          <span class="hx-promo-badge">
+            <span>✦</span>
+            TRAVIXA SMART TRAVEL
+          </span>
+
+          <h2 class="hx-promo-title">
+            Not sure where
+            <em>to go?</em>
+          </h2>
+
+          <p class="hx-promo-desc">
+            Tell us your mood, budget and travel style. Our AI Trip Planner will
+            create your perfect journey.
+          </p>
+
+          <button type="button" class="hx-promo-btn" (click)="openPlanner()">
+            <span>Plan my trip</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="hx-promo-visual">
+          <div class="hx-orbit hx-orbit-one"></div>
+          <div class="hx-orbit hx-orbit-two"></div>
+          <div class="hx-globe">🌍</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BENEFITS                                        -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="hx-benefits-section">
+    <div class="container">
+      <div class="hx-benefits-head">
+        <span class="section-kicker">
+          <span class="eyebrow-line"></span>
+          THE TRAVIXA DIFFERENCE
+        </span>
+        <h2 class="section-title">
+          Travel without
+          <em>the stress.</em>
+        </h2>
+      </div>
+
+      <div class="hx-benefits-grid">
+        <div class="hx-benefit-card">
+          <div class="hx-benefit-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polygon
+                points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"
+              />
+            </svg>
+          </div>
+          <h4>Curated Experiences</h4>
+          <p>
+            Carefully selected destinations and packages designed around real
+            traveler experiences.
+          </p>
+        </div>
+
+        <div class="hx-benefit-card">
+          <div class="hx-benefit-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="1" y="4" width="22" height="16" rx="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+          </div>
+          <h4>Transparent Pricing</h4>
+          <p>
+            Know what you are paying for with clear, straightforward holiday
+            pricing.
+          </p>
+        </div>
+
+        <div class="hx-benefit-card">
+          <div class="hx-benefit-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <h4>One Travel Ecosystem</h4>
+          <p>
+            Connect hotels, restaurants, transport and tours into one seamless
+            travel experience.
+          </p>
+        </div>
+
+        <div class="hx-benefit-card">
+          <div class="hx-benefit-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h4>Best Price Guarantee</h4>
+          <p>
+            Find a lower price elsewhere? We'll match it — no questions asked.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

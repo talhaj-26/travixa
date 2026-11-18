@@ -1,0 +1,33 @@
+<button class="workspace-toggle" type="button" (click)="toggle()" [attr.aria-expanded]="isOpen" aria-label="Open workspace navigation">
+  <span></span><span></span><span></span>
+</button>
+
+@if (isOpen) { <button class="workspace-scrim" type="button" (click)="close()" aria-label="Close workspace navigation"></button> }
+
+<aside class="workspace-nav" [class.workspace-nav--expanded]="isExpanded" (mouseenter)="openOnHover()" (mouseleave)="closeOnLeave()" aria-label="Role workspace navigation">
+  <div class="workspace-nav__top">
+    <div class="workspace-kicker"><span class="workspace-kicker__dot"></span> PRIVATE WORKSPACE</div>
+    <button class="workspace-close" type="button" (click)="close()" aria-label="Close navigation">×</button>
+    <app-live-clock></app-live-clock>
+  </div>
+
+  <nav class="workspace-menu">
+    @for (group of groups; track $index) {
+      <div class="workspace-menu__group">
+        @if (group.label) { <p>{{ group.label }}</p> }
+        @for (item of group.items; track item.route) {
+          <a [routerLink]="item.route" routerLinkActive="is-active" (click)="close()">
+            <span class="workspace-menu__icon">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+            <span class="workspace-menu__arrow">›</span>
+          </a>
+        }
+      </div>
+    }
+  </nav>
+
+  <div class="workspace-nav__bottom">
+    <a routerLink="/" (click)="close()"><span>←</span> Public website</a>
+    <div class="workspace-nav__utility"><app-theme-toggle></app-theme-toggle><button type="button" (click)="logout()">Sign out</button></div>
+  </div>
+</aside>

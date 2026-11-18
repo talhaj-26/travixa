@@ -1,0 +1,100 @@
+:host { display:block; }
+
+.workspace-nav { position:fixed; top:76px; bottom:0; left:0; z-index:850; width:72px; display:flex; flex-direction:column; overflow:hidden; color:#dbeafe; background:linear-gradient(165deg,#0b1e32 0%,#0b3138 48%,#10223c 100%); border-right:1px solid rgba(148,163,184,.18); box-shadow:14px 0 42px rgba(15,23,42,.12); will-change:width; transition:width 160ms cubic-bezier(.2,.75,.25,1),box-shadow 160ms ease; }
+.workspace-nav--expanded { width:268px; box-shadow:18px 0 50px rgba(15,23,42,.25); }
+.workspace-nav::before { content:""; position:absolute; width:240px; height:240px; right:-125px; top:-115px; border-radius:50%; background:radial-gradient(circle,rgba(45,212,191,.24),transparent 68%); pointer-events:none; }
+.workspace-nav__top { position:relative; padding:1.35rem 1.1rem .85rem; border-bottom:1px solid rgba(148,163,184,.13); }
+.workspace-kicker { display:flex; align-items:center; gap:.45rem; color:#91a6bd; font:800 .61rem var(--font-mono,monospace); letter-spacing:.13em; }
+.workspace-kicker__dot { width:.45rem; height:.45rem; border-radius:50%; background:#2dd4bf; box-shadow:0 0 0 .2rem rgba(45,212,191,.13),0 0 14px #2dd4bf; }
+app-live-clock { display:block; margin-top:.85rem; }
+:host ::ng-deep .live-clock { width:100%; justify-content:space-between; border-color:rgba(94,234,212,.18); background:rgba(255,255,255,.055); color:#e2e8f0; }
+:host ::ng-deep .live-clock__time { color:#5eead4; }
+:host ::ng-deep .live-clock__date { color:#a8bbcd; }
+.workspace-menu { flex:1; overflow:auto; padding:.1rem .7rem 1rem; scrollbar-width:thin; scrollbar-color:rgba(148,163,184,.28) transparent; }.workspace-menu__group { padding:.55rem 0; }.workspace-menu__group + .workspace-menu__group { border-top:1px solid rgba(148,163,184,.1); }.workspace-menu p { margin:.18rem .5rem .4rem; color:#8298b2; font:800 .6rem var(--font-mono,monospace); letter-spacing:.13em; }
+.workspace-menu a { position:relative; display:flex; align-items:center; gap:.7rem; min-height:2.55rem; margin:.14rem 0; padding:.55rem .6rem; border-radius:.68rem; color:#c4d2e0; text-decoration:none; font:650 .76rem var(--font-body,sans-serif); transition:background .2s ease,color .2s ease,transform .2s ease; }.workspace-menu a:hover { color:#fff; background:rgba(255,255,255,.075); transform:translateX(2px); }.workspace-menu a.is-active { color:#fff; background:linear-gradient(100deg,rgba(20,184,166,.36),rgba(6,182,212,.14)); box-shadow:inset 2px 0 #5eead4; }.workspace-menu a.is-active::after { content:""; position:absolute; right:.65rem; width:.32rem; height:.32rem; border-radius:50%; background:#5eead4; box-shadow:0 0 10px #5eead4; }
+.workspace-menu__icon { display:grid; place-items:center; width:1.1rem; color:#6ee7e0; font:800 1rem/1 var(--font-mono,monospace); }.workspace-menu__arrow { margin-left:auto; color:#7188a1; font-size:1.2rem; }.workspace-menu a.is-active .workspace-menu__arrow { visibility:hidden; }
+.workspace-nav__bottom { padding:.8rem; border-top:1px solid rgba(148,163,184,.13); background:rgba(2,6,23,.13); }.workspace-nav__bottom>a { display:flex; gap:.55rem; padding:.48rem .5rem .75rem; color:#a9bbcb; text-decoration:none; font:700 .71rem var(--font-body,sans-serif); }.workspace-nav__bottom>a:hover { color:#fff; }.workspace-nav__utility { display:flex; align-items:center; justify-content:space-between; }.workspace-nav__utility button { border:0; border-radius:.55rem; padding:.48rem .6rem; color:#fecaca; background:rgba(239,68,68,.11); font:750 .68rem var(--font-body,sans-serif); cursor:pointer; }.workspace-nav__utility button:hover { background:rgba(239,68,68,.21); }
+.workspace-toggle,.workspace-close,.workspace-scrim { display:none; }
+.workspace-nav:not(.workspace-nav--expanded) .workspace-kicker,.workspace-nav:not(.workspace-nav--expanded) app-live-clock,.workspace-nav:not(.workspace-nav--expanded) .workspace-menu p,.workspace-nav:not(.workspace-nav--expanded) .workspace-menu a>span:not(.workspace-menu__icon),.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__bottom>a:not(:has(span)),.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__utility button { display:none; }.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__top{min-height:1.1rem;padding:.7rem}.workspace-nav:not(.workspace-nav--expanded) .workspace-menu{padding:.1rem .55rem}.workspace-nav:not(.workspace-nav--expanded) .workspace-menu__group{padding:.3rem 0}.workspace-nav:not(.workspace-nav--expanded) .workspace-menu a{justify-content:center;padding:.55rem}.workspace-nav:not(.workspace-nav--expanded) .workspace-menu__icon{width:auto}.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__bottom{padding:.55rem}.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__bottom>a{justify-content:center;font-size:0}.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__bottom>a span{font-size:1rem}.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__utility{justify-content:center}.workspace-nav:not(.workspace-nav--expanded) :host ::ng-deep .theme-btn{transform:scale(.8)}
+@media (max-width:1100px) { .workspace-nav { width:268px; transform:translateX(-104%); transition:transform 180ms cubic-bezier(.2,.75,.25,1); box-shadow:18px 0 50px rgba(15,23,42,.34); }.workspace-nav--expanded { transform:translateX(0); }.workspace-toggle { position:fixed; display:grid; gap:4px; place-content:center; top:91px; left:.8rem; z-index:855; width:2.55rem; height:2.55rem; border:1px solid rgba(15,118,110,.2); border-radius:.7rem; color:#0f766e; background:rgba(255,255,255,.9); box-shadow:0 .5rem 1.2rem rgba(15,23,42,.12); backdrop-filter:blur(10px); cursor:pointer; }.workspace-toggle span { display:block; width:1rem; height:2px; border-radius:2px; background:currentColor; }:host-context([data-theme="dark"]) .workspace-toggle { color:#5eead4; background:rgba(10,22,37,.92); }.workspace-close { position:absolute; display:grid; place-items:center; top:.8rem; right:.8rem; width:1.8rem; height:1.8rem; border:0; border-radius:.5rem; color:#cbd5e1; background:rgba(255,255,255,.07); font-size:1.25rem; cursor:pointer; }.workspace-scrim { position:fixed; display:block; inset:76px 0 0; z-index:840; border:0; background:rgba(2,6,23,.45); }.workspace-nav:not(.workspace-nav--expanded) .workspace-kicker,.workspace-nav:not(.workspace-nav--expanded) app-live-clock,.workspace-nav:not(.workspace-nav--expanded) .workspace-menu p,.workspace-nav:not(.workspace-nav--expanded) .workspace-menu a>span:not(.workspace-menu__icon),.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__bottom>a:not(:has(span)),.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__utility button { display:initial; } }
+
+.workspace-nav {
+  background: linear-gradient(165deg, #08142b 0%, #0c1b38 54%, #132a50 100%);
+}
+
+.workspace-kicker__dot { background: #60a5fa; box-shadow: 0 0 0 .2rem rgba(96,165,250,.16), 0 0 14px #60a5fa; }
+:host ::ng-deep .live-clock__time { color: #93c5fd; }
+.workspace-menu a.is-active { background: linear-gradient(100deg,rgba(37,99,235,.4),rgba(96,165,250,.16)); box-shadow: inset 2px 0 #93c5fd; }
+.workspace-menu a.is-active::after { background: #93c5fd; box-shadow: 0 0 10px #60a5fa; }
+.workspace-menu__icon { color: #93c5fd; }
+.workspace-toggle { border-color: rgba(37,99,235,.22); color: #1d4ed8; }
+:host-context([data-theme="dark"]) .workspace-toggle { color: #bfdbfe; }
+
+/* Crystal-glass workspace rail, matched to the compact header. */
+.workspace-nav {
+  top: 66px;
+  color: #e5efff;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(82, 148, 255, 0.2), transparent 34%),
+    linear-gradient(165deg, rgba(7, 20, 45, 0.94), rgba(10, 32, 65, 0.91) 55%, rgba(12, 42, 72, 0.94));
+  border-right-color: rgba(191, 219, 254, 0.18);
+  box-shadow: 12px 0 38px rgba(12, 35, 75, 0.14), inset -1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(24px) saturate(155%);
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+}
+
+.workspace-nav--expanded { box-shadow: 18px 0 48px rgba(2, 12, 32, 0.3), inset -1px 0 rgba(255, 255, 255, 0.08); }
+.workspace-nav__top { padding: 1rem 1rem 0.8rem; border-bottom-color: rgba(191, 219, 254, 0.14); }
+.workspace-kicker { color: #a8c1e5; }
+.workspace-kicker__dot { background: #f7c66b; box-shadow: 0 0 0 0.2rem rgba(247, 198, 107, 0.14), 0 0 14px rgba(247, 198, 107, 0.72); }
+.workspace-menu { scrollbar-color: rgba(191, 219, 254, 0.3) transparent; }
+.workspace-menu__group + .workspace-menu__group { border-top-color: rgba(191, 219, 254, 0.1); }
+.workspace-menu p { color: #91add1; }
+.workspace-menu a { min-height: 2.45rem; border: 1px solid transparent; color: #d3e2f8; }
+.workspace-menu a:hover { color: #fff; background: rgba(191, 219, 254, 0.1); border-color: rgba(191, 219, 254, 0.12); }
+.workspace-menu a.is-active {
+  color: #fff;
+  background: linear-gradient(105deg, rgba(59, 130, 246, 0.34), rgba(45, 212, 191, 0.15));
+  border-color: rgba(147, 197, 253, 0.2);
+  box-shadow: inset 3px 0 #8dc2ff, 0 5px 16px rgba(4, 15, 38, 0.16);
+}
+.workspace-menu a.is-active::after { background: #f7c66b; box-shadow: 0 0 10px rgba(247, 198, 107, 0.72); }
+.workspace-menu__icon { color: #a9d6ff; }
+.workspace-nav__bottom {
+  padding: 0.7rem;
+  border-top-color: rgba(191, 219, 254, 0.14);
+  background: linear-gradient(180deg, rgba(4, 13, 32, 0.12), rgba(4, 13, 32, 0.42));
+}
+.workspace-nav__bottom > a { color: #c5d8f2; }
+.workspace-nav__bottom > a:hover { color: #fff; }
+.workspace-nav__utility button { color: #ffe2e5; border: 1px solid rgba(251, 113, 133, 0.18); }
+.workspace-nav__utility button:hover { background: rgba(190, 35, 65, 0.3); }
+
+.workspace-nav:not(.workspace-nav--expanded) .workspace-nav__utility { flex-direction: column; gap: 0.45rem; }
+.workspace-nav:not(.workspace-nav--expanded) :host ::ng-deep .theme-switch {
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 13px;
+}
+.workspace-nav:not(.workspace-nav--expanded) :host ::ng-deep .theme-option {
+  width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 10px;
+}
+.workspace-nav:not(.workspace-nav--expanded) :host ::ng-deep .theme-option span { display: none; }
+.workspace-nav:not(.workspace-nav--expanded) :host ::ng-deep .theme-option svg { width: 15px; height: 15px; }
+
+@media (max-width: 1100px) {
+  .workspace-nav { top: 64px; }
+  .workspace-scrim { inset: 64px 0 0; }
+  .workspace-toggle { top: 74px; border-radius: 12px; }
+  .workspace-nav__top { padding-top: 1.2rem; }
+}
+
+@media (max-width: 575px) {
+  .workspace-nav { top: 60px; }
+  .workspace-scrim { inset: 60px 0 0; }
+  .workspace-toggle { top: 68px; left: 0.65rem; }
+}

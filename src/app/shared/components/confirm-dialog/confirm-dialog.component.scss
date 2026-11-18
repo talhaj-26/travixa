@@ -1,0 +1,60 @@
+.travixa-confirm {
+  padding: 30px 20px;
+}
+
+.confirm-icon {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.confirm-title {
+  margin-bottom: 8px;
+  color: var(--travixa-dark);
+  font-weight: 800;
+}
+
+.confirm-message {
+  max-width: 420px;
+  margin: 0 auto 24px;
+  color: var(--travixa-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cancel-btn,
+.delete-btn {
+  min-width: 100px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.delete-btn {
+  border: none;
+}
+
+@media (max-width: 575.98px) {
+  .confirm-actions {
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .delete-btn {
+    width: 100%;
+  }
+}

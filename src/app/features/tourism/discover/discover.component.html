@@ -1,0 +1,824 @@
+<div class="discover-page">
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO with Animated Slideshow                    -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="discover-hero">
+    <!-- Background slideshow -->
+    <div class="hero-bg">
+      @for (slide of heroSlides; track slide.name; let i = $index) {
+        <div
+          class="hero-bg-slide"
+          [class.active]="currentSlide() === i"
+          [style.background-image]="'url(' + slide.image + ')'"
+        ></div>
+      }
+      <div class="hero-bg-overlay"></div>
+    </div>
+
+    <!-- Decorative orbs -->
+    <div class="hero-orb hero-orb-one"></div>
+    <div class="hero-orb hero-orb-two"></div>
+
+    <div class="container hero-container">
+      <div class="hero-content">
+        <!-- Badge -->
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>TRAVIXA EXPLORE BANGLADESH</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="hero-title">
+          Discover places
+          <span>worth remembering.</span>
+        </h1>
+
+        <!-- Current slide info -->
+        <div class="hero-current">
+          <span class="hero-current-region">{{ currentHero.region }}</span>
+          <span class="hero-current-sep">•</span>
+          <span class="hero-current-name">{{ currentHero.name }}</span>
+          <span class="hero-current-rating">
+            <span class="rating-star">★</span>
+            {{ currentHero.rating }}
+          </span>
+        </div>
+
+        <p class="hero-description">
+          {{ currentHero.description }}
+        </p>
+
+        <!-- Search bar -->
+        <div class="explore-search">
+          <div class="search-field">
+            <span class="search-icon">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+
+            <div class="search-field-body">
+              <small>Where do you want to go?</small>
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                placeholder="Search destinations, cities..."
+                (keyup.enter)="searchExplore()"
+              />
+            </div>
+          </div>
+
+          <div class="search-field search-category-field">
+            <span class="search-icon">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                <line x1="9" y1="3" x2="9" y2="18" />
+                <line x1="15" y1="6" x2="15" y2="21" />
+              </svg>
+            </span>
+
+            <div class="search-field-body">
+              <small>Experience type</small>
+              <select [(ngModel)]="selectedCategory">
+                @for (category of categories; track category.value) {
+                  <option [value]="category.value">{{ category.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <button class="search-btn" type="button" (click)="searchExplore()">
+            <span>Explore</span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Popular searches -->
+        <div class="popular-searches">
+          <span class="popular-label">POPULAR NOW</span>
+          <div class="popular-chips">
+            <button
+              type="button"
+              (click)="
+                searchTerm = 'Cox\'s Bazar';
+                selectedCategory = 'ALL';
+                searchExplore()
+              "
+            >
+              Cox's Bazar
+            </button>
+            <button
+              type="button"
+              (click)="
+                searchTerm = 'Sajek'; selectedCategory = 'ALL'; searchExplore()
+              "
+            >
+              Sajek Valley
+            </button>
+            <button
+              type="button"
+              (click)="
+                searchTerm = 'Bandarban';
+                selectedCategory = 'ALL';
+                searchExplore()
+              "
+            >
+              Bandarban
+            </button>
+            <button
+              type="button"
+              (click)="
+                searchTerm = 'Sylhet'; selectedCategory = 'ALL'; searchExplore()
+              "
+            >
+              Sylhet
+            </button>
+            <button
+              type="button"
+              (click)="
+                searchTerm = 'Sundarbans';
+                selectedCategory = 'ALL';
+                searchExplore()
+              "
+            >
+              Sundarbans
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slideshow controls -->
+      <div class="hero-slideshow-controls">
+        <div class="hero-slideshow-info">
+          <span class="hero-slideshow-count">
+            <strong>{{
+              (currentSlide() + 1).toString().padStart(2, "0")
+            }}</strong>
+            <span>/</span>
+            <span>{{ heroSlides.length.toString().padStart(2, "0") }}</span>
+          </span>
+          <span class="hero-slideshow-label">{{ currentHero.tagline }}</span>
+        </div>
+
+        <div class="hero-slideshow-nav">
+          <button
+            type="button"
+            class="slideshow-arrow"
+            (click)="prevSlide()"
+            aria-label="Previous"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <div class="slideshow-dots">
+            @for (slide of heroSlides; track slide.name; let i = $index) {
+              <button
+                type="button"
+                class="slideshow-dot"
+                [class.active]="currentSlide() === i"
+                (click)="goToSlide(i)"
+                [attr.aria-label]="'Go to slide ' + (i + 1)"
+              >
+                <span class="slideshow-dot-fill"></span>
+              </button>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="slideshow-arrow"
+            (click)="nextSlide()"
+            aria-label="Next"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- CATEGORY NAV                                    -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="category-section">
+    <div class="container">
+      <div class="category-list">
+        @for (category of categories; track category.value) {
+          <button
+            type="button"
+            class="category-pill"
+            [class.active]="selectedCategory === category.value"
+            (click)="selectCategory(category.value)"
+          >
+            <span class="category-pill-icon">{{ category.icon }}</span>
+            <span class="category-pill-label">{{ category.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- DESTINATIONS — Bento Grid                       -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="content-section destinations-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">
+            <span class="eyebrow-line"></span>
+            DESTINATIONS
+          </span>
+          <h2 class="section-title">
+            Places calling
+            <em>your name.</em>
+          </h2>
+          <p class="section-desc">
+            Explore handpicked destinations for your next unforgettable journey.
+          </p>
+        </div>
+
+        <button class="outline-btn" type="button" (click)="viewDestinations()">
+          <span>View all destinations</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+
+      @if (filteredDestinations.length > 0) {
+        <div class="destination-grid">
+          @for (
+            destination of featuredDestinations;
+            track destination.id;
+            let i = $index
+          ) {
+            <article
+              class="destination-card"
+              [class.destination-card-large]="i === 0"
+              [style.animation-delay.ms]="i * 100"
+            >
+              <div
+                class="destination-image"
+                [style.background-image]="'url(' + destination.image + ')'"
+              >
+                <div class="destination-overlay"></div>
+
+                <div class="destination-badges">
+                  <span class="destination-category">
+                    {{ destination.categoryLabel }}
+                  </span>
+                  @if (destination.badge) {
+                    <span class="destination-badge">{{
+                      destination.badge
+                    }}</span>
+                  }
+                </div>
+
+                <div class="destination-rating">
+                  <span class="rating-star">★</span>
+                  <strong>{{ destination.rating }}</strong>
+                  <span class="rating-count">({{ destination.reviews }})</span>
+                </div>
+
+                <div class="destination-info">
+                  <span class="destination-country">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                      />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    {{ destination.country }}
+                  </span>
+
+                  <h3>{{ destination.name }}</h3>
+
+                  <p>{{ destination.description }}</p>
+
+                  <button
+                    type="button"
+                    class="destination-cta"
+                    (click)="exploreDestination(destination)"
+                  >
+                    <span>Explore place</span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+
+          @for (
+            destination of regularDestinations;
+            track destination.id;
+            let i = $index
+          ) {
+            <article
+              class="destination-card destination-card-small"
+              [style.animation-delay.ms]="
+                (featuredDestinations.length + i) * 80
+              "
+            >
+              <div
+                class="destination-image"
+                [style.background-image]="'url(' + destination.image + ')'"
+              >
+                <div class="destination-overlay"></div>
+
+                <div class="destination-badges">
+                  <span class="destination-category">
+                    {{ destination.categoryLabel }}
+                  </span>
+                </div>
+
+                <div class="destination-rating">
+                  <span class="rating-star">★</span>
+                  <strong>{{ destination.rating }}</strong>
+                </div>
+
+                <div class="destination-info">
+                  <h3>{{ destination.name }}</h3>
+                  <p>{{ destination.description }}</p>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-result">
+          <div class="empty-icon">🔎</div>
+          <h3>No destinations found</h3>
+          <p>Try another destination or category.</p>
+          <button type="button" class="outline-btn" (click)="clearSearch()">
+            Clear search
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- STAYS                                           -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="content-section soft-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">
+            <span class="eyebrow-line"></span>
+            STAYS
+          </span>
+          <h2 class="section-title">
+            Stay where the
+            <em>journey begins.</em>
+          </h2>
+          <p class="section-desc">
+            Comfortable places selected to make your trip even better.
+          </p>
+        </div>
+
+        <button class="outline-btn" type="button" (click)="viewHotels()">
+          <span>Explore stays</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="hotel-grid">
+        @for (hotel of hotels; track hotel.id; let i = $index) {
+          <article class="hotel-card" [style.animation-delay.ms]="i * 100">
+            <div class="hotel-image">
+              <img [src]="hotel.image" [alt]="hotel.name" loading="lazy" />
+
+              @if (hotel.badge) {
+                <span class="hotel-badge">{{ hotel.badge }}</span>
+              }
+
+              <button
+                type="button"
+                class="hotel-favorite"
+                aria-label="Add to wishlist"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div class="hotel-body">
+              <div class="hotel-location">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                {{ hotel.location }}
+              </div>
+
+              <h3>{{ hotel.name }}</h3>
+
+              <div class="hotel-meta">
+                <span class="hotel-rating">
+                  <span class="rating-star">★</span>
+                  {{ hotel.rating }}
+                </span>
+                <span class="hotel-price">
+                  From <strong>৳{{ hotel.price | number }}</strong> / night
+                </span>
+              </div>
+
+              <button type="button" class="card-btn" (click)="viewHotels()">
+                <span>View stay</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- RESTAURANTS                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="content-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">
+            <span class="eyebrow-line"></span>
+            DINING
+          </span>
+          <h2 class="section-title">
+            Taste the
+            <em>destination.</em>
+          </h2>
+          <p class="section-desc">
+            Discover local flavors and memorable dining experiences.
+          </p>
+        </div>
+
+        <button class="outline-btn" type="button" (click)="viewRestaurants()">
+          <span>Explore restaurants</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="restaurant-grid">
+        @for (restaurant of restaurants; track restaurant.id; let i = $index) {
+          <article class="restaurant-card" [style.animation-delay.ms]="i * 100">
+            <div class="restaurant-icon">{{ restaurant.icon }}</div>
+
+            <div class="restaurant-content">
+              <div class="restaurant-rating">
+                <span class="rating-star">★</span>
+                {{ restaurant.rating }}
+              </div>
+
+              <h3>{{ restaurant.name }}</h3>
+
+              <div class="restaurant-location">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                {{ restaurant.location }}
+              </div>
+
+              <div class="restaurant-bottom">
+                <span class="restaurant-cuisine">{{ restaurant.cuisine }}</span>
+                <span class="restaurant-price">{{
+                  restaurant.priceRange
+                }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- TOUR PACKAGES                                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="content-section soft-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">
+            <span class="eyebrow-line"></span>
+            CURATED JOURNEYS
+          </span>
+          <h2 class="section-title">
+            Your next story
+            <em>starts here.</em>
+          </h2>
+          <p class="section-desc">
+            Ready-made experiences designed for stress-free exploration.
+          </p>
+        </div>
+
+        <button class="outline-btn" type="button" (click)="viewPackages()">
+          <span>View packages</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="package-grid">
+        @for (pkg of packages; track pkg.id; let i = $index) {
+          <article class="package-card" [style.animation-delay.ms]="i * 100">
+            <div class="package-image">
+              <img [src]="pkg.image" [alt]="pkg.title" loading="lazy" />
+
+              <span class="package-duration">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                {{ pkg.duration }} Days
+              </span>
+
+              <span class="package-rating">
+                <span class="rating-star">★</span>
+                {{ pkg.rating }}
+              </span>
+            </div>
+
+            <div class="package-body">
+              <div class="package-location">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                {{ pkg.destination }}
+              </div>
+
+              <h3>{{ pkg.title }}</h3>
+
+              <div class="package-footer">
+                <div class="package-price">
+                  <span class="package-price-label">From</span>
+                  <strong>৳{{ pkg.price | number }}</strong>
+                </div>
+                <button
+                  type="button"
+                  class="card-btn-icon"
+                  (click)="viewPackages()"
+                  aria-label="View journey"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- AI PLANNER CTA                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="ai-banner-section">
+    <div class="container">
+      <div class="ai-banner">
+        <div class="ai-decoration ai-decoration-one"></div>
+        <div class="ai-decoration ai-decoration-two"></div>
+
+        <div class="ai-content">
+          <div class="ai-badge">
+            <span>✦</span>
+            TRAVIXA AI PLANNER
+          </div>
+
+          <h2 class="ai-title">
+            Not sure where
+            <em>to start?</em>
+          </h2>
+
+          <p class="ai-desc">
+            Tell us your destination, budget and travel style. TRAVIXA will
+            create a personalized trip plan for you.
+          </p>
+
+          <button type="button" class="ai-btn" (click)="openPlanner()">
+            <span>Plan my trip</span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="ai-visual">
+          <div class="ai-center">
+            <span class="ai-center-icon">✦</span>
+            <strong>AI</strong>
+          </div>
+
+          <div class="ai-orbit ai-orbit-one">
+            <span class="ai-orbit-icon">🗺️</span>
+            <span class="ai-orbit-label">Discover</span>
+          </div>
+
+          <div class="ai-orbit ai-orbit-two">
+            <span class="ai-orbit-icon">🧳</span>
+            <span class="ai-orbit-label">Travel</span>
+          </div>
+
+          <div class="ai-orbit ai-orbit-three">
+            <span class="ai-orbit-icon">◆</span>
+            <span class="ai-orbit-label">Book</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FINAL STATS                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <strong>64+</strong>
+          <span>Destinations</span>
+        </div>
+        <div class="stat-item">
+          <strong>120+</strong>
+          <span>Hotels & Stays</span>
+        </div>
+        <div class="stat-item">
+          <strong>75+</strong>
+          <span>Restaurants</span>
+        </div>
+        <div class="stat-item">
+          <strong>24/7</strong>
+          <span>Travel Support</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

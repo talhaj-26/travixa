@@ -1,0 +1,1400 @@
+<div class="booking-page">
+  <!-- HERO SECTION -->
+  <section class="booking-hero">
+    @for (slide of heroSlides; track $index) {
+      <div
+        class="hero-slide"
+        [class.active]="currentHeroSlide === $index"
+        [style.background-image]="'url(' + slide.image + ')'"
+      ></div>
+    }
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-topbar">
+      <button class="hero-back-btn" type="button" (click)="goBack()">
+        <span>←</span> Back
+      </button>
+
+      <div class="hero-brand">
+        <span class="brand-mark">T</span>
+        <span>TRAVIXA</span>
+      </div>
+
+      <button
+        class="hero-wishlist-btn"
+        type="button"
+        [class.saved]="savedToWishlist"
+        (click)="toggleWishlist()"
+      >
+        {{ savedToWishlist ? "♥ Saved" : "♡ Save" }}
+      </button>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-kicker">
+        <span class="hero-kicker-line"></span>
+        {{ currentHero.kicker }}
+      </span>
+
+      <h1>
+        {{ currentHero.title }}
+        <span>{{ currentHero.highlight }}</span>
+      </h1>
+
+      <p>{{ currentHero.text }}</p>
+
+      <div class="hero-trust">
+        <span>✦ Thoughtful experiences</span>
+        <span>✦ Easy reservations</span>
+        <span>✦ Travel with confidence</span>
+      </div>
+    </div>
+
+    <div class="hero-pagination">
+      @for (slide of heroSlides; track $index) {
+        <button
+          type="button"
+          [class.active]="currentHeroSlide === $index"
+          (click)="goToHeroSlide($index)"
+          [attr.aria-label]="'Show slide ' + ($index + 1)"
+        ></button>
+      }
+    </div>
+
+    <div class="hero-bottom">
+      <span>YOUR NEXT EXPERIENCE STARTS HERE</span>
+      <span>01 — 05</span>
+    </div>
+  </section>
+
+  <!-- MAIN BOOKING CONTENT -->
+  <main class="booking-main">
+    <!-- INTRO -->
+    <section class="booking-intro">
+      <div>
+        <span class="section-eyebrow">THE TRAVIXA EXPERIENCE</span>
+        <h2>Make your next moment <span>memorable.</span></h2>
+        <p>
+          Choose your experience, customize your plans and reserve your next
+          journey with confidence.
+        </p>
+      </div>
+
+      <div class="intro-assurance">
+        <span class="assurance-icon">✦</span>
+        <div>
+          <strong>Simple & secure booking</strong>
+          <small>Your journey, thoughtfully arranged.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOKING TYPE SELECTOR -->
+    <section class="booking-type-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">01 / CHOOSE EXPERIENCE</span>
+          <h3>What are you planning?</h3>
+        </div>
+        <span class="section-side-note">SELECT ONE EXPERIENCE</span>
+      </div>
+
+      <div class="booking-type-grid">
+        @for (type of bookingTypes; track type.value) {
+          <button
+            type="button"
+            class="booking-type-card"
+            [class.active]="bookingType === type.value"
+            [style.--type-color]="type.color"
+            (click)="selectBookingType(type.value)"
+          >
+            <span class="type-icon">{{ type.icon }}</span>
+
+            <span class="type-content">
+              <strong>{{ type.label }}</strong>
+              <small>{{ type.desc }}</small>
+            </span>
+
+            <span class="type-check">
+              {{ bookingType === type.value ? "✓" : "+" }}
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- SUCCESS SCREEN -->
+    @if (isSubmitted) {
+      <section class="booking-success">
+        <div class="success-decoration">
+          @for (dot of confettiDots; track $index) {
+            <span
+              class="confetti-dot"
+              [style.background]="dot.color"
+              [style.left.%]="dot.left"
+              [style.animation-delay.s]="dot.delay"
+              [style.width.px]="dot.size"
+              [style.height.px]="dot.size"
+              [style.animation-duration.s]="dot.duration"
+            >
+            </span>
+          }
+        </div>
+
+        <div class="success-card">
+          <div class="success-icon">✓</div>
+
+          <span class="section-eyebrow">BOOKING REQUEST RECEIVED</span>
+          <h2>Your journey is <span>one step closer.</span></h2>
+
+          <p>
+            Your booking request has been successfully submitted. Review your
+            booking reference below.
+          </p>
+
+          <div class="success-reference">
+            <small>BOOKING REFERENCE</small>
+            <strong>{{ bookingReference }}</strong>
+          </div>
+
+          <div class="success-details">
+            <div>
+              <small>Experience</small>
+              <strong>{{ submittedItem?.name || submittedBookingType }}</strong>
+            </div>
+
+            <div>
+              <small>Booking amount</small>
+              <strong>{{ formatCurrency(submittedAmount) }}</strong>
+            </div>
+
+            <div>
+              <small>Booking date</small>
+              <strong>{{
+                formatDate(submittedBooking?.bookingDate || "")
+              }}</strong>
+            </div>
+          </div>
+
+          <div class="success-actions">
+            <button type="button" class="primary-btn" (click)="confirmAndPay()">
+              Continue to payment →
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn"
+              [disabled]="isDownloadingInvoice"
+              (click)="downloadBookingInvoice()"
+            >
+              {{
+                isDownloadingInvoice
+                  ? "Preparing invoice..."
+                  : "↓ Download invoice"
+              }}
+            </button>
+          </div>
+
+          <button type="button" class="text-btn" (click)="goToDiscover()">
+            Explore more experiences
+          </button>
+        </div>
+      </section>
+    }
+
+    <!-- BOOKING WORKSPACE -->
+    @if (!isSubmitted) {
+      <section class="booking-layout">
+        <div class="booking-main-column">
+          <!-- CATALOG -->
+          <section class="catalog-section">
+            <div class="section-heading">
+              <div>
+                <span class="section-eyebrow">02 / AVAILABLE OPTIONS</span>
+                <h3>Find your perfect experience</h3>
+                <p>Choose an available option to continue.</p>
+              </div>
+
+              <span class="catalog-count"> {{ catalog.length }} options </span>
+            </div>
+
+            @if (isLoadingCatalog) {
+              <div class="catalog-state loading-state">
+                <div class="loading-spinner"></div>
+                <strong>Finding your experiences...</strong>
+                <p>We're loading the latest available options.</p>
+              </div>
+            } @else if (catalogError) {
+              <div class="catalog-state error-state">
+                <span class="state-icon">!</span>
+                <strong>Unable to load options</strong>
+                <p>{{ catalogError }}</p>
+                <button
+                  type="button"
+                  class="secondary-btn"
+                  (click)="loadCatalog()"
+                >
+                  Try again
+                </button>
+              </div>
+            } @else if (catalog.length === 0) {
+              <div class="catalog-state empty-state">
+                <span class="state-icon">✦</span>
+                <strong>No options available right now</strong>
+                <p>Please check again later or choose another experience.</p>
+              </div>
+            } @else {
+              <div class="catalog-grid">
+                @for (item of catalog; track item.id) {
+                  <button
+                    type="button"
+                    class="catalog-card"
+                    [class.selected]="itemId === item.id"
+                    (click)="
+                      itemId = item.id;
+                      booking.itemId = item.id;
+                      selectedItem = item
+                    "
+                  >
+                    <div class="catalog-image">
+                      @if (item.image) {
+                        <img [src]="item.image" [alt]="item.name" />
+                      } @else {
+                        <div class="catalog-image-placeholder">
+                          {{ bookingTypeIcon }}
+                        </div>
+                      }
+
+                      <span class="catalog-status">Available</span>
+
+                      @if (item.rating) {
+                        <span class="catalog-rating">★ {{ item.rating }}</span>
+                      }
+                    </div>
+
+                    <div class="catalog-info">
+                      <div class="catalog-type-label">
+                        {{ item.type.replace("_", " ") }}
+                      </div>
+
+                      <h4>{{ item.name }}</h4>
+
+                      <p class="catalog-location">
+                        <span>⌖</span> {{ item.location }}
+                      </p>
+
+                      @if (item.description) {
+                        <p class="catalog-description">
+                          {{ item.description }}
+                        </p>
+                      }
+
+                      <div class="catalog-tags">
+                        @for (tag of item.tags; track tag) {
+                          <span>{{ tag }}</span>
+                        }
+                      </div>
+
+                      @if (item.languages?.length) {
+                        <div class="catalog-tags">
+                          @for (language of item.languages; track language) {
+                            <span>{{ language }}</span>
+                          }
+                        </div>
+                      }
+
+                      <div class="catalog-card-bottom">
+                        <div class="catalog-price">
+                          <strong>
+                            {{ formatCurrency(item.basePrice) }}
+                          </strong>
+                          <small>{{ item.priceUnit }}</small>
+                        </div>
+
+                        <span class="select-indicator">
+                          {{ itemId === item.id ? "✓ Selected" : "Select →" }}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                }
+              </div>
+            }
+          </section>
+
+          <!-- SELECTED ITEM -->
+          @if (selectedItem) {
+            <section class="selected-experience">
+              <div class="selected-experience-icon">✓</div>
+
+              <div class="selected-experience-content">
+                <small>YOUR SELECTED EXPERIENCE</small>
+                <strong>{{ selectedItem.name }}</strong>
+                <span>⌖ {{ selectedItem.location }}</span>
+              </div>
+
+              <button
+                type="button"
+                class="change-selection-btn"
+                (click)="itemId = 0; booking.itemId = 0; selectedItem = null"
+              >
+                Change
+              </button>
+            </section>
+          }
+
+          <!-- PROGRESS STEPPER -->
+          <section class="wizard-section">
+            <div class="section-heading">
+              <div>
+                <span class="section-eyebrow">03 / COMPLETE YOUR BOOKING</span>
+                <h3>Let's plan the details</h3>
+                <p>A few details and you're ready to go.</p>
+              </div>
+
+              <span class="step-counter">
+                STEP {{ currentStep }} / {{ totalSteps }}
+              </span>
+            </div>
+
+            <div class="wizard-progress">
+              <div class="wizard-progress-track">
+                <div
+                  class="wizard-progress-fill"
+                  [style.width.%]="progressPercent"
+                ></div>
+              </div>
+
+              <div class="wizard-steps">
+                @for (step of steps; track step.id) {
+                  <button
+                    type="button"
+                    class="wizard-step"
+                    [class.active]="currentStep === step.id"
+                    [class.completed]="currentStep > step.id"
+                    [disabled]="step.id >= currentStep"
+                    (click)="goToStep(step.id)"
+                  >
+                    <span class="wizard-step-icon">
+                      {{ currentStep > step.id ? "✓" : step.icon }}
+                    </span>
+
+                    <span class="wizard-step-info">
+                      <strong>{{ step.label }}</strong>
+                      <small>{{ step.description }}</small>
+                    </span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- STEP 1: SCHEDULE -->
+            @if (currentStep === 1) {
+              <div class="wizard-content">
+                <div class="wizard-title">
+                  <span class="wizard-title-icon">📅</span>
+                  <div>
+                    <h4>Set your schedule</h4>
+                    <p>Choose when you'd like to enjoy your experience.</p>
+                  </div>
+                </div>
+
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label for="bookingDate">Booking date</label>
+                    <input
+                      id="bookingDate"
+                      type="date"
+                      [(ngModel)]="bookingDate"
+                      [min]="minDate"
+                    />
+                    <small>The date you're making this reservation.</small>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="startDate">
+                      {{
+                        bookingType === "HOTEL"
+                          ? "Check-in date"
+                          : "Experience date"
+                      }}
+                    </label>
+                    <input
+                      id="startDate"
+                      type="date"
+                      [(ngModel)]="startDate"
+                      [min]="minDate"
+                      (change)="checkHotelAvailability()"
+                    />
+                  </div>
+
+                  @if (bookingType === "HOTEL") {
+                    <div class="form-field">
+                      <label for="endDate">Check-out date</label>
+                      <input
+                        id="endDate"
+                        type="date"
+                        [(ngModel)]="endDate"
+                        [min]="startDate || minDate"
+                        (change)="checkHotelAvailability()"
+                      />
+                      <small>{{ numberOfNights }} night(s) selected</small>
+                    </div>
+
+                    <div class="form-field">
+                      <label for="hotelRoomCount">Number of rooms</label>
+                      <select
+                        id="hotelRoomCount"
+                        [(ngModel)]="hotelRoomCount"
+                        (change)="checkHotelAvailability()"
+                      >
+                        @for (
+                          count of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                          track count
+                        ) {
+                          <option [ngValue]="count">
+                            {{ count }} {{ count === 1 ? "Room" : "Rooms" }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  }
+
+                  @if (bookingType === "TOUR_GUIDE") {
+                    <div class="form-field">
+                      <label for="durationHours">Guide duration</label>
+                      <select
+                        id="durationHours"
+                        [(ngModel)]="booking.durationHours"
+                      >
+                        @for (
+                          hours of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+                          track hours
+                        ) {
+                          <option [ngValue]="hours">
+                            {{ hours }} {{ hours === 1 ? "Hour" : "Hours" }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  }
+                </div>
+
+                <!-- HOTEL AVAILABILITY -->
+                @if (
+                  bookingType === "HOTEL" &&
+                  requestedHotelId !== null &&
+                  requestedRoomTypeId !== null
+                ) {
+                  <div class="availability-panel">
+                    @if (hotelAvailabilityLoading) {
+                      <span class="availability-indicator loading"></span>
+                      <div>
+                        <strong>Checking room availability...</strong>
+                        <small>Please wait while we verify your dates.</small>
+                      </div>
+                    } @else if (hotelAvailability?.available) {
+                      <span class="availability-indicator available">✓</span>
+                      <div>
+                        <strong>Rooms available for your stay</strong>
+                        <small>
+                          {{ hotelAvailability?.nights }} night(s) ·
+                          {{ hotelAvailability?.requestedRooms }} room(s)
+                        </small>
+                      </div>
+                      <strong class="availability-price">
+                        {{
+                          formatCurrency(hotelAvailability?.totalRoomCost || 0)
+                        }}
+                      </strong>
+                    } @else if (hotelAvailabilityError) {
+                      <span class="availability-indicator unavailable">!</span>
+                      <div>
+                        <strong>Availability not confirmed</strong>
+                        <small>{{ hotelAvailabilityError }}</small>
+                      </div>
+                    } @else {
+                      <span class="availability-indicator"></span>
+                      <div>
+                        <strong>Choose your dates</strong>
+                        <small
+                          >We'll verify availability for your selected
+                          stay.</small
+                        >
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- RESTAURANT TIME SLOTS -->
+                @if (bookingType === "RESTAURANT") {
+                  <div class="time-slot-section">
+                    <div class="subsection-heading">
+                      <h4>Choose a time slot</h4>
+                      <span>REQUIRED</span>
+                    </div>
+
+                    <div class="time-slot-grid">
+                      @for (slot of timeSlots; track slot.value) {
+                        <button
+                          type="button"
+                          class="time-slot-card"
+                          [class.active]="timeSlot === slot.value"
+                          (click)="timeSlot = slot.value"
+                        >
+                          <span>{{ slot.icon }}</span>
+                          <strong>{{ slot.label }}</strong>
+                          <small>{{ slot.time }}</small>
+                          <p>{{ slot.description }}</p>
+                          @if (timeSlot === slot.value) {
+                            <span class="slot-check">✓</span>
+                          }
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (touched["schedule"] && !step1Valid) {
+                  <div class="validation-message">
+                    Please complete the required schedule information.
+                  </div>
+                }
+
+                <div class="wizard-actions wizard-actions-end">
+                  <button
+                    type="button"
+                    class="primary-btn"
+                    [disabled]="!canContinue"
+                    (click)="nextStep()"
+                  >
+                    Continue to guests →
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- STEP 2: GUESTS -->
+            @if (currentStep === 2) {
+              <div class="wizard-content">
+                <div class="wizard-title">
+                  <span class="wizard-title-icon">👥</span>
+                  <div>
+                    <h4>Who's joining the journey?</h4>
+                    <p>Tell us about the people included in this booking.</p>
+                  </div>
+                </div>
+
+                <div class="guest-counter-grid">
+                  <div class="guest-counter">
+                    <div>
+                      <strong>Adults</strong>
+                      <small>Age 13 or above</small>
+                    </div>
+                    <div class="counter-controls">
+                      <button
+                        type="button"
+                        (click)="adjustGuests('adults', -1)"
+                        [disabled]="adults <= 1"
+                      >
+                        −
+                      </button>
+                      <strong>{{ adults }}</strong>
+                      <button type="button" (click)="adjustGuests('adults', 1)">
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="guest-counter">
+                    <div>
+                      <strong>Children</strong>
+                      <small>Age 2–12</small>
+                    </div>
+                    <div class="counter-controls">
+                      <button
+                        type="button"
+                        (click)="adjustGuests('children', -1)"
+                        [disabled]="children <= 0"
+                      >
+                        −
+                      </button>
+                      <strong>{{ children }}</strong>
+                      <button
+                        type="button"
+                        (click)="adjustGuests('children', 1)"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="guest-counter">
+                    <div>
+                      <strong>Infants</strong>
+                      <small>Below 2 years</small>
+                    </div>
+                    <div class="counter-controls">
+                      <button
+                        type="button"
+                        (click)="adjustGuests('infants', -1)"
+                        [disabled]="infants <= 0"
+                      >
+                        −
+                      </button>
+                      <strong>{{ infants }}</strong>
+                      <button
+                        type="button"
+                        (click)="adjustGuests('infants', 1)"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="guest-total">
+                  <span>✦</span>
+                  <strong>{{ totalGuests }} total guest(s)</strong>
+                </div>
+
+                <!-- PRIMARY CONTACT -->
+                <div class="form-section">
+                  <div class="subsection-heading">
+                    <h4>Primary contact</h4>
+                    <span>REQUIRED</span>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="fullName">Full name</label>
+                      <input
+                        id="fullName"
+                        type="text"
+                        [(ngModel)]="fullName"
+                        placeholder="Enter your full name"
+                        maxlength="120"
+                      />
+                    </div>
+
+                    <div class="form-field">
+                      <label for="email">Email address</label>
+                      <input
+                        id="email"
+                        type="email"
+                        [(ngModel)]="email"
+                        placeholder="you@example.com"
+                        maxlength="254"
+                      />
+                    </div>
+
+                    <div class="form-field full-width">
+                      <label for="phone">Phone number</label>
+                      <input
+                        id="phone"
+                        type="tel"
+                        [(ngModel)]="phone"
+                        placeholder="Enter your contact number"
+                        maxlength="40"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- COMPANIONS -->
+                <div class="form-section">
+                  <div class="subsection-heading">
+                    <div>
+                      <h4>Additional travellers</h4>
+                      <p>Add companion details if applicable.</p>
+                    </div>
+
+                    <button
+                      type="button"
+                      class="add-companion-btn"
+                      [disabled]="companions.length >= 9"
+                      (click)="addCompanion()"
+                    >
+                      + Add companion
+                    </button>
+                  </div>
+
+                  @if (companions.length === 0) {
+                    <div class="companion-empty">
+                      <span>＋</span>
+                      <p>No additional travellers added.</p>
+                    </div>
+                  }
+
+                  @for (guest of companions; track guest) {
+                    <div class="companion-card">
+                      <div class="companion-card-heading">
+                        <strong
+                          >Traveller {{ companions.indexOf(guest) + 2 }}</strong
+                        >
+
+                        <button
+                          type="button"
+                          class="remove-companion-btn"
+                          (click)="removeCompanion(companions.indexOf(guest))"
+                        >
+                          Remove
+                        </button>
+                      </div>
+
+                      <div class="form-grid">
+                        <div class="form-field">
+                          <label
+                            [for]="'guest-name-' + companions.indexOf(guest)"
+                          >
+                            Full name
+                          </label>
+
+                          <input
+                            [id]="'guest-name-' + companions.indexOf(guest)"
+                            type="text"
+                            [(ngModel)]="guest.fullName"
+                            [ngModelOptions]="{ standalone: true }"
+                            placeholder="Traveller name"
+                            maxlength="120"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                @if (touched["contact"] && !step2Valid) {
+                  <div class="validation-message">
+                    Please provide a valid name, email and phone number. Check
+                    the companion details as well.
+                  </div>
+                }
+
+                <div class="wizard-actions">
+                  <button
+                    type="button"
+                    class="secondary-btn"
+                    (click)="prevStep()"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="primary-btn"
+                    [disabled]="!canContinue"
+                    (click)="nextStep()"
+                  >
+                    Continue to add-ons →
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- STEP 3: ADD-ONS -->
+            @if (currentStep === 3) {
+              <div class="wizard-content">
+                <div class="wizard-title">
+                  <span class="wizard-title-icon">✨</span>
+                  <div>
+                    <h4>Make it more special</h4>
+                    <p>Personalize your experience with optional extras.</p>
+                  </div>
+                </div>
+
+                @if (availableAddOns.length > 0) {
+                  <div class="addon-grid">
+                    @for (addon of availableAddOns; track addon.id) {
+                      <button
+                        type="button"
+                        class="addon-card"
+                        [class.selected]="isAddOnSelected(addon.id)"
+                        (click)="toggleAddOn(addon)"
+                      >
+                        <div class="addon-image">
+                          <img [src]="addon.image" [alt]="addon.name" />
+                          <span class="addon-icon">{{ addon.icon }}</span>
+                        </div>
+
+                        <div class="addon-info">
+                          <div class="addon-title-row">
+                            <h4>{{ addon.name }}</h4>
+                            <span class="addon-check">
+                              {{ isAddOnSelected(addon.id) ? "✓" : "+" }}
+                            </span>
+                          </div>
+
+                          <p>{{ addon.description }}</p>
+
+                          <strong>{{ formatCurrency(addon.price) }}</strong>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <div class="addon-empty">
+                    <span>✦</span>
+                    <h4>No optional extras available</h4>
+                    <p>You can continue without adding anything.</p>
+                  </div>
+                }
+
+                <!-- SPECIAL REQUEST -->
+                <div class="form-section special-request-section">
+                  <div class="subsection-heading">
+                    <h4>Special requests</h4>
+                    <span>OPTIONAL</span>
+                  </div>
+
+                  <textarea
+                    [(ngModel)]="specialRequest"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="Let us know if you have any special requirements..."
+                  >
+                  </textarea>
+
+                  <small
+                    >Share any preferences or additional information.</small
+                  >
+                </div>
+
+                <!-- SELECTED ADDONS -->
+                @if (selectedAddons.length > 0) {
+                  <div class="selected-addons-summary">
+                    <strong
+                      >{{ selectedAddons.length }} extra(s) selected</strong
+                    >
+
+                    @for (addon of selectedAddons; track addon.id) {
+                      <div>
+                        <span>{{ addon.name }}</span>
+                        <strong>{{ formatCurrency(addon.price) }}</strong>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <div class="wizard-actions">
+                  <button
+                    type="button"
+                    class="secondary-btn"
+                    (click)="prevStep()"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="primary-btn"
+                    [disabled]="!canContinue"
+                    (click)="nextStep()"
+                  >
+                    Review booking →
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- STEP 4: REVIEW -->
+            @if (currentStep === 4) {
+              <div class="wizard-content">
+                <div class="wizard-title">
+                  <span class="wizard-title-icon">✓</span>
+                  <div>
+                    <h4>Review your booking</h4>
+                    <p>
+                      Everything look good? Check your details before
+                      submitting.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- EXPERIENCE REVIEW -->
+                <div class="review-experience">
+                  <div class="review-experience-image">
+                    @if (selectedItem?.image) {
+                      <img
+                        [src]="selectedItem?.image"
+                        [alt]="selectedItem?.name"
+                      />
+                    } @else {
+                      <span>{{ bookingTypeIcon }}</span>
+                    }
+                  </div>
+
+                  <div class="review-experience-info">
+                    <span>{{ bookingTypeLabel }}</span>
+                    <h4>{{ selectedItem?.name }}</h4>
+                    <p>⌖ {{ selectedItem?.location }}</p>
+                  </div>
+
+                  <span class="review-confirmed">✓ Selected</span>
+                </div>
+
+                <!-- SCHEDULE REVIEW -->
+                <div class="review-section">
+                  <div class="review-section-heading">
+                    <h4>Schedule details</h4>
+                    <button type="button" (click)="goToStep(1)">Edit</button>
+                  </div>
+
+                  <div class="review-grid">
+                    <div>
+                      <small>Booking date</small>
+                      <strong>{{ formatDate(bookingDate) }}</strong>
+                    </div>
+
+                    <div>
+                      <small>
+                        {{
+                          bookingType === "HOTEL"
+                            ? "Check-in"
+                            : "Experience date"
+                        }}
+                      </small>
+                      <strong>{{ formatDate(startDate) }}</strong>
+                    </div>
+
+                    @if (bookingType === "HOTEL") {
+                      <div>
+                        <small>Check-out</small>
+                        <strong>{{ formatDate(endDate) }}</strong>
+                      </div>
+
+                      <div>
+                        <small>Stay duration</small>
+                        <strong>{{ numberOfNights }} night(s)</strong>
+                      </div>
+
+                      <div>
+                        <small>Rooms</small>
+                        <strong>{{ hotelRoomCount }}</strong>
+                      </div>
+                    }
+
+                    @if (bookingType === "RESTAURANT") {
+                      <div>
+                        <small>Time slot</small>
+                        <strong>{{ timeSlot }}</strong>
+                      </div>
+                    }
+
+                    @if (bookingType === "TOUR_GUIDE") {
+                      <div>
+                        <small>Duration</small>
+                        <strong>{{ booking.durationHours }} hour(s)</strong>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- GUEST REVIEW -->
+                <div class="review-section">
+                  <div class="review-section-heading">
+                    <h4>Guest information</h4>
+                    <button type="button" (click)="goToStep(2)">Edit</button>
+                  </div>
+
+                  <div class="review-grid">
+                    <div>
+                      <small>Primary guest</small>
+                      <strong>{{ fullName }}</strong>
+                    </div>
+
+                    <div>
+                      <small>Email</small>
+                      <strong>{{ email }}</strong>
+                    </div>
+
+                    <div>
+                      <small>Phone</small>
+                      <strong>{{ phone }}</strong>
+                    </div>
+
+                    <div>
+                      <small>Total guests</small>
+                      <strong>{{ totalGuests }}</strong>
+                    </div>
+
+                    <div>
+                      <small>Adults</small>
+                      <strong>{{ adults }}</strong>
+                    </div>
+
+                    <div>
+                      <small>Children / Infants</small>
+                      <strong>{{ children }} / {{ infants }}</strong>
+                    </div>
+                  </div>
+
+                  @if (companions.length > 0) {
+                    <div class="review-companions">
+                      <strong>Additional travellers</strong>
+
+                      @for (guest of companions; track $index) {
+                        <div>
+                          <span>{{
+                            guest.fullName || "Unnamed traveller"
+                          }}</span>
+                          <small>{{
+                            guest.email ||
+                              guest.phoneNumber ||
+                              "No additional contact"
+                          }}</small>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- ADDON REVIEW -->
+                @if (selectedAddons.length > 0) {
+                  <div class="review-section">
+                    <div class="review-section-heading">
+                      <h4>Selected extras</h4>
+                      <button type="button" (click)="goToStep(3)">Edit</button>
+                    </div>
+
+                    @for (addon of selectedAddons; track addon.id) {
+                      <div class="review-addon-row">
+                        <span>{{ addon.icon }} {{ addon.name }}</span>
+                        <strong>{{ formatCurrency(addon.price) }}</strong>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (specialRequest) {
+                  <div class="review-section">
+                    <h4>Special requests</h4>
+                    <p class="review-special-request">{{ specialRequest }}</p>
+                  </div>
+                }
+
+                <!-- COUPON -->
+                <div class="coupon-section">
+                  <div class="coupon-heading">
+                    <span>％</span>
+                    <div>
+                      <strong>Have a promo code?</strong>
+                      <small>Apply an eligible discount to your booking.</small>
+                    </div>
+                  </div>
+
+                  @if (!appliedCoupon) {
+                    <div class="coupon-input-row">
+                      <input
+                        type="text"
+                        [(ngModel)]="couponCode"
+                        placeholder="Enter promo code"
+                        (keyup.enter)="applyCoupon()"
+                      />
+
+                      <button
+                        type="button"
+                        class="secondary-btn"
+                        [disabled]="!couponCode.trim()"
+                        (click)="applyCoupon()"
+                      >
+                        Apply
+                      </button>
+                    </div>
+
+                    @if (couponError) {
+                      <p class="coupon-error">{{ couponError }}</p>
+                    }
+                  } @else {
+                    <div class="coupon-applied">
+                      <div>
+                        <span>✓</span>
+                        <div>
+                          <strong>{{ appliedCoupon.code }}</strong>
+                          <small>{{ appliedCoupon.label }}</small>
+                        </div>
+                      </div>
+
+                      <button type="button" (click)="removeCoupon()">
+                        Remove
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <!-- FINAL VALIDATION -->
+                @if (bookingType === "HOTEL" && !hotelAvailability?.available) {
+                  <div class="validation-message">
+                    Hotel room availability must be confirmed before submitting.
+                  </div>
+                }
+
+                @if (!selectedItem) {
+                  <div class="validation-message">
+                    Please select an available experience before continuing.
+                  </div>
+                }
+
+                <div class="wizard-actions">
+                  <button
+                    type="button"
+                    class="secondary-btn"
+                    (click)="prevStep()"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="primary-btn submit-booking-btn"
+                    [disabled]="!step4Valid || isSubmitting"
+                    (click)="submitBooking()"
+                  >
+                    @if (isSubmitting) {
+                      <span class="button-spinner"></span>
+                      Submitting...
+                    } @else {
+                      Confirm booking →
+                    }
+                  </button>
+                </div>
+
+                <p class="review-disclaimer">
+                  Your final payable amount will be determined by the booking
+                  response from TRAVIXA. Displayed prices are estimates.
+                </p>
+              </div>
+            }
+          </section>
+        </div>
+
+        <!-- BOOKING SUMMARY SIDEBAR -->
+        <aside class="booking-sidebar">
+          <div class="sidebar-card summary-card">
+            <div class="sidebar-card-heading">
+              <div>
+                <span class="section-eyebrow">YOUR RESERVATION</span>
+                <h3>Booking summary</h3>
+              </div>
+              <span class="summary-mark">✦</span>
+            </div>
+
+            @if (selectedItem) {
+              <div class="summary-experience">
+                <div class="summary-image">
+                  @if (selectedItem.image) {
+                    <img [src]="selectedItem.image" [alt]="selectedItem.name" />
+                  } @else {
+                    <span>{{ bookingTypeIcon }}</span>
+                  }
+                </div>
+
+                <div>
+                  <small>{{ bookingTypeLabel }}</small>
+                  <strong>{{ selectedItem.name }}</strong>
+                  <span>⌖ {{ selectedItem.location }}</span>
+                </div>
+              </div>
+            } @else {
+              <div class="summary-placeholder">
+                <span>✦</span>
+                <p>Your selected experience will appear here.</p>
+              </div>
+            }
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-meta">
+              <div>
+                <span>Booking date</span>
+                <strong>{{ formatDate(bookingDate) }}</strong>
+              </div>
+
+              <div>
+                <span>Experience date</span>
+                <strong>{{ formatDate(startDate) }}</strong>
+              </div>
+
+              @if (bookingType === "HOTEL") {
+                <div>
+                  <span>Check-out</span>
+                  <strong>{{ formatDate(endDate) }}</strong>
+                </div>
+
+                <div>
+                  <span>Rooms / Nights</span>
+                  <strong>{{ hotelRoomCount }} / {{ numberOfNights }}</strong>
+                </div>
+              }
+
+              <div>
+                <span>Guests</span>
+                <strong>{{ totalGuests }}</strong>
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-price-breakdown">
+              <div>
+                <span>Base amount</span>
+                <strong>{{ formatCurrency(baseSubtotal) }}</strong>
+              </div>
+
+              @if (addOnsTotal > 0) {
+                <div>
+                  <span>Additional extras</span>
+                  <strong>{{ formatCurrency(addOnsTotal) }}</strong>
+                </div>
+              }
+
+              @if (serviceFee > 0) {
+                <div>
+                  <span>Service fee</span>
+                  <strong>{{ formatCurrency(serviceFee) }}</strong>
+                </div>
+              }
+
+              @if (tax > 0) {
+                <div>
+                  <span>Estimated tax</span>
+                  <strong>{{ formatCurrency(tax) }}</strong>
+                </div>
+              }
+
+              @if (discount > 0) {
+                <div class="discount-row">
+                  <span>Discount</span>
+                  <strong>−{{ formatCurrency(discount) }}</strong>
+                </div>
+              }
+            </div>
+
+            <div class="summary-total">
+              <div>
+                <small>ESTIMATED TOTAL</small>
+                <strong>{{ formatCurrency(estimatedTotal) }}</strong>
+              </div>
+              <span>BDT</span>
+            </div>
+
+            <p class="summary-disclaimer">
+              Final pricing and availability are subject to server confirmation.
+            </p>
+
+            @if (currentStep < 4) {
+              <button
+                type="button"
+                class="sidebar-continue-btn"
+                [disabled]="!canContinue"
+                (click)="nextStep()"
+              >
+                Continue booking →
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="sidebar-continue-btn"
+                [disabled]="!step4Valid || isSubmitting"
+                (click)="submitBooking()"
+              >
+                {{ isSubmitting ? "Submitting..." : "Confirm booking →" }}
+              </button>
+            }
+
+            <button
+              type="button"
+              class="sidebar-reset-btn"
+              (click)="resetBooking()"
+            >
+              Reset booking
+            </button>
+          </div>
+
+          <!-- WEATHER PREVIEW -->
+          <div class="sidebar-card weather-card">
+            <div class="weather-top">
+              <span>WEATHER PREVIEW</span>
+              <span>✦</span>
+            </div>
+
+            <div class="weather-content">
+              <span class="weather-icon">{{ weatherPreview.icon }}</span>
+              <div>
+                <strong>{{ weatherPreview.temp }}</strong>
+                <small>{{ weatherPreview.condition }}</small>
+              </div>
+            </div>
+
+            <p>Weather preview for your selected destination.</p>
+          </div>
+
+          <!-- TRUST CARD -->
+          <div class="sidebar-card trust-card">
+            <div class="trust-heading">
+              <span>✦</span>
+              <strong>Book with confidence</strong>
+            </div>
+
+            <div class="trust-item">
+              <span>✓</span>
+              <div>
+                <strong>Secure booking process</strong>
+                <small>Your request is submitted securely.</small>
+              </div>
+            </div>
+
+            <div class="trust-item">
+              <span>✓</span>
+              <div>
+                <strong>Availability verification</strong>
+                <small>Hotel availability is checked with the server.</small>
+              </div>
+            </div>
+
+            <div class="trust-item">
+              <span>✓</span>
+              <div>
+                <strong>Booking confirmation</strong>
+                <small>Receive a reference after successful submission.</small>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    }
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="booking-footer">
+    <div class="footer-brand">
+      <span class="brand-mark">T</span>
+      <strong>TRAVIXA</strong>
+    </div>
+
+    <p>Discover more. Experience better. Travel smarter.</p>
+
+    <button type="button" (click)="goToDiscover()">
+      Explore experiences →
+    </button>
+  </footer>
+
+  <!-- TOAST NOTIFICATION -->
+  @if (showToastMessage && toast.show) {
+    <div
+      class="booking-toast"
+      [class.toast-success]="toast.type === 'success'"
+      [class.toast-danger]="toast.type === 'danger'"
+      [class.toast-info]="toast.type === 'info'"
+    >
+      <span class="toast-icon">
+        {{
+          toast.type === "success" ? "✓" : toast.type === "danger" ? "!" : "✦"
+        }}
+      </span>
+
+      <span>{{ toastMessage }}</span>
+    </div>
+  }
+</div>

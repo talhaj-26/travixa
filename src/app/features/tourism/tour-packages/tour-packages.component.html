@@ -1,0 +1,517 @@
+<section class="tp-page">
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO                                            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="tp-hero">
+    <div class="tp-hero-bg">
+      <div class="tp-hero-image"></div>
+      <div class="tp-hero-overlay"></div>
+    </div>
+
+    <div class="tp-hero-orb tp-hero-orb-one"></div>
+    <div class="tp-hero-orb tp-hero-orb-two"></div>
+
+    <div class="container tp-hero-container">
+      <div class="tp-hero-content">
+        <div class="tp-hero-badge">
+          <span class="badge-dot"></span>
+          <span>TRAVIXA TOUR PACKAGES</span>
+        </div>
+
+        <h1 class="tp-hero-title">
+          Your next
+          <span>adventure starts here.</span>
+        </h1>
+
+        <p class="tp-hero-desc">
+          Discover carefully crafted tour packages, explore incredible
+          destinations, and turn your travel plans into unforgettable stories.
+        </p>
+
+        <div class="tp-hero-highlights">
+          <div class="tp-highlight">
+            <span class="tp-highlight-icon">✦</span>
+            <div>
+              <strong>Published listings</strong>
+              <small>Packages reviewed for display</small>
+            </div>
+          </div>
+
+          <div class="tp-highlight">
+            <span class="tp-highlight-icon">✓</span>
+            <div>
+              <strong>Clear package details</strong>
+              <small>Duration, group size and price</small>
+            </div>
+          </div>
+
+          <div class="tp-highlight">
+            <span class="tp-highlight-icon">★</span>
+            <div>
+              <strong>Current listings</strong>
+              <small>Information from TRAVIXA</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="tp-search">
+          <span class="tp-search-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="currentPage = 0"
+            placeholder="Search packages, destinations, activities..."
+          />
+
+          @if (searchTerm) {
+            <button
+              type="button"
+              class="tp-search-clear"
+              (click)="searchTerm = ''"
+              aria-label="Clear"
+            >
+              ×
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="tp-hero-stats">
+        <div class="tp-stat">
+          <strong>{{ packages.length }}</strong>
+          <span>Published packages</span>
+        </div>
+        <div class="tp-stat">
+          <strong>{{ destinations.length - 1 }}</strong>
+          <span>Destinations</span>
+        </div>
+        <div class="tp-stat">
+          <strong>{{ agencyCount }}</strong>
+          <span>Travel agencies</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FILTER BAR                                      -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="tp-filter-section">
+    <div class="container">
+      <div class="tp-filter-header">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            EXPLORE
+          </span>
+          <h2 class="section-title">
+            Find your
+            <em>perfect trip.</em>
+          </h2>
+        </div>
+
+        <div class="tp-filter-actions">
+          @if (activeFilterCount > 0) {
+            <button type="button" class="tp-clear-btn" (click)="clearFilters()">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              >
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+              <span>Reset filters</span>
+              <span class="filter-count">{{ activeFilterCount }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Filter dropdowns -->
+      <div class="tp-filter-grid">
+        <div class="tp-filter-field">
+          <label for="destFilter">Destination</label>
+          <select id="destFilter" [(ngModel)]="selectedDestination" (ngModelChange)="currentPage = 0">
+            @for (dest of destinations; track dest.value) {
+              <option [value]="dest.value">{{ dest.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tp-filter-field">
+          <label for="durationFilter">Duration</label>
+          <select id="durationFilter" [(ngModel)]="selectedDuration" (ngModelChange)="currentPage = 0">
+            @for (duration of durationOptions; track duration.value) {
+              <option [value]="duration.value">{{ duration.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tp-filter-field">
+          <label for="priceFilter">Budget</label>
+          <select id="priceFilter" [(ngModel)]="selectedPrice" (ngModelChange)="currentPage = 0">
+            @for (price of priceOptions; track price.value) {
+              <option [value]="price.value">{{ price.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tp-filter-field">
+          <label for="sortFilter">Sort by</label>
+          <select id="sortFilter" [(ngModel)]="sortBy">
+            @for (sort of sortOptions; track sort.value) {
+              <option [value]="sort.value">{{ sort.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PACKAGE GRID                                    -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="tp-listing-section">
+    <div class="container">
+      <div class="tp-listing-head">
+        <div class="tp-listing-title">
+          <h2>
+            Tour Packages
+            <span class="result-count">{{ filteredPackages.length }}</span>
+          </h2>
+          <p>Carefully designed journeys made for unforgettable moments.</p>
+        </div>
+
+        <div class="tp-view-toggle">
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="viewMode() === 'grid'"
+            (click)="setViewMode('grid')"
+            aria-label="Grid view"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="viewMode() === 'list'"
+            (click)="setViewMode('list')"
+            aria-label="List view"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      @if (loading) {
+        <div class="tp-empty-state" role="status">Loading published journeys…</div>
+      } @else if (catalogError) {
+        <div class="tp-empty-state" role="alert"><p>{{ catalogError }}</p><button type="button" class="tp-btn-view" (click)="loadPackages()">Try again</button></div>
+      } @else if (filteredPackages.length > 0) {
+        <div class="tp-grid" [class.tp-grid-list]="viewMode() === 'list'">
+          @for (pkg of pagedPackages; track pkg.id; let i = $index) {
+            <article class="tp-card" [style.animation-delay.ms]="i * 60">
+              <!-- Image -->
+              <div class="tp-card-image">
+                @if (pkg.image) { <img [src]="pkg.image" [alt]="pkg.title" loading="lazy" (error)="pkg.image = ''" /> }
+                @else { <div class="tp-image-placeholder" role="img" [attr.aria-label]="pkg.title + ' photo unavailable'">✦</div> }
+
+                <div class="tp-card-overlay"></div>
+
+                <!-- Top badges -->
+                <div class="tp-card-top">
+                  <span class="tp-card-badge">PUBLISHED</span>
+                </div>
+
+                <!-- Bottom: duration + category -->
+                <div class="tp-card-image-bottom">
+                  <span class="tp-image-chip">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    {{ pkg.durationDays }} days
+                  </span>
+
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="tp-card-body">
+                <div class="tp-card-location">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{{ pkg.destination }}</span>
+                </div>
+
+                <h3 class="tp-card-title">{{ pkg.title }}</h3>
+
+                <p class="tp-card-desc">{{ pkg.description }}</p>
+
+                <!-- Activities -->
+                <div class="tp-card-activities">
+                  @for (
+                    activity of pkg.inclusions.slice(0, 3);
+                    track activity
+                  ) {
+                    <span class="tp-activity-chip">{{ activity }}</span>
+                  }
+                  @if (pkg.inclusions.length > 3) {
+                    <span class="tp-activity-chip tp-activity-more">
+                      +{{ pkg.inclusions.length - 3 }}
+                    </span>
+                  }
+                </div>
+
+                <!-- Meta -->
+                <div class="tp-card-meta">
+                  <div class="tp-meta-item">
+                    <span class="tp-meta-icon">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                      </svg>
+                    </span>
+                    <div>
+                      <small>Group</small>
+                      <strong>Max {{ pkg.groupSize }}</strong>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Footer: price + CTA -->
+                <div class="tp-card-footer">
+                  <div class="tp-price-block">
+                    <span class="tp-price-label">Starting from</span>
+                    <div class="tp-price-row">
+                      <strong class="tp-price"
+                        >{{ formatPrice(pkg, pkg.price) }}</strong
+                      >
+                    </div>
+                    <span class="tp-price-per">per person</span>
+                  </div>
+
+                  <div class="tp-card-actions">
+                    <button
+                      type="button"
+                      class="tp-btn-view"
+                      (click)="viewPackage(pkg)"
+                      aria-label="View details"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                      >
+                        <path
+                          d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="tp-btn-book"
+                      (click)="bookPackage(pkg)"
+                    >
+                      <span>Book</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+        @if (pageCount > 1) {
+          <nav class="tp-pagination" aria-label="Tour package pages">
+            <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">Previous</button>
+            <span>Page {{ currentPage + 1 }} of {{ pageCount }}</span>
+            <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage + 1 >= pageCount">Next</button>
+          </nav>
+        }
+      } @else {
+        <div class="tp-empty">
+          <div class="tp-empty-icon">🧳</div>
+          <h3>No tour packages found</h3>
+          <p>
+            Try changing your search or filters to discover another
+            unforgettable journey.
+          </p>
+          <button type="button" class="tp-reset-btn" (click)="clearFilters()">
+            <span>Show all packages</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- AI PLANNER CTA                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="tp-planner-section">
+    <div class="container">
+      <div class="tp-planner">
+        <div class="tp-planner-bg">
+          <div class="tp-planner-overlay"></div>
+        </div>
+
+        <div class="tp-planner-glow"></div>
+
+        <div class="tp-planner-content">
+          <span class="tp-planner-badge">
+            <span>✦</span>
+            TRAVIXA SMART PLANNER
+          </span>
+
+          <h2 class="tp-planner-title">
+            Can't decide where
+            <em>your journey begins?</em>
+          </h2>
+
+          <p class="tp-planner-desc">
+            Tell TRAVIXA your interests, budget and travel style, and discover a
+            journey built around you.
+          </p>
+
+          <button type="button" class="tp-planner-btn" (click)="openPlanner()">
+            <span>Plan my journey</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="tp-planner-mark">
+          <span>✦</span>
+          <small>TRAVIXA AI</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BACK TO DISCOVER                                -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="tp-back-section">
+    <div class="container">
+      <button type="button" class="tp-back-btn" (click)="goToDiscover()">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        <span>Back to Discover</span>
+      </button>
+    </div>
+  </section>
+</section>

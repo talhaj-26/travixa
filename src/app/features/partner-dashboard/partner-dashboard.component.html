@@ -1,0 +1,48 @@
+<main class="partner-dashboard">
+  <div class="dashboard-shell">
+    <header class="dashboard-hero">
+      <div>
+        <p class="eyebrow">PARTNER WORKSPACE · LIVE OPERATIONS</p>
+        <h1>Welcome back, <span>{{ userName }}</span>.</h1>
+        <div class="hero-meta"><span class="role-chip">{{ roleLabel }}</span><span class="scope">{{ data?.scope || 'Your linked organization workspace' }}</span></div>
+      </div>
+      <a routerLink="/partner-listings" class="hero-action">Manage your listings <span>↗</span></a>
+    </header>
+
+    @if (loading) {
+      <section class="state-card" aria-live="polite"><span class="loader"></span><h2>Loading your workspace</h2><p>Fetching organization-scoped metrics from TRAVIXA.</p></section>
+    } @else if (errorMessage) {
+      <section class="state-card error" role="alert"><h2>Workspace unavailable</h2><p>{{ errorMessage }}</p><button type="button" (click)="load()">Try again</button></section>
+    } @else if (data) {
+      <section class="metrics" aria-label="Partner listing summary">
+        <article class="metric metric--primary"><span>Managed listings</span><strong>{{ totalListings | number }}</strong><small>Across your linked organizations</small></article>
+        <article class="metric"><span>Hotels</span><strong>{{ data.totalHotels | number }}</strong><small>Hotel listings</small></article>
+        <article class="metric"><span>Restaurants</span><strong>{{ data.totalRestaurants | number }}</strong><small>Restaurant listings</small></article>
+        <article class="metric"><span>Tour packages</span><strong>{{ data.totalTourPackages | number }}</strong><small>Travel experiences</small></article>
+        <article class="metric"><span>Pending review</span><strong>{{ data.pendingListings | number }}</strong><small>Listings awaiting approval</small></article>
+      </section>
+
+      @if (data.totalPartnerOrganizations === 0) {
+        <section class="notice"><span>i</span><div><strong>No active organization is linked</strong><p>Ask an administrator to connect your account to a partner organization to manage its listings.</p></div></section>
+      }
+
+      <section class="workspace-grid">
+        <article class="operations">
+          <div><p class="eyebrow">OPERATIONS</p><h2>Manage your travel services</h2><p>Open the tools available to your account and keep your listings current.</p></div>
+          <nav class="action-list" aria-label="Partner workspace shortcuts">
+            @for (action of primaryActions; track action.route) { <a [routerLink]="action.route"><b>{{ action.icon }}</b><span>{{ action.label }}</span><i>›</i></a> }
+          </nav>
+        </article>
+        <article class="inventory">
+          <p class="eyebrow">YOUR INVENTORY</p><h2>Services in your workspace</h2>
+          <a routerLink="/hotel-management"><span>Hotels</span><strong>{{ data.totalHotels | number }}</strong><i>↗</i></a>
+          <a routerLink="/restaurant-management"><span>Restaurants</span><strong>{{ data.totalRestaurants | number }}</strong><i>↗</i></a>
+          <a routerLink="/tour-package-management"><span>Tour packages</span><strong>{{ data.totalTourPackages | number }}</strong><i>↗</i></a>
+          <a routerLink="/tour-guide-management"><span>Tour guides</span><strong>{{ data.totalTourGuides | number }}</strong><i>↗</i></a>
+          <a routerLink="/transport-management"><span>Transport routes</span><strong>{{ data.totalTransportRoutes | number }}</strong><i>↗</i></a>
+        </article>
+      </section>
+      <p class="data-note">Counts are supplied by the server and limited to your active organization memberships.</p>
+    }
+  </div>
+</main>

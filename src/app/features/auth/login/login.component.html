@@ -1,0 +1,390 @@
+<section class="login-page">
+  <!-- Theme Toggle -->
+  <div class="login-theme-toggle">
+    <app-theme-toggle />
+  </div>
+
+  <!-- Background decor -->
+  <div class="login-bg">
+    <div class="bg-orb bg-orb-one"></div>
+    <div class="bg-orb bg-orb-two"></div>
+    <div class="bg-orb bg-orb-three"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="login-wrapper">
+    <div class="login-shell">
+      <!-- ═══ LEFT — VISUAL ═══ -->
+      <aside class="login-visual">
+        <div class="visual-images">
+          @for (v of visuals; track v.location; let i = $index) {
+            <div
+              class="visual-image"
+              [class.active]="currentVisualIndex === i"
+              [style.background-image]="'url(' + v.image + ')'"
+            ></div>
+          }
+          <div class="visual-overlay"></div>
+        </div>
+
+        <div class="visual-inner">
+          <a routerLink="/" class="brand">
+            <span class="brand-mark">T</span>
+            <span class="brand-text">TRAVIXA</span>
+          </a>
+
+          <div class="visual-copy">
+            <span class="visual-kicker">
+              <span class="kicker-dot"></span>
+              {{ currentVisual.kicker }}
+            </span>
+
+            <h1 class="visual-title">
+              {{ currentVisual.title }}
+              <span>{{ currentVisual.titleAccent }}</span>
+            </h1>
+
+            <p class="visual-desc">{{ currentVisual.description }}</p>
+          </div>
+
+          <div class="visual-features">
+            @for (f of visualFeatures; track f.title) {
+              <div class="visual-feature">
+                <span class="feature-icon">{{ f.icon }}</span>
+                <div class="feature-text">
+                  <strong>{{ f.title }}</strong>
+                  <small>{{ f.subtitle }}</small>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Visual footer with PROGRESS BAR -->
+        <div class="visual-footer">
+          <div class="visual-progress">
+            <div
+              class="visual-progress__bar"
+              [style.width.%]="visualProgress"
+            ></div>
+          </div>
+
+          <div class="visual-dots">
+            @for (v of visuals; track v.location; let i = $index) {
+              <button
+                type="button"
+                class="dot"
+                [class.active]="currentVisualIndex === i"
+                (click)="setVisual(i)"
+                [attr.aria-label]="'View ' + v.location"
+              ></button>
+            }
+          </div>
+
+          <span class="visual-location">
+            <span class="location-line"></span>
+            {{ currentVisual.location }} • BANGLADESH
+          </span>
+        </div>
+      </aside>
+
+      <!-- ═══ RIGHT — FORM ═══ -->
+      <main class="login-panel">
+        <div class="login-card" [class.shake]="shakeForm">
+          <!-- Mobile brand row with back link -->
+          <div class="mobile-brand-row">
+            <a routerLink="/" class="mobile-brand">
+              <span class="brand-mark">T</span>
+              <span class="brand-text">TRAVIXA</span>
+            </a>
+
+            <a routerLink="/" class="mobile-back">← Home</a>
+          </div>
+
+          <div class="form-header">
+            <span class="form-kicker">WELCOME BACK</span>
+            <h2 class="form-title">
+              Sign in to
+              <span>TRAVIXA.</span>
+            </h2>
+            <p class="form-subtitle">
+              Continue your journey — pick up where you left off.
+            </p>
+          </div>
+
+          <!-- Last login info -->
+          @if (lastLoginInfo) {
+            <div class="last-login">
+              <span class="last-login__icon">🛡</span>
+              <div>
+                <strong>Last login</strong>
+                <small>
+                  {{ lastLoginInfo.time }} · {{ lastLoginInfo.device }}
+                </small>
+              </div>
+            </div>
+          }
+
+          @if (errorMessage) {
+            <div class="form-alert" role="alert">
+              <span class="alert-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </span>
+              <span class="alert-text">{{ errorMessage }}</span>
+              <button
+                type="button"
+                class="alert-close"
+                (click)="errorMessage = ''"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          }
+
+          <form
+            [formGroup]="loginForm"
+            (ngSubmit)="submit()"
+            novalidate
+            class="login-form"
+          >
+            <!-- Email -->
+            <div class="form-field">
+              <label for="username" class="field-label">User name</label>
+
+              <div
+                class="field-input"
+                [class.is-error]="username.invalid && username.touched"
+                [class.is-valid]="username.valid && username.touched"
+              >
+                <span class="field-icon">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                    />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </span>
+
+                <input
+                  id="username"
+                  type="text"
+                  formControlName="username"
+                  placeholder="username"
+                  autocomplete="username"
+                  spellcheck="false"
+                />
+
+                @if (username.valid && username.touched) {
+                  <span class="field-status">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                }
+              </div>
+
+              @if (username.invalid && username.touched) {
+                <small class="field-error">
+                  @if (username.errors?.["required"]) {
+                    User name is required.
+                  } 
+                </small>
+              }
+            </div>
+
+            <!-- Password -->
+            <div class="form-field">
+              <div class="field-row">
+                <label for="password" class="field-label">Password</label>
+                <a routerLink="/forgot-password" class="field-link"
+                  >Forgot password?</a
+                >
+              </div>
+
+              <div
+                class="field-input"
+                [class.is-error]="password.invalid && password.touched"
+              >
+                <span class="field-icon">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </span>
+
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  (keyup)="checkCapsLock($event)"
+                />
+
+                <button
+                  type="button"
+                  class="field-toggle"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="
+                    showPassword ? 'Hide password' : 'Show password'
+                  "
+                >
+                  @if (showPassword) {
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                      />
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                  } @else {
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  }
+                </button>
+              </div>
+
+              @if (capsLockOn) {
+                <small class="field-warning">⚠ Caps Lock is on</small>
+              }
+
+              @if (password.invalid && password.touched) {
+                <small class="field-error">
+                  @if (password.errors?.["required"]) {
+                    Password is required.
+                  } @else if (password.errors?.["minlength"]) {
+                    Password must be at least 6 characters.
+                  }
+                </small>
+              }
+            </div>
+
+            <!-- Remember -->
+            <label class="form-remember">
+              <input type="checkbox" formControlName="rememberMe" />
+              <span class="remember-box">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span class="remember-text">Keep me signed in for 30 days</span>
+            </label>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="form-submit"
+              [disabled]="loginForm.invalid || isSubmitting || loginSuccess"
+              [class.is-loading]="isSubmitting"
+              [class.is-success]="loginSuccess"
+            >
+              @if (loginSuccess) {
+                <span class="submit-icon">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <span>Welcome back!</span>
+              } @else if (isSubmitting) {
+                <span class="submit-spinner"></span>
+                <span>Signing you in...</span>
+              } @else {
+                <span>Sign in to TRAVIXA</span>
+                <span class="submit-arrow">↗</span>
+              }
+            </button>
+          </form>
+
+          <div class="auth-security-note">
+            <span aria-hidden="true">✦</span>
+            <p>Sign in with the account details you used to register with TRAVIXA.</p>
+          </div>
+
+          <!-- Trust badges (NEW) -->
+          <div class="trust-row">
+            @for (b of trustBadges; track b.label) {
+              <div class="trust-badge">
+                <span class="trust-badge__icon">{{ b.icon }}</span>
+                <span class="trust-badge__label">{{ b.label }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="form-signup">
+            <span>New to TRAVIXA?</span>
+            <a routerLink="/register">
+              Create an account
+              <span>↗</span>
+            </a>
+          </div>
+
+          <div class="form-footer">
+            © {{ currentYear }} TRAVIXA • Smart Tourism & Hospitality Platform
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>

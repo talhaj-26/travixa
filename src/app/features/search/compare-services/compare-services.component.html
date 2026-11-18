@@ -1,0 +1,314 @@
+<div class="compare-page">
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <header class="topbar-wrap">
+    <div class="topbar">
+      <a class="brand" (click)="goToHome()">
+        <span class="brand-mark">T</span>
+        <span class="brand-text">
+          TRAVIXA
+          <small>MATCH LAB</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        <a (click)="goToSearch()">Search</a>
+        <a (click)="goToDiscover()">Discover</a>
+        <a (click)="goToWishlist()">Wishlist</a>
+        <a (click)="goToBooking()">Bookings</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="hero">
+      <div class="hero-glow hero-glow--1"></div>
+      <div class="hero-glow hero-glow--2"></div>
+
+      <div class="hero-text">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          DECISION INTELLIGENCE
+        </span>
+
+        <h1>
+          Compare before
+          <span class="hero-accent">you commit.</span>
+        </h1>
+
+        <p>
+          Put your favourite travel and hospitality options side by side.
+          Compare price, rating, facilities, experience and value before making
+          your next TRAVIXA booking.
+        </p>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <strong>{{ services.length }}</strong>
+            <small>Services</small>
+          </div>
+          <div class="hero-stat">
+            <strong>6</strong>
+            <small>Features</small>
+          </div>
+          <div class="hero-stat">
+            <strong>1</strong>
+            <small>Winner</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-note">
+        <div class="hero-note-icon">⚖️</div>
+        <strong>{{ services.length }}</strong>
+        <span>services currently inside your comparison matrix</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════ COMPARISON BOARD ═══════════════ -->
+    <section class="compare-shell">
+      <div class="compare-head">
+        <div>
+          <span class="section-kicker">SIDE BY SIDE</span>
+          <h2>Comparison Matrix</h2>
+          <p>One view. Every option. Better travel decisions.</p>
+        </div>
+
+        <div class="head-actions">
+          <button class="btn btn-light" (click)="goToSearch()">
+            <span>+</span> Add Service
+          </button>
+
+          @if (services.length > 0) {
+            <button
+              class="btn btn-primary"
+              [class.btn-success]="saved"
+              (click)="saveComparison()"
+            >
+              @if (saved) {
+                <span>✓</span> Saved
+              } @else {
+                <span>♥</span> Save Comparison
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (loading) {
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Loading comparison...</p>
+        </div>
+      } @else if (services.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">⚖️</div>
+          <h3>Nothing to compare yet</h3>
+          <p>Add hotels, tours, restaurants or guides to see them side by side.</p>
+          <button class="btn btn-primary" (click)="goToSearch()">
+            Browse Services
+          </button>
+        </div>
+      } @else {
+        <div class="matrix">
+          <div
+            class="matrix-grid"
+            [style.grid-template-columns]="getGridTemplate()"
+          >
+            <!-- ─── PRODUCT HEADER ROW ─── -->
+            <div class="product-row">
+              <div class="product-label">
+                <span class="product-label-icon">⚖️</span>
+                Services
+              </div>
+
+              @for (service of services; track service.id; let i = $index) {
+                <div
+                  class="product"
+                  [attr.data-type]="getColorVar(service.type)"
+                  [class.product--winner]="isWinner(service.id)"
+                >
+                  @if (isWinner(service.id)) {
+                    <span class="winner-badge">
+                      🏆 BEST VALUE
+                    </span>
+                  }
+
+                  <button
+                    type="button"
+                    class="product-remove"
+                    (click)="removeService(service.id, $event)"
+                    aria-label="Remove from comparison"
+                  >
+                    ×
+                  </button>
+
+                  <div class="product-image-wrap">
+                    <img
+                      [src]="service.image"
+                      [alt]="service.name"
+                      class="product-image"
+                      loading="lazy"
+                    />
+                    <div class="product-image-overlay"></div>
+
+                    <span class="product-type-badge">
+                      {{ service.typeIcon }} {{ service.typeLabel }}
+                    </span>
+                  </div>
+
+                  <div class="product-body">
+                    <h3>{{ service.name }}</h3>
+                    <div class="product-location">
+                      📍 {{ service.location }}
+                    </div>
+
+                    <div class="rating">
+                      <span class="star">★</span>
+                      <strong>{{ service.rating }}</strong>
+                      <small>({{ service.reviews }} reviews)</small>
+                    </div>
+
+                    <div class="product-actions">
+                      <button
+                        class="btn btn-primary"
+                        (click)="goToService(service)"
+                      >
+                        View
+                      </button>
+                      <button
+                        class="btn btn-light"
+                        (click)="goToBooking()"
+                      >
+                        {{ service.actionLabel }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- ─── SCORE ROW (special) ─── -->
+            <div class="feature-row feature-row--score">
+              <div class="feature-name">
+                <span class="feature-icon">🏅</span>
+                TRAVIXA Score
+              </div>
+
+              @for (service of services; track service.id; let i = $index) {
+                <div class="feature-value feature-value--score">
+                  <div
+                    class="score-ring"
+                    [style.background]="getScoreStyle(animatedScores[i] || 0)"
+                  >
+                    <div class="score-inner">
+                      <strong>{{ animatedScores[i] || 0 }}</strong>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- ─── FEATURE ROWS ─── -->
+            @for (row of featureRows; track row.label) {
+              <div class="feature-row">
+                <div class="feature-name">{{ row.label }}</div>
+
+                @for (service of services; track service.id) {
+                  <div
+                    class="feature-value"
+                    [attr.data-type]="getColorVar(service.type)"
+                  >
+                    @switch (row.render) {
+                      @case ('price') {
+                        <div class="price">
+                          {{ formatPrice(service.startingPrice) }}
+                          <small>{{ service.priceUnit }}</small>
+                        </div>
+                      }
+                      @case ('rating') {
+                        <strong>{{ service.rating }} / 5</strong>
+                      }
+                      @case ('boolean') {
+                        @if (getFeatureValue(service, row.field)) {
+                          <span class="yes">✓ Yes</span>
+                        } @else {
+                          <span class="no">× No</span>
+                        }
+                      }
+                      @default {
+                        <span>{{ getFeatureValue(service, row.field) }}</span>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ─── DECISION INTELLIGENCE ─── -->
+        <div class="decision-section">
+          <div class="decision-head">
+            <div>
+              <span class="section-kicker">INSIGHTS</span>
+              <h2>What stands out?</h2>
+              <p>A quick decision layer to help travellers understand the matrix.</p>
+            </div>
+          </div>
+
+          <div class="decision-grid">
+            <div class="decision-card" data-accent="purple">
+              <div class="decision-number">01</div>
+              <h3>Best Overall Experience</h3>
+              <p>
+                Sajek Cloud Escape leads the experience score with a strong
+                combination of destination appeal, traveller rating and package
+                value.
+              </p>
+            </div>
+
+            <div class="decision-card" data-accent="blue">
+              <div class="decision-number">02</div>
+              <h3>Best Accommodation Value</h3>
+              <p>
+                Grand Palace Dhaka provides the strongest hotel-focused
+                combination of comfort, verified service and booking flexibility.
+              </p>
+            </div>
+
+            <div class="decision-card" data-accent="green">
+              <div class="decision-number">03</div>
+              <h3>Best Local Expertise</h3>
+              <p>
+                Arif Hasan stands out for destination knowledge, traveller
+                ratings and personalised guided experiences.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- ═══════════════ FINAL CTA ═══════════════ -->
+    <section class="bottom-cta">
+      <div class="cta-glow"></div>
+      <div class="cta-text">
+        <span class="cta-kicker">DECISION READY</span>
+        <h2>Found your match?</h2>
+        <p>
+          Continue your journey with TRAVIXA and turn comparison into action.
+        </p>
+      </div>
+
+      <div class="cta-actions">
+        <button class="btn cta-btn cta-btn--light" (click)="goToSearch()">
+          Explore More
+        </button>
+        <button class="btn cta-btn cta-btn--dark" (click)="goToBooking()">
+          Continue Booking →
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

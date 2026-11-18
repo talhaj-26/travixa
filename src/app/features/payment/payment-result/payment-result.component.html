@@ -1,0 +1,86 @@
+<main class="receipt-page">
+  <section class="receipt-shell">
+    @if (loading) {
+      <div class="receipt-state" role="status">
+        <div class="spinner-border text-primary" aria-hidden="true"></div>
+        <p>Preparing your secure payment receipt…</p>
+      </div>
+    } @else if (errorMessage) {
+      <div class="receipt-state receipt-state--error" role="alert">
+        <span class="receipt-state__icon">!</span>
+        <h1>Receipt unavailable</h1>
+        <p>{{ errorMessage }}</p>
+        <a routerLink="/my-bookings" class="btn btn-primary">Go to my bookings</a>
+      </div>
+    } @else if (receipt) {
+      <header class="receipt-header no-print">
+        <a routerLink="/" class="receipt-brand" aria-label="TRAVIXA home">
+          <span class="receipt-brand__mark">T</span>
+          <span>TRAVIXA</span>
+        </a>
+        <span class="receipt-header__label">Payment receipt</span>
+      </header>
+
+      <section class="receipt-success no-print">
+        <span class="receipt-success__icon" aria-hidden="true">✓</span>
+        <div>
+          <p class="receipt-eyebrow">PAYMENT CONFIRMED</p>
+          <h1>Your booking is confirmed.</h1>
+          <p>Your payment is recorded. Download or print this receipt for your travel records.</p>
+        </div>
+      </section>
+
+      <section class="receipt-card" aria-label="Payment receipt details">
+        <div class="receipt-card__head">
+          <div>
+            <p class="receipt-eyebrow">TRAVIXA</p>
+            <h2>Payment receipt</h2>
+            <p>Smart Tourism &amp; Hospitality Platform</p>
+          </div>
+          <div class="receipt-status">
+            <span>INVOICE</span>
+            <strong>{{ receipt.invoiceNumber }}</strong>
+            <em>{{ receipt.paymentStatus }}</em>
+          </div>
+        </div>
+
+        <div class="receipt-details">
+          <div class="receipt-detail"><span>Booking reference</span><strong>{{ receipt.reference }}</strong></div>
+          <div class="receipt-detail"><span>Transaction ID</span><strong>{{ receipt.transactionId }}</strong></div>
+          <div class="receipt-detail"><span>Payment date</span><strong>{{ receipt.paymentDate }}</strong></div>
+          <div class="receipt-detail"><span>Payment status</span><strong class="text-success">{{ receipt.paymentStatus }}</strong></div>
+        </div>
+
+        <div class="receipt-section">
+          <p class="receipt-section__title">Billed to</p>
+          <div class="receipt-customer">
+            <strong>{{ receipt.travelerName }}</strong>
+            <span>{{ receipt.travelerEmail }}</span>
+          </div>
+        </div>
+
+        <div class="receipt-section">
+          <p class="receipt-section__title">Booking summary</p>
+          <div class="receipt-item">
+            <span class="receipt-item__icon" aria-hidden="true">✦</span>
+            <div><strong>{{ receipt.serviceName }}</strong><span>{{ receipt.serviceType }}</span></div>
+            <strong>{{ receipt.currency }} {{ receipt.amount | number }}</strong>
+          </div>
+        </div>
+
+        <div class="receipt-total"><span>Total paid</span><strong>{{ receipt.currency }} {{ receipt.amount | number }}</strong></div>
+
+        <footer class="receipt-footer">
+          <span><strong>Thank you for choosing TRAVIXA.</strong><br />Keep this receipt for your records.</span>
+          <span><strong>Support</strong><br />support&#64;travixa.com</span>
+        </footer>
+      </section>
+
+      <div class="receipt-actions no-print">
+        <button type="button" class="btn btn-primary" (click)="printReceipt()">Print / Save as PDF</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="downloadReceipt()">Download receipt</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="viewBooking()">View booking</button>
+      </div>
+    }
+  </section>
+</main>

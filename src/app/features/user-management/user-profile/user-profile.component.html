@@ -1,0 +1,683 @@
+  <div class="profile-page">
+    <!-- ═══════════════════════════════════════════════════════════
+        NAVBAR (unchanged structure, added logout button)
+        ═══════════════════════════════════════════════════════════ -->
+    <nav class="profile-nav">
+      <div class="nav-inner">
+        <a class="brand" (click)="goToHome()">
+          <div class="brand-mark">✈</div>
+          <div class="brand-text">
+            <strong>TRAVIXA</strong>
+            <small>Travel • Connect • Explore</small>
+          </div>
+        </a>
+
+        <div class="nav-actions">
+          <app-theme-toggle />
+
+          <a class="btn-nav btn-nav--ghost" (click)="goToDashboard()">
+            Dashboard
+          </a>
+          <a class="btn-nav btn-nav--outline" (click)="goToDiscover()">
+            Discover
+          </a>
+
+          <!-- LOGOUT -->
+          <button
+            type="button"
+            class="btn-nav btn-nav--danger"
+            (click)="logout()"
+          >
+            <span>🚪</span> Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="profile-shell">
+      <!-- ═══════════════════════════════════════════════════════════
+          HERO
+          ═══════════════════════════════════════════════════════════ -->
+      <div class="hero-grid">
+        <!-- Identity Card -->
+        <div class="identity-card">
+          <div class="identity-blob identity-blob--1"></div>
+          <div class="identity-blob identity-blob--2"></div>
+
+          <div class="identity-inner">
+            <div class="hero-top">
+              @if (profile.verified) {
+                <span class="verified-badge">
+                  <span class="verified-tick">✓</span>
+                  VERIFIED TRAVIXA MEMBER
+                </span>
+              }
+
+              <!-- NEW: Quick actions in hero -->
+              <div class="hero-actions-inline">
+                <button
+                  type="button"
+                  class="hero-icon-btn"
+                  (click)="goToNotifications()"
+                  [attr.aria-label]="'Notifications'"
+                >
+                  🔔
+                  @if (unreadNotifications > 0) {
+                    <span class="hero-icon-badge">{{ unreadNotifications }}</span>
+                  }
+                </button>
+                <button
+                  type="button"
+                  class="hero-icon-btn"
+                  (click)="goToSettings()"
+                  aria-label="Settings"
+                >
+                  ⚙
+                </button>
+              </div>
+            </div>
+
+            <h1 class="identity-title">
+              Welcome back,
+              <span class="identity-name">{{ profile.firstName }}.</span>
+            </h1>
+
+            <p class="identity-desc">
+              Your travel identity — manage bookings, preferences, security and
+              personal details from one beautiful hub.
+            </p>
+
+            <div class="identity-meta">
+              <div class="identity-meta-item">
+                <small>USER ID</small>
+                <strong>{{ profile.id }}</strong>
+              </div>
+              <div class="identity-meta-item">
+                <small>MEMBER SINCE</small>
+                <strong>{{ profile.memberSince }}</strong>
+              </div>
+              <div class="identity-meta-item">
+                <small>ROLE</small>
+                <strong>{{ profile.roleLabel }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Card -->
+        <div class="status-card">
+          <div class="status-head">
+            <div>
+              <small class="status-kicker">ACCOUNT STATUS</small>
+              <h3 class="status-value">{{ profile.accountStatus }}</h3>
+            </div>
+            <div class="status-icon">
+              <span>✓</span>
+            </div>
+          </div>
+
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [style.width.%]="profile.profileCompletion"
+            ></div>
+          </div>
+
+          <div class="progress-meta">
+            <small>Profile completion</small>
+            <strong>{{ profile.profileCompletion }}%</strong>
+          </div>
+
+          <div class="status-quick">
+            <span class="status-quick-dot"></span>
+            <small>All systems secure · Last login today</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+          TRAVEL STATS (NEW — 4 animated cards)
+          ═══════════════════════════════════════════════════════════ -->
+      <div class="stats-grid">
+        @for (stat of travelStats; track stat.label; let i = $index) {
+          <div class="stat-card" [attr.data-accent]="stat.accent">
+            <div class="stat-card__icon">{{ stat.icon }}</div>
+            <div class="stat-card__value">
+              {{ animatedStats[i] }}{{ stat.suffix }}
+            </div>
+            <div class="stat-card__label">{{ stat.label }}</div>
+            <div class="stat-card__glow"></div>
+          </div>
+        }
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+          MAIN GRID
+          ═══════════════════════════════════════════════════════════ -->
+      <div class="main-grid">
+        <!-- ═══════════════════════════════════════ -->
+        <!-- LEFT — PROFILE CARD                     -->
+        <!-- ═══════════════════════════════════════ -->
+        <aside class="profile-card">
+          <!-- Avatar -->
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <div class="avatar">
+              @if (profile.avatarUrl) {
+                <img
+                  [src]="profile.avatarUrl"
+                  [alt]="profile.fullName"
+                  class="avatar-img"
+                />
+              } @else {
+                <span class="avatar-initials">{{ displayInitials }}</span>
+              }
+            </div>
+
+            <span class="avatar-status"></span>
+
+            <!-- Avatar menu trigger -->
+            <button
+              type="button"
+              class="avatar-menu-btn"
+              (click)="toggleAvatarMenu($event)"
+              aria-label="Avatar options"
+            >
+              📷
+            </button>
+
+            <!-- Avatar menu -->
+            @if (showAvatarMenu) {
+              <div class="avatar-menu">
+                <button
+                  type="button"
+                  class="avatar-menu-item"
+                  (click)="uploadAvatar()"
+                >
+                  <span>⬆</span> Upload photo
+                </button>
+                @if (profile.avatarUrl) {
+                  <button
+                    type="button"
+                    class="avatar-menu-item"
+                    (click)="removeAvatar()"
+                  >
+                    <span>🗑</span> Remove photo
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Name & Email -->
+          <h3 class="profile-name">{{ profile.fullName }}</h3>
+          <p class="profile-email">{{ profile.email }}</p>
+
+          <span class="profile-role">{{ profile.roleLabel }}</span>
+
+          <!-- Travel badges -->
+          <div class="badges-section">
+            <span class="badges-title">ACHIEVEMENTS</span>
+            <div class="badges-grid">
+              @for (badge of travelBadges; track badge.label) {
+                <div
+                  class="badge-item"
+                  [class.badge-item--locked]="!badge.unlocked"
+                  [attr.title]="badge.description"
+                >
+                  <span class="badge-icon">{{ badge.icon }}</span>
+                  <small class="badge-label">{{ badge.label }}</small>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Profile actions -->
+          <div class="profile-actions">
+            <button
+              type="button"
+              class="btn-profile btn-profile--primary"
+              (click)="goToBookings()"
+            >
+              <span>✈</span> My Trips
+            </button>
+            <button
+              type="button"
+              class="btn-profile btn-profile--outline"
+              (click)="goToWishlist()"
+            >
+              <span>♥</span> Wishlist
+            </button>
+            <button
+              type="button"
+              class="btn-profile btn-profile--ghost"
+              (click)="goToSettings()"
+            >
+              <span>⚙</span> Settings
+            </button>
+          </div>
+
+          <!-- Meta -->
+          <div class="profile-meta">
+            <div class="profile-meta-row">
+              <small>Joined</small>
+              <strong>{{ profile.memberSince }}</strong>
+            </div>
+            <div class="profile-meta-row">
+              <small>Country</small>
+              <strong>{{ address.country }}</strong>
+            </div>
+            <div class="profile-meta-row">
+              <small>Account Status</small>
+              <strong class="meta-status">{{ profile.accountStatus }}</strong>
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <button
+            type="button"
+            class="btn-logout"
+            (click)="logout()"
+          >
+            <span>🚪</span> Logout
+          </button>
+        </aside>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- RIGHT — TABS + CONTENT                  -->
+        <!-- ═══════════════════════════════════════ -->
+        <main class="content-area">
+          <!-- Tab bar -->
+          <div class="tab-bar">
+            @for (tab of tabs; track tab.value) {
+              <button
+                type="button"
+                class="tab-btn"
+                [class.tab-btn--active]="activeTab === tab.value"
+                (click)="setTab(tab.value)"
+              >
+                <span class="tab-icon">{{ tab.icon }}</span>
+                <span class="tab-label">{{ tab.label }}</span>
+              </button>
+            }
+          </div>
+
+          <!-- ═══ PERSONAL ═══ -->
+          @if (activeTab === 'PERSONAL') {
+            <section class="tab-panel">
+              <div class="panel-head">
+                <div>
+                  <span class="panel-kicker">PERSONAL</span>
+                  <h2 class="panel-title">Personal Information</h2>
+                  <p class="panel-sub">
+                    Your basic identity details — used across all TRAVIXA
+                    services.
+                  </p>
+                </div>
+
+                @if (!editMode) {
+                  <button type="button" class="btn-edit" (click)="startEdit()">
+                    <span>✎</span> Edit Profile
+                  </button>
+                } @else {
+                  <div class="edit-actions">
+                    <button type="button" class="btn-cancel" (click)="cancelEdit()">
+                      Cancel
+                    </button>
+                    <button type="button" class="btn-save" (click)="saveEdit()">
+                      <span>✓</span> Save
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <small>First Name</small>
+                  @if (editMode) {
+                    <input
+                      type="text"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.firstName"
+                    />
+                  } @else {
+                    <strong>{{ profile.firstName }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Last Name</small>
+                  @if (editMode) {
+                    <input
+                      type="text"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.lastName"
+                    />
+                  } @else {
+                    <strong>{{ profile.lastName }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Email</small>
+                  @if (editMode) {
+                    <input
+                      type="email"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.email"
+                    />
+                  } @else {
+                    <strong>{{ profile.email }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Phone</small>
+                  @if (editMode) {
+                    <input
+                      type="tel"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.phone"
+                    />
+                  } @else {
+                    <strong>{{ profile.phone }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Age</small>
+                  @if (editMode) {
+                    <input
+                      type="number"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.age"
+                    />
+                  } @else {
+                    <strong>{{ profile.age }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Gender</small>
+                  @if (editMode) {
+                    <select class="info-input" [(ngModel)]="editBuffer.gender">
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  } @else {
+                    <strong>{{ profile.gender }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>Date of Birth</small>
+                  @if (editMode) {
+                    <input
+                      type="date"
+                      class="info-input"
+                      [(ngModel)]="editBuffer.dateOfBirth"
+                    />
+                  } @else {
+                    <strong>{{ profile.dateOfBirth }}</strong>
+                  }
+                </div>
+
+                <div class="info-item">
+                  <small>User ID</small>
+                  <strong class="info-id">{{ profile.id }}</strong>
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- ═══ PREFERENCES ═══ -->
+          @if (activeTab === 'PREFERENCES') {
+            <section class="tab-panel">
+              <div class="panel-head">
+                <div>
+                  <span class="panel-kicker">TRAVEL STYLE</span>
+                  <h2 class="panel-title">Travel Preferences</h2>
+                  <p class="panel-sub">
+                    Choose your favourite travel interests — we'll personalise
+                    your recommendations.
+                  </p>
+                </div>
+                <span class="count-badge">
+                  {{ activePreferenceCount }} active
+                </span>
+              </div>
+
+              <div class="pref-section">
+                <span class="pref-section-label">YOUR INTERESTS</span>
+
+                @if (preferences.length === 0) {
+                  <div class="pref-empty">
+                    <span>✦</span>
+                    <p>No preferences selected yet. Add some below!</p>
+                  </div>
+                } @else {
+                  <div class="pref-active-grid">
+                    @for (pref of preferences; track pref.id) {
+                      <button
+                        type="button"
+                        class="pref-chip pref-chip--active"
+                        (click)="removePreference(pref, $event)"
+                      >
+                        <span class="pref-chip-icon">{{ pref.icon }}</span>
+                        <span class="pref-chip-label">{{ pref.label }}</span>
+                        <span class="pref-chip-remove">×</span>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="pref-section">
+                <span class="pref-section-label">ADD MORE INTERESTS</span>
+
+                <div class="pref-all-grid">
+                  @for (pref of allPreferences; track pref.id) {
+                    <button
+                      type="button"
+                      class="pref-chip"
+                      [class.pref-chip--disabled]="isPreferenceActive(pref.id)"
+                      [disabled]="isPreferenceActive(pref.id)"
+                      (click)="togglePreference(pref)"
+                    >
+                      <span class="pref-chip-icon">{{ pref.icon }}</span>
+                      <span class="pref-chip-label">{{ pref.label }}</span>
+                      @if (isPreferenceActive(pref.id)) {
+                        <span class="pref-chip-check">✓</span>
+                      } @else {
+                        <span class="pref-chip-add">+</span>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- ═══ SECURITY ═══ -->
+          @if (activeTab === 'SECURITY') {
+            <section class="tab-panel tab-panel--dark">
+              <div class="panel-head">
+                <div>
+                  <span class="panel-kicker panel-kicker--light">SECURITY</span>
+                  <h2 class="panel-title panel-title--light">
+                    Account Protection
+                  </h2>
+                  <p class="panel-sub panel-sub--light">
+                    Keep your TRAVIXA account secure with advanced protection.
+                  </p>
+                </div>
+              </div>
+
+              <div class="security-row">
+                <div class="security-row-icon">🔒</div>
+                <div class="security-row-body">
+                  <strong>Password</strong>
+                  <small>Last changed 2 months ago</small>
+                </div>
+                <div class="security-row-status security-row-status--ok">
+                  Protected
+                </div>
+                <button
+                  type="button"
+                  class="btn-security"
+                  (click)="goToResetPassword()"
+                >
+                  Reset
+                </button>
+              </div>
+
+              <div class="security-row">
+                <div class="security-row-icon">🛡</div>
+                <div class="security-row-body">
+                  <strong>Two-Factor Authentication</strong>
+                  <small>Extra security layer for your account</small>
+                </div>
+                <button
+                  type="button"
+                  class="toggle-switch"
+                  [class.toggle-switch--on]="twoFactorEnabled"
+                  (click)="toggle2FA()"
+                >
+                  <span class="toggle-knob"></span>
+                </button>
+              </div>
+
+              <div class="sessions-section">
+                <div class="sessions-head">
+                  <span class="sessions-title">ACTIVE SESSIONS</span>
+                  <button
+                    type="button"
+                    class="btn-link-danger"
+                    (click)="signOutAllDevices()"
+                  >
+                    Sign out all
+                  </button>
+                </div>
+
+                <div class="session-list">
+                  @for (session of activeSessions; track session.device) {
+                    <div class="session-item">
+                      <div class="session-icon">{{ session.icon }}</div>
+                      <div class="session-info">
+                        <strong>{{ session.device }}</strong>
+                        <small>
+                          {{ session.location }} · {{ session.lastActive }}
+                        </small>
+                      </div>
+                      @if (session.current) {
+                        <span class="session-current">Current</span>
+                      } @else {
+                        <button
+                          type="button"
+                          class="session-revoke"
+                          (click)="revokeSession(session)"
+                        >
+                          Revoke
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- ═══ ADDRESS ═══ -->
+          @if (activeTab === 'ADDRESS') {
+            <section class="tab-panel">
+              <div class="panel-head">
+                <div>
+                  <span class="panel-kicker">LOCATION</span>
+                  <h2 class="panel-title">Address &amp; Location</h2>
+                  <p class="panel-sub">
+                    Where you're based — helps us find nearby experiences.
+                  </p>
+                </div>
+              </div>
+
+              <div class="address-hero">
+                <div class="address-icon">📍</div>
+                <div class="address-info">
+                  <small>Current Address</small>
+                  <strong>{{ address.city }}, {{ address.country }}</strong>
+                </div>
+              </div>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <small>Country</small>
+                  <strong>{{ address.country }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>City</small>
+                  <strong>{{ address.city }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>Area</small>
+                  <strong>{{ address.area }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>Street</small>
+                  <strong>{{ address.street }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>Postal Code</small>
+                  <strong>{{ address.postalCode }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>Department</small>
+                  <strong>{{ address.department }}</strong>
+                </div>
+                <div class="info-item">
+                  <small>Member Since</small>
+                  <strong>{{ address.memberSince }}</strong>
+                </div>
+              </div>
+            </section>
+          }
+        </main>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+          BOTTOM CTA
+          ═══════════════════════════════════════════════════════════ -->
+      <section class="final-cta">
+        <div class="cta-glow"></div>
+        <div class="cta-watermark">TRAVIXA</div>
+
+        <div class="cta-inner">
+          <div>
+            <span class="cta-kicker">TRAVIXA EXPERIENCE</span>
+            <h2 class="cta-title">Your next adventure starts here.</h2>
+            <p class="cta-copy">
+              Discover new destinations, save unforgettable experiences and make
+              every journey count.
+            </p>
+          </div>
+
+          <div class="cta-actions">
+            <button
+              type="button"
+              class="cta-btn cta-btn--light"
+              (click)="goToDiscover()"
+            >
+              Explore Destinations <span>→</span>
+            </button>
+            <button
+              type="button"
+              class="cta-btn cta-btn--ghost"
+              (click)="goToPlanner()"
+            >
+              ✨ Plan My Trip
+            </button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>

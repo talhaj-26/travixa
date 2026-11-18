@@ -1,0 +1,381 @@
+<section class="maps-page">
+  <!-- Hero -->
+  <section class="maps-hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-badge">
+          <span>🗺️</span>
+          Explore with Travixa Maps
+        </span>
+
+        <h1>
+          Find Your Place.
+          <span>Explore Your World.</span>
+        </h1>
+
+        <p>
+          Discover hotels, restaurants, attractions and transport points around
+          your next destination.
+        </p>
+
+        <!-- Search -->
+        <div class="map-search-box">
+          <span class="search-icon">🔎</span>
+
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search places, destinations or categories..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="searchLocation()"
+          />
+
+          @if (searchTerm) {
+            <button type="button" class="clear-search" (click)="clearFilters()">
+              ✕
+            </button>
+          }
+
+          <button
+            type="button"
+            class="search-button"
+            (click)="searchLocation()"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Workspace -->
+  <section class="map-workspace">
+    <div class="container">
+      <!-- Category Filters -->
+      <div class="category-bar">
+        <div class="category-heading">
+          <span>Explore</span>
+          <small>Choose a category</small>
+        </div>
+
+        <div class="category-list">
+          @for (category of categories; track category.value) {
+            <button
+              type="button"
+              class="category-pill"
+              [class.active]="selectedCategory === category.value"
+              (click)="selectCategory(category.value)"
+            >
+              <span>{{ category.icon }}</span>
+              {{ category.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Main Map Layout -->
+      <div class="map-layout">
+        <!-- Places Sidebar -->
+        <aside class="places-panel">
+          <div class="panel-header">
+            <div>
+              <span class="eyebrow">Nearby discoveries</span>
+
+              <h2>
+                {{ filteredPlaces.length }}
+                Places Found
+              </h2>
+            </div>
+
+            <button type="button" class="reset-button" (click)="clearFilters()">
+              Reset
+            </button>
+          </div>
+
+          <!-- Place List -->
+          <div class="places-list">
+            @for (place of filteredPlaces; track place.id) {
+              <button
+                type="button"
+                class="place-card"
+                [class.selected]="selectedPlace?.id === place.id"
+                (click)="selectPlace(place)"
+              >
+                <div class="place-image">
+                  <img [src]="place.image" [alt]="place.name" />
+
+                  <span class="place-icon">
+                    {{ place.icon }}
+                  </span>
+                </div>
+
+                <div class="place-info">
+                  <div class="place-top">
+                    <span class="place-category">
+                      {{ getCategoryLabel(place.category) }}
+                    </span>
+
+                    @if (place.featured) {
+                      <span class="featured-badge"> Featured </span>
+                    }
+                  </div>
+
+                  <h3>{{ place.name }}</h3>
+
+                  <p class="place-location">📍 {{ place.location }}</p>
+
+                  <div class="place-meta">
+                    <span class="rating"> ★ {{ place.rating }} </span>
+
+                    <span>•</span>
+
+                    <span>
+                      {{ place.distance }}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            } @empty {
+              <div class="empty-places">
+                <div class="empty-icon">🔎</div>
+
+                <h3>No places found</h3>
+
+                <p>Try another search or category.</p>
+
+                <button
+                  type="button"
+                  class="empty-button"
+                  (click)="clearFilters()"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            }
+          </div>
+        </aside>
+
+        <!-- Mock Map -->
+        <div class="map-container">
+          <div class="map-canvas">
+            <!-- Map Grid -->
+            <div class="map-grid"></div>
+
+            <!-- Map Roads -->
+            <div class="road road-one"></div>
+            <div class="road road-two"></div>
+            <div class="road road-three"></div>
+            <div class="road road-four"></div>
+
+            <!-- Water -->
+            <div class="water-area">
+              <span>Bay / Water</span>
+            </div>
+
+            <!-- Map Label -->
+            <div class="map-label map-label-one">Cox's Bazar</div>
+
+            <div class="map-label map-label-two">Tourist Zone</div>
+
+            <div class="map-label map-label-three">City Center</div>
+
+            <!-- Location Markers -->
+            @for (place of filteredPlaces; track place.id) {
+              <button
+                type="button"
+                class="map-marker"
+                [class.active]="selectedPlace?.id === place.id"
+                [ngStyle]="getMapMarkerStyle(place)"
+                [title]="place.name"
+                (click)="selectPlace(place)"
+              >
+                <span>
+                  {{ place.icon }}
+                </span>
+              </button>
+            }
+
+            <!-- Current Location -->
+            <div class="current-location">
+              <span class="location-pulse"></span>
+              <span class="location-dot"></span>
+            </div>
+
+            <!-- Map Controls -->
+            <div class="map-controls">
+              <button type="button" title="Zoom in">+</button>
+
+              <button type="button" title="Zoom out">−</button>
+
+              <button type="button" title="My location">◎</button>
+            </div>
+
+            <!-- Selected Place Card -->
+            @if (selectedPlace) {
+              <div class="selected-place-card">
+                <button
+                  type="button"
+                  class="close-selected"
+                  (click)="clearSelection()"
+                >
+                  ✕
+                </button>
+
+                <div class="selected-image">
+                  <img [src]="selectedPlace.image" [alt]="selectedPlace.name" />
+                </div>
+
+                <div class="selected-content">
+                  <span class="selected-category">
+                    {{ getCategoryIcon(selectedPlace.category) }}
+                    {{ getCategoryLabel(selectedPlace.category) }}
+                  </span>
+
+                  <h3>
+                    {{ selectedPlace.name }}
+                  </h3>
+
+                  <p>
+                    {{ selectedPlace.description }}
+                  </p>
+
+                  <div class="selected-meta">
+                    <span> ★ {{ selectedPlace.rating }} </span>
+
+                    <span> 📍 {{ selectedPlace.distance }} </span>
+                  </div>
+
+                  @if (directionSummary) {
+                    <p class="direction-summary">{{ directionSummary }}</p>
+                  }
+
+                  <div class="selected-actions">
+                    <button
+                      type="button"
+                      class="direction-button"
+                      (click)="getDirections(selectedPlace)"
+                    >
+                      🧭 Directions
+                    </button>
+
+                    <button
+                      type="button"
+                      class="explore-button"
+                      (click)="explorePlace(selectedPlace)"
+                    >
+                      Explore →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Mock Map Notice -->
+            <div class="map-notice">
+              <span>🗺️</span>
+              Travixa Interactive Map
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Places -->
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Popular nearby</span>
+
+          <h2>
+            Places Worth
+            <span>Exploring</span>
+          </h2>
+        </div>
+
+        <button type="button" class="view-all-button" (click)="clearFilters()">
+          View All →
+        </button>
+      </div>
+
+      <div class="featured-grid">
+        @for (place of featuredPlaces.slice(0, 4); track place.id) {
+          <button
+            type="button"
+            class="featured-card"
+            (click)="selectPlace(place)"
+          >
+            <div class="featured-image">
+              <img [src]="place.image" [alt]="place.name" />
+
+              <span class="featured-icon">
+                {{ place.icon }}
+              </span>
+
+              <span class="featured-rating"> ★ {{ place.rating }} </span>
+            </div>
+
+            <div class="featured-content">
+              <span>
+                {{ getCategoryLabel(place.category) }}
+              </span>
+
+              <h3>
+                {{ place.name }}
+              </h3>
+
+              <p>📍 {{ place.location }}</p>
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="maps-cta">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-glow"></div>
+
+        <div class="cta-content">
+          <span class="cta-badge"> ✨ Plan smarter </span>
+
+          <h2>
+            Know Where You’re Going.
+            <span>Love How You Get There.</span>
+          </h2>
+
+          <p>
+            Combine destinations, stays and experiences with Travixa's
+            intelligent travel planning tools.
+          </p>
+
+          <div class="cta-actions">
+            <button type="button" class="primary-cta" (click)="openPlanner()">
+              🧠 Open AI Planner
+            </button>
+
+            <button
+              type="button"
+              class="secondary-cta"
+              (click)="openDiscover()"
+            >
+              Explore Travixa →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back -->
+  <section class="back-section">
+    <div class="container">
+      <button type="button" class="back-button" (click)="goBack()">
+        ← Back to Previous Page
+      </button>
+    </div>
+  </section>
+</section>

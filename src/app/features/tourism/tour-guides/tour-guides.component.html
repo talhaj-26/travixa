@@ -1,0 +1,585 @@
+<section class="guides-page">
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO SLIDESHOW
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="guides-hero">
+    <!-- Background slides -->
+    <div class="hero-slides">
+      @for (slide of heroSlides; track slide.image; let i = $index) {
+        <div
+          class="hero-slide"
+          [class.hero-slide--active]="i === currentSlide"
+          [style.backgroundImage]="slide.image ? 'url(' + slide.image + ')' : null"
+        ></div>
+      }
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Arrows -->
+    <button
+      type="button"
+      class="hero-arrow hero-arrow--left"
+      (click)="prevSlide()"
+      aria-label="Previous slide"
+    >
+      ‹
+    </button>
+    <button
+      type="button"
+      class="hero-arrow hero-arrow--right"
+      (click)="nextSlide()"
+      aria-label="Next slide"
+    >
+      ›
+    </button>
+
+    <!-- Content -->
+    <div class="container hero-content">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="hero-badge">
+            <span class="hero-badge__dot"></span>
+            🧭 TRAVIXA GUIDES · {{ currentHero.kicker }}
+          </span>
+
+          <h1 class="hero-title">
+            {{ currentHero.title }}
+            <span>{{ currentHero.highlight }}</span>
+          </h1>
+
+          <p class="hero-text">{{ currentHero.text }}</p>
+
+          <!-- Highlights -->
+          <div class="hero-highlights">
+            <div class="highlight-item">
+              <span>✓</span>
+              <div>
+                <strong>Verified Guides</strong>
+                <small>Trusted local experts</small>
+              </div>
+            </div>
+
+            <div class="highlight-item">
+              <span>★</span>
+              <div>
+              <strong>Clear pricing</strong>
+              <small>Rates shown by the hour</small>
+              </div>
+            </div>
+
+            <div class="highlight-item">
+              <span>🌍</span>
+              <div>
+                <strong>Local Experience</strong>
+                <small>Beyond the usual</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-cta">
+            <button
+              type="button"
+              class="btn-hero-primary"
+              (click)="goToDiscover()"
+            >
+              Explore Guides
+              <span>→</span>
+            </button>
+            <button
+              type="button"
+              class="btn-hero-ghost"
+              (click)="openPlanner()"
+            >
+              ✨ AI Planner
+            </button>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="hero-stat-card">
+            <div class="stat-item">
+              <strong>{{ guides.length }}+</strong>
+              <span>Expert Guides</span>
+            </div>
+            <div class="stat-item">
+              <strong>{{ locations.length - 1 }}</strong>
+              <span>Destinations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="guide-search-card">
+        <div class="search-box">
+          <span class="search-icon">🔎</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search guides, destinations, languages, specialties..."
+            [(ngModel)]="searchTerm"
+          />
+          @if (searchTerm) {
+            <button
+              type="button"
+              class="clear-search"
+              (click)="searchTerm = ''"
+            >
+              ×
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Slide dots -->
+      <div class="hero-dots">
+        @for (slide of heroSlides; track slide.image; let i = $index) {
+          <button
+            type="button"
+            class="hero-dot"
+            [class.hero-dot--active]="i === currentSlide"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)"
+          ></button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GUIDE STORIES CAROUSEL
+       ═══════════════════════════════════════════════════════════ -->
+  @if (guideStories.length) { <section class="stories-section">
+    <div class="container">
+      <div class="stories-heading">
+        <div>
+          <span class="section-kicker">GUIDE STORIES</span>
+          <h2>In Their Own Words</h2>
+        </div>
+        <p>Meet the storytellers behind unforgettable journeys.</p>
+      </div>
+
+      <div class="stories-track">
+        @for (story of guideStories; track story.guideId) {
+          <article class="story-card" (click)="viewStory(story)">
+            <div class="story-image">
+              <img [src]="story.image" [alt]="story.guideName" loading="lazy" />
+              <div class="story-overlay"></div>
+              <span class="story-tour">{{ story.tour }}</span>
+            </div>
+            <div class="story-body">
+              <p class="story-quote">"{{ story.quote }}"</p>
+              <div class="story-author">
+                <strong>{{ story.guideName }}</strong>
+                <span>📍 {{ story.location }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section> }
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FILTER SECTION
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="filter-section">
+    <div class="container">
+      <div class="filter-header">
+        <div>
+          <span class="section-kicker">FIND YOUR GUIDE</span>
+          <h2>Explore Local Experts</h2>
+        </div>
+
+        <div class="filter-header-actions">
+          @if (activeFilterCount > 0 || searchTerm) {
+            <span class="filter-count">
+              {{ activeFilterCount + (searchTerm ? 1 : 0) }} active
+            </span>
+          }
+          <button type="button" class="btn-clear" (click)="clearFilters()">
+            ↻ Reset Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Specialty quick chips -->
+      <div class="specialty-chips">
+        @for (sp of specialties; track sp) {
+          <button
+            type="button"
+            class="specialty-chip-btn"
+            [class.specialty-chip-btn--active]="selectedSpecialty === sp"
+            (click)="selectSpecialty(sp)"
+          >
+            <span class="specialty-icon">{{ specialtyIcons[sp] }}</span>
+            <span>{{ sp === "ALL" ? "All Experiences" : sp }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Location quick chips -->
+      <div class="location-chips">
+        @for (loc of locations; track loc) {
+          <button
+            type="button"
+            class="location-chip"
+            [class.location-chip--active]="selectedLocation === loc"
+            (click)="selectLocation(loc)"
+          >
+            {{ loc === "ALL" ? "All Destinations" : loc }}
+          </button>
+        }
+      </div>
+
+      <div class="row g-3">
+        <!-- Location -->
+        <div class="col-lg-3 col-md-6">
+          <label class="filter-label">Destination</label>
+          <select
+            class="form-select filter-control"
+            [(ngModel)]="selectedLocation"
+          >
+            @for (location of locations; track location) {
+              <option [value]="location">
+                {{ location === "ALL" ? "All Destinations" : location }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Language -->
+        <div class="col-lg-3 col-md-6">
+          <label class="filter-label">Language</label>
+          <select
+            class="form-select filter-control"
+            [(ngModel)]="selectedLanguage"
+          >
+            @for (language of languages; track language) {
+              <option [value]="language">
+                {{ language === "ALL" ? "All Languages" : language }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Specialty -->
+        <div class="col-lg-3 col-md-6">
+          <label class="filter-label">Specialty</label>
+          <select
+            class="form-select filter-control"
+            [(ngModel)]="selectedSpecialty"
+          >
+            @for (specialty of specialties; track specialty) {
+              <option [value]="specialty">
+                {{ specialty === "ALL" ? "All Experiences" : specialty }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Rating -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GUIDE LISTING
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="guide-listing">
+    <div class="container">
+      <div class="listing-heading">
+        <div>
+          <span class="section-kicker">DISCOVER</span>
+          <h2>
+            Local Tour Guides
+            <span class="result-count">{{ filteredGuides.length }}</span>
+          </h2>
+        </div>
+
+        <!-- View toggle + sort -->
+        <div class="listing-tools">
+          <div class="view-toggle">
+            <button
+              type="button"
+              class="view-btn"
+              [class.view-btn--active]="viewMode === 'grid'"
+              (click)="setView('grid')"
+              aria-label="Grid view"
+            >
+              ▦
+            </button>
+            <button
+              type="button"
+              class="view-btn"
+              [class.view-btn--active]="viewMode === 'list'"
+              (click)="setView('list')"
+              aria-label="List view"
+            >
+              ☰
+            </button>
+          </div>
+
+          <select class="form-select sort-control" [(ngModel)]="sortBy">
+            @for (s of sortOptions; track s.value) {
+              <option [value]="s.value">{{ s.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading skeleton -->
+      @if (loading) {
+        <div class="row g-4 mt-2">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div [class]="viewMode === 'grid' ? 'col-xl-4 col-lg-6' : 'col-12'">
+              <div class="skeleton-card">
+                <div class="skeleton-image"></div>
+                <div class="skeleton-body">
+                  <div class="skeleton-line skeleton-line--sm"></div>
+                  <div class="skeleton-line skeleton-line--lg"></div>
+                  <div class="skeleton-line"></div>
+                  <div class="skeleton-line skeleton-line--md"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+      } @else if (catalogError) {
+        <div class="empty-state" role="alert"><h3>Guide services unavailable</h3><p>{{ catalogError }}</p></div>
+      } @else if (filteredGuides.length > 0) {
+        <div class="row g-4 mt-2">
+          @for (guide of filteredGuides; track guide.id) {
+            <div [class]="viewMode === 'grid' ? 'col-xl-4 col-lg-6' : 'col-12'">
+              <article
+                class="guide-card"
+                [class.guide-card--list]="viewMode === 'list'"
+              >
+                <!-- Image -->
+                <div class="guide-image" (click)="openQuickView(guide, $event)">
+                  @if (guide.image) { <img [src]="guide.image" [alt]="guide.name" loading="lazy" /> } @else { <div class="guide-image-fallback" aria-hidden="true">🧭</div> }
+
+                  @if (guide.verified) {
+                    <span class="verified-badge">
+                      <span class="verified-tick">✓</span>
+                      Verified
+                    </span>
+                  }
+
+                  <div class="image-overlay"></div>
+
+                  <div class="image-quickview">
+                    <span>👁 Quick View</span>
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div class="guide-content">
+                  <div class="guide-top">
+                    <div class="guide-location">📍 {{ guide.location }}</div>
+                  </div>
+
+                  <div class="guide-name-row">
+                    <h3 (click)="viewGuide(guide, $event)">
+                      {{ guide.name }}
+                    </h3>
+                    @if (guide.verified) {
+                      <span class="verified-icon">✓</span>
+                    }
+                  </div>
+
+                  <p class="guide-bio">{{ guide.bio }}</p>
+
+                  <!-- Languages -->
+                  <div class="guide-languages">
+                    <span class="detail-label">Languages</span>
+                    <div class="chip-list">
+                      @for (language of guide.languages; track language) {
+                        <span class="language-chip">{{ language }}</span>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Specialties -->
+                  <div class="guide-specialties">
+                    <span class="detail-label">Specialties</span>
+                    <div class="chip-list">
+                      @for (specialty of guide.specialties; track specialty) {
+                        <span class="specialty-chip">
+                          {{ specialtyIcons[specialty] || '•' }} {{ specialty }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Meta -->
+                  <div class="guide-meta">
+                    <div class="meta-item price-meta">
+                      <span>💳</span>
+                      <div>
+                        <small>From</small>
+                        <strong>
+                          {{ guide.currency }} {{ guide.pricePerHour }}
+                          <small>/hour</small>
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="guide-actions">
+                    <button
+                      type="button"
+                      class="btn-view"
+                      (click)="viewGuide(guide, $event)"
+                    >
+                      View Profile
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-hire"
+                      (click)="hireGuide(guide, $event)"
+                    >
+                      Hire Guide
+                      <span>→</span>
+                    </button>
+                  </div>
+
+                </div>
+              </article>
+            </div>
+          }
+        </div>
+
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">🧭</div>
+          <h3>No guides found</h3>
+          <p>
+            Try changing your search or filters to discover more local travel
+            experts.
+          </p>
+          <button
+            type="button"
+            class="btn-reset-empty"
+            (click)="clearFilters()"
+          >
+            Show All Guides
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       AI PLANNER CTA
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="planner-section">
+    <div class="container">
+      <div class="planner-card">
+        <div class="planner-content">
+          <span class="planner-badge">✨ TRAVIXA SMART PLANNER</span>
+          <h2>Let TRAVIXA Find Your Perfect Guide.</h2>
+          <p>
+            Tell us your destination, interests and travel style, and discover
+            experiences designed around you.
+          </p>
+          <button type="button" class="btn-planner" (click)="openPlanner()">
+            Open AI Planner
+            <span>→</span>
+          </button>
+        </div>
+        <div class="planner-icon">🧭</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BACK TO DISCOVER
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="back-section">
+    <div class="container text-center">
+      <button type="button" class="back-btn" (click)="goToDiscover()">
+        ← Back to Discover
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       QUICK VIEW MODAL
+       ═══════════════════════════════════════════════════════════ -->
+  @if (quickView) {
+    <div class="modal-backdrop" (click)="closeQuickView()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeQuickView()"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+        <div class="modal-image">
+          @if (quickView.image) { <img [src]="quickView.image" [alt]="quickView.name" /> } @else { <div class="guide-image-fallback" aria-hidden="true">🧭</div> }
+          @if (quickView.verified) {
+            <span class="verified-badge">
+              <span class="verified-tick">✓</span>
+              Verified
+            </span>
+          }
+        </div>
+
+        <div class="modal-body">
+          <span class="modal-location">📍 {{ quickView.location }}</span>
+          <h3>{{ quickView.name }}</h3>
+
+          <div class="chip-list">
+            @for (item of quickView.specialties; track item) {
+              <span class="specialty-chip">
+                {{ specialtyIcons[item] || '•' }} {{ item }}
+              </span>
+            }
+          </div>
+
+          <p class="modal-description">{{ quickView.bio }}</p>
+
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <small>From</small>
+              <strong>{{ quickView.currency }} {{ quickView.pricePerHour }}/hour</strong>
+            </div>
+          </div>
+
+          <div class="modal-langs">
+            <span class="detail-label">Languages</span>
+            <div class="chip-list">
+              @for (lang of quickView.languages; track lang) {
+                <span class="language-chip">{{ lang }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-view"
+              (click)="viewGuide(quickView)"
+            >
+              View Profile
+            </button>
+            <button
+              type="button"
+              class="btn-hire"
+              (click)="hireGuide(quickView)"
+            >
+              Hire Guide <span>→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+</section>

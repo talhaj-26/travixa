@@ -1,0 +1,387 @@
+<section class="payment-page">
+  <!-- Hero -->
+  <div class="payment-hero">
+    <div class="container">
+      <div class="hero-content text-center">
+        <span class="hero-badge">🔐 Secure Checkout</span>
+
+        <h1>
+          Complete Your
+          <span>Payment</span>
+        </h1>
+
+        <p>
+          Securely complete your Travixa booking and get ready for your next
+          unforgettable journey.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container payment-container">
+    <!-- Success -->
+    @if (isPaid) {
+      <div class="success-card text-center">
+        <div class="success-icon">✓</div>
+
+        <span class="success-badge">{{ isDemoPayment ? 'DEMO PAYMENT RECORDED' : 'Payment Successful' }}</span>
+
+        <h2>{{ isDemoPayment ? 'Demo payment completed' : 'Your Payment is Confirmed!' }}</h2>
+
+        <p>
+          @if (isDemoPayment) {
+            This instructor demonstration recorded a successful payment in the database. No money was charged and no payment gateway was used.
+          } @else {
+            Thank you for choosing Travixa. Your payment has been processed successfully.
+          }
+        </p>
+
+        <div class="payment-success-details">
+          <div>
+            <span>Booking Reference</span>
+            <strong>{{ payment.bookingReference }}</strong>
+          </div>
+
+          <div>
+            <span>Amount Paid</span>
+            <strong>{{ payment.currency }} {{ payment.amount | number }}</strong>
+          </div>
+
+          <div>
+            <span>Payment Method</span>
+            <strong>{{ payment.paymentMethod.replace("_", " ") }}</strong>
+          </div>
+
+          <div>
+            <span>Status</span>
+            <strong class="text-success">{{ isDemoPayment ? 'DEMO · PAID' : 'PAID' }}</strong>
+          </div>
+        </div>
+
+        <div class="success-actions">
+          <button type="button" class="btn btn-primary" (click)="goToReceipt()">
+            View Receipt
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="goToDiscover()"
+          >
+            Explore Travixa
+          </button>
+        </div>
+      </div>
+    } @else {
+      <!-- Payment Content -->
+      <div class="row g-4">
+        <!-- Main Payment -->
+        <div class="col-lg-8">
+          <div class="payment-card">
+            <div class="card-heading">
+              <div>
+                <span class="section-label"> PAYMENT METHOD </span>
+
+                <h2>Choose how you want to pay</h2>
+
+                <p>Select your preferred payment method below.</p>
+              </div>
+
+              <div class="secure-icon">🔒</div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+              @for (method of paymentMethods; track method.value) {
+                <button
+                  type="button"
+                  class="payment-method"
+                  [class.active]="payment.paymentMethod === method.value"
+                  (click)="selectPaymentMethod(method.value)"
+                >
+                  <span class="method-icon">
+                    {{ method.icon }}
+                  </span>
+
+                  <span class="method-info">
+                    <strong>
+                      {{ method.label }}
+                    </strong>
+
+                    <small>
+                      {{ method.description }}
+                    </small>
+                  </span>
+
+                  <span class="method-check">
+                    @if (payment.paymentMethod === method.value) {
+                      ✓
+                    }
+                  </span>
+                </button>
+              }
+            </div>
+
+            <!-- Card Payment -->
+            @if (payment.paymentMethod === "CARD") {
+              <div class="payment-form">
+                <div class="form-section-title">
+                  <span>💳</span>
+                  <div>
+                    <h3>Card Details</h3>
+                    <p>Enter your card information securely.</p>
+                  </div>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label"> Card Number </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cardNumber"
+                      [(ngModel)]="payment.cardNumber"
+                      placeholder="1234 5678 9012 3456"
+                      maxlength="19"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label"> Card Holder Name </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cardHolder"
+                      [(ngModel)]="payment.cardHolder"
+                      placeholder="Enter card holder name"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label"> Expiry Date </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="expiryDate"
+                      [(ngModel)]="payment.expiryDate"
+                      placeholder="MM/YY"
+                      maxlength="5"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label"> CVV </label>
+
+                    <input
+                      type="password"
+                      class="form-control"
+                      name="cvv"
+                      [(ngModel)]="payment.cvv"
+                      placeholder="•••"
+                      maxlength="4"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Mobile Financial Service -->
+            @if (payment.paymentMethod === "MOBILE_FINANCIAL_SERVICE") {
+              <div class="payment-form">
+                <div class="form-section-title">
+                  <span>📱</span>
+                  <div>
+                    <h3>Mobile Financial Service</h3>
+                    <p>Complete your payment using your mobile wallet.</p>
+                  </div>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label"> Mobile Number </label>
+
+                    <input
+                      type="tel"
+                      class="form-control"
+                      name="mobileNumber"
+                      [(ngModel)]="payment.mobileNumber"
+                      placeholder="01XXXXXXXXX"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label"> Transaction ID </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="transactionId"
+                      [(ngModel)]="payment.transactionId"
+                      placeholder="Enter transaction ID"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Bank Transfer -->
+            @if (payment.paymentMethod === "BANK_TRANSFER") {
+              <div class="payment-form">
+                <div class="form-section-title">
+                  <span>🏦</span>
+                  <div>
+                    <h3>Bank Transfer</h3>
+                    <p>Enter your bank transaction information.</p>
+                  </div>
+                </div>
+
+                <div class="bank-info">
+                  <div>
+                    <span>Bank Name</span>
+                    <strong>Travixa Partner Bank</strong>
+                  </div>
+
+                  <div>
+                    <span>Account Name</span>
+                    <strong>Travixa Tourism Ltd.</strong>
+                  </div>
+
+                  <div>
+                    <span>Account Number</span>
+                    <strong>1234567890</strong>
+                  </div>
+
+                  <div>
+                    <span>Routing Number</span>
+                    <strong>123456789</strong>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <label class="form-label"> Transaction ID </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="transactionId"
+                    [(ngModel)]="payment.transactionId"
+                    placeholder="Enter bank transaction ID"
+                  />
+                </div>
+              </div>
+            }
+
+            <!-- Pay Button -->
+            @if (errorMessage) {
+              <div class="alert alert-danger mt-4" role="alert">
+                {{ errorMessage }}
+              </div>
+            }
+
+            <div class="payment-action">
+              <button
+                type="button"
+                class="btn pay-btn"
+                [disabled]="!isPaymentInputValid || isSubmitting"
+                (click)="processPayment()"
+              >
+                <span>🔒</span>
+                {{ isSubmitting ? "Confirming payment..." : "Pay " + payment.currency + " " + (payment.amount | number) }}
+              </button>
+
+              <p>
+                Your payment information is protected with secure encryption.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="col-lg-4">
+          <div class="summary-card">
+            <div class="summary-heading">
+              <span class="section-label"> ORDER SUMMARY </span>
+
+              <h3>Payment Summary</h3>
+            </div>
+
+            <div class="summary-reference">
+              <span>Booking Reference</span>
+
+              <strong>
+                {{ payment.bookingReference }}
+              </strong>
+            </div>
+
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <strong>{{ payment.currency }} {{ payment.subtotal | number }}</strong>
+            </div>
+
+            @if (payment.discountAmount > 0) {
+              <div class="summary-line">
+                <span>Discount{{ payment.couponCode ? ' · ' + payment.couponCode : '' }}</span>
+                <strong class="discount">- {{ payment.currency }} {{ payment.discountAmount | number }}</strong>
+              </div>
+            }
+
+            <div class="summary-total">
+              <span>Total Payable</span>
+
+              <strong>{{ payment.currency }} {{ payment.amount | number }}</strong>
+            </div>
+
+            <div class="trust-box">
+              <span>🛡️</span>
+
+              <div>
+                <strong>Secure Payment</strong>
+                <p>Your payment details are protected.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Trust Section -->
+    @if (!isPaid) {
+      <div class="trust-section">
+        <div class="trust-item">
+          <span>🔐</span>
+          <div>
+            <strong>Secure Checkout</strong>
+            <small>Protected payment process</small>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <span>⚡</span>
+          <div>
+            <strong>Fast Processing</strong>
+            <small>Instant payment confirmation</small>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <span>🛡️</span>
+          <div>
+            <strong>Trusted Platform</strong>
+            <small>Safe & reliable booking</small>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <span>💬</span>
+          <div>
+            <strong>24/7 Support</strong>
+            <small>We're here to help</small>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

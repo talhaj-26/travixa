@@ -1,0 +1,98 @@
+<main class="about-page">
+  <section class="about-hero">
+    <div class="about-hero__glow about-hero__glow--one"></div>
+    <div class="about-hero__glow about-hero__glow--two"></div>
+
+    <div class="about-hero__content">
+      <p class="eyebrow"><span></span> The Travixa story</p>
+      <h1>Every journey deserves <em>one beautiful beginning.</em></h1>
+      <p class="about-hero__lead">
+        Travixa brings Bangladesh travel into one intelligent, welcoming place — helping people discover stays,
+        experiences, dining and transport with less planning friction and more room for wonder.
+      </p>
+      <div class="about-hero__actions">
+        <a routerLink="/discover" class="button button--primary">Start exploring <span>→</span></a>
+        <a routerLink="/partner-registration" class="button button--ghost">Partner with Travixa</a>
+      </div>
+    </div>
+
+    <div class="journey-art" aria-hidden="true">
+      <div class="journey-art__orbit journey-art__orbit--outer"></div>
+      <div class="journey-art__orbit journey-art__orbit--inner"></div>
+      <div class="journey-art__route"></div>
+      <div class="journey-art__pin journey-art__pin--start"><span>⌂</span></div>
+      <div class="journey-art__pin journey-art__pin--mid"><span>⌖</span></div>
+      <div class="journey-art__pin journey-art__pin--end"><span>✦</span></div>
+      <div class="journey-art__center">
+        <span class="journey-art__compass">✦</span>
+        <small>TRAVEL<br>CONNECTED</small>
+      </div>
+      <div class="journey-art__label journey-art__label--one">Your next story</div>
+      <div class="journey-art__label journey-art__label--two">Made for the way you go</div>
+    </div>
+  </section>
+
+  <section class="trust-strip" aria-label="Travixa commitments">
+    <div><strong>One platform</strong><span>for the whole journey</span></div>
+    <div><strong>৳ BDT-first</strong><span>clear local pricing</span></div>
+    <div><strong>People + technology</strong><span>travel with confidence</span></div>
+  </section>
+
+  <section class="story-section section-shell">
+    <div class="section-intro">
+      <p class="eyebrow"><span></span> Why we exist</p>
+      <h2>Travel planning should feel like <em>anticipation, not administration.</em></h2>
+    </div>
+    <div class="story-section__copy">
+      <p>
+        A great trip is made of many small decisions: where to sleep, what to taste, who to travel with and how to
+        spend each precious hour. Travixa is being shaped to bring those decisions together in a calmer, clearer way.
+      </p>
+      <p>
+        We connect travellers with the people and businesses that make a destination feel alive — from hospitality
+        partners and local guides to transport providers and experience makers. The result is a platform designed for
+        discovery before departure and confidence all the way through the return home.
+      </p>
+    </div>
+  </section>
+
+  <section class="values-section section-shell">
+    @for (value of values; track value.title) {
+      <article class="value-card">
+        <span class="value-card__icon">{{ value.icon }}</span>
+        <h3>{{ value.title }}</h3>
+        <p>{{ value.text }}</p>
+      </article>
+    }
+  </section>
+
+  <section class="ecosystem-section">
+    <div class="section-shell">
+      <div class="ecosystem-section__heading">
+        <div>
+          <p class="eyebrow"><span></span> Designed around real trips</p>
+          <h2>More of the journey, <em>working together.</em></h2>
+        </div>
+        <p>Travixa is a growing travel ecosystem, not just another booking window.</p>
+      </div>
+      <div class="ecosystem-grid">
+        @for (item of ecosystem; track item.number) {
+          <article class="ecosystem-card">
+            <span>{{ item.number }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.text }}</p>
+            <i>↗</i>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="closing section-shell">
+    <div>
+      <p class="eyebrow"><span></span> Come along</p>
+      <h2>Let’s make the next trip feel <em>more like yours.</em></h2>
+    </div>
+    <a routerLink="/discover" class="button button--primary">Discover Travixa <span>→</span></a>
+  </section>
+</main>

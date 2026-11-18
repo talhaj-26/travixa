@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+main.auth-main {
+  min-height: 100vh;
+  padding: 0;
+}
+
+main.workspace-main {
+  min-height: calc(100vh - 66px);
+  margin-left: 72px;
+  transition: margin-left .25s ease;
+}
+
+main.workspace-main--expanded {
+  margin-left: 268px;
+}
+
+@media (max-width: 1100px) {
+  main.workspace-main {
+    min-height: calc(100vh - 64px);
+  }
+
+  main.workspace-main {
+    margin-left: 0;
+  }
+
+  main.workspace-main--expanded {
+    margin-left: 0;
+  }
+
+}
+
+@media (max-width: 575px) {
+  main.workspace-main {
+    min-height: calc(100vh - 60px);
+  }
+}

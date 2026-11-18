@@ -1,0 +1,238 @@
+
+<main class="admin-page">
+  <div class="admin-shell">
+    <section class="admin-hero">
+      <div class="hero-copy">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          TRAVIXA · ADMIN CONTROL CENTER
+        </span>
+
+        <h1>Platform overview</h1>
+        <p>
+          A live snapshot of users, bookings, listings and payments across
+          your travel platform.
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <a routerLink="/user-management" class="hero-button">
+          Manage users <span aria-hidden="true">↗</span>
+        </a>
+        <a routerLink="/reports-analytics" class="hero-button secondary">
+          Reports
+        </a>
+      </div>
+    </section>
+
+    @if (loading) {
+      <section class="state-card" aria-live="polite">
+        <span class="loading-spinner"></span>
+        <h2>Loading platform metrics</h2>
+        <p>Fetching current figures from the backend.</p>
+      </section>
+    } @else if (errorMessage) {
+      <section class="state-card error-state" role="alert">
+        <h2>Metrics unavailable</h2>
+        <p>{{ errorMessage }}</p>
+        <button type="button" class="primary-button" (click)="load()">
+          Retry
+        </button>
+      </section>
+    } @else if (data !== null) {
+      <div class="overview-line">
+        <span class="live-dot"></span>
+        <span>Live database overview</span>
+        <span class="overview-scope">{{ data.scope }}</span>
+      </div>
+
+      <section class="metrics-grid">
+        <article class="metric-card">
+          <span class="metric-icon users-icon">◎</span>
+          <span class="metric-label">Total users</span>
+          <strong>{{ data.totalUsers | number }}</strong>
+          <span class="metric-foot">
+            {{ data.activeUsers | number }} enabled accounts
+          </span>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-icon bookings-icon">▤</span>
+          <span class="metric-label">Total bookings</span>
+          <strong>{{ data.totalBookings | number }}</strong>
+          <span class="metric-foot">
+            {{ data.confirmedBookings | number }} confirmed
+          </span>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-icon revenue-icon">৳</span>
+          <span class="metric-label">Successful payments · BDT</span>
+          <strong class="revenue-value">
+            {{ formatCurrency(data.paidRevenueBdt) }}
+          </strong>
+          <span class="metric-foot">
+            {{ data.successfulPayments | number }} successful payments
+          </span>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-icon listings-icon">◇</span>
+          <span class="metric-label">Listings pending review</span>
+          <strong>{{ data.pendingListings | number }}</strong>
+          <span class="metric-foot">Hotels, restaurants, packages and guide profiles</span>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel booking-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">BOOKING OPERATIONS</span>
+              <h2>Booking status</h2>
+            </div>
+            <a routerLink="/admin-booking-management" class="text-link">
+              View bookings ↗
+            </a>
+          </div>
+
+          <div class="status-list">
+            @for (item of bookingStatuses; track trackByLabel($index, item)) {
+              <div class="status-row">
+                <div class="status-copy">
+                  <span class="status-dot" [ngClass]="item.className"></span>
+                  <span>{{ item.label }}</span>
+                </div>
+                <strong>{{ item.value | number }}</strong>
+              </div>
+            }
+          </div>
+        </article>
+
+        <article class="panel module-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">PLATFORM INVENTORY</span>
+              <h2>Service modules</h2>
+            </div>
+          </div>
+
+          <a routerLink="/hotel-management" class="module-row">
+            <span class="module-symbol">⌂</span>
+            <span class="module-name">Hotels</span>
+            <strong>{{ data.totalHotels | number }}</strong>
+            <span class="module-arrow">↗</span>
+          </a>
+
+          <a routerLink="/restaurant-management" class="module-row">
+            <span class="module-symbol">♨</span>
+            <span class="module-name">Restaurants</span>
+            <strong>{{ data.totalRestaurants | number }}</strong>
+            <span class="module-arrow">↗</span>
+          </a>
+
+          <a routerLink="/tour-package-management" class="module-row">
+            <span class="module-symbol">✧</span>
+            <span class="module-name">Tour packages</span>
+            <strong>{{ data.totalTourPackages | number }}</strong>
+            <span class="module-arrow">↗</span>
+          </a>
+
+          <a routerLink="/tour-guide-management" class="module-row">
+            <span class="module-symbol">◎</span>
+            <span class="module-name">Tour guide profiles</span>
+            <strong>{{ data.totalTourGuides | number }}</strong>
+            <span class="module-arrow">↗</span>
+          </a>
+
+          <a routerLink="/transport-management" class="module-row">
+            <span class="module-symbol">⇄</span>
+            <span class="module-name">Transport routes</span>
+            <strong>{{ data.totalTransportRoutes | number }}</strong>
+            <span class="module-arrow">↗</span>
+          </a>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel partner-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">PARTNER NETWORK</span>
+              <h2>Partner organizations</h2>
+            </div>
+            <a routerLink="/partner-management" class="text-link">
+              Manage ↗
+            </a>
+          </div>
+
+          <div class="partner-stats">
+            <div>
+              <span>Total organizations</span>
+              <strong>{{ data.totalPartnerOrganizations | number }}</strong>
+            </div>
+            <div>
+              <span>Awaiting review</span>
+              <strong>{{ data.pendingPartnerOrganizations | number }}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel payment-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">PAYMENT OPERATIONS</span>
+              <h2>Payment status</h2>
+            </div>
+            <a routerLink="/admin-payment-management" class="text-link">
+              Payments ↗
+            </a>
+          </div>
+
+          <div class="payment-stats">
+            <div>
+              <span>All payments</span>
+              <strong>{{ data.totalPayments | number }}</strong>
+            </div>
+            <div>
+              <span>Successful</span>
+              <strong class="success-text">
+                {{ data.successfulPayments | number }}
+              </strong>
+            </div>
+            <div>
+              <span>Failed</span>
+              <strong class="danger-text">
+                {{ data.failedPayments | number }}
+              </strong>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel recent-panel">
+        <div class="panel-heading">
+          <div><span class="section-kicker">LATEST ACTIVITY</span><h2>Recent bookings</h2></div>
+          <a routerLink="/admin-booking-management" class="text-link">All bookings ↗</a>
+        </div>
+        @if (data.recentBookings.length) {
+          <div class="recent-list">
+            @for (booking of data.recentBookings; track trackByBooking($index, booking)) {
+              <div class="recent-row"><div><strong>{{ booking.referenceNumber }}</strong><span>{{ booking.placedAt ? (booking.placedAt | date:'medium') : 'Date unavailable' }}</span></div><span class="recent-status" [ngClass]="booking.status.toLowerCase()">{{ booking.status.replaceAll('_', ' ') }}</span><strong>{{ formatCurrency(booking.totalAmount) }}</strong></div>
+            }
+          </div>
+        } @else { <p class="empty-recent">No bookings have been recorded yet.</p> }
+      </section>
+
+      <section class="integrity-note">
+        <span class="note-icon">i</span>
+        <p>
+          These figures are based on records currently available in the
+          database. Audit history, live API health, support tickets and
+          historical trend charts are not displayed until their backend
+          data sources are implemented.
+        </p>
+      </section>
+    }
+  </div>
+</main>

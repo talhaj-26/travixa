@@ -1,0 +1,576 @@
+<div class="planner-page">
+  <!-- Animated background particles -->
+  <div class="bg-particles">
+    @for (p of particles; track $index) {
+      <span
+        class="particle"
+        [style.width.px]="p.size"
+        [style.height.px]="p.size"
+        [style.left.%]="p.left"
+        [style.top.%]="p.top"
+        [style.animation-delay.s]="p.delay"
+        [style.animation-duration.s]="p.duration"
+      ></span>
+    }
+  </div>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="planner-hero">
+    <div class="hero-glow hero-glow--1"></div>
+    <div class="hero-glow hero-glow--2"></div>
+
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            TRAVIXA AI TRIP PLANNER
+            <span class="badge-live">LIVE</span>
+          </div>
+
+          <h1>
+            Your trip.
+            <span class="hero-typed">
+              {{ heroDisplayText }}<span class="cursor">|</span>
+            </span>
+          </h1>
+
+          <p class="hero-text">
+            Tell us where you want to go, what you love and how you want to
+            travel. TRAVIXA AI designs a journey built entirely around you.
+          </p>
+
+          <div class="hero-features">
+            <div>
+              <span>✦</span>
+              Personalized
+            </div>
+            <div>
+              <span>⚡</span>
+              Instant Planning
+            </div>
+            <div>
+              <span>♥</span>
+              Made for You
+            </div>
+          </div>
+
+          <!-- Live stats -->
+          <div class="hero-live-stats">
+            <div>
+              <strong>{{ animatedStat1 | number }}+</strong>
+              <small>Trips Planned</small>
+            </div>
+            <div>
+              <strong>{{ animatedStat2 }}+</strong>
+              <small>Destinations</small>
+            </div>
+            <div>
+              <strong>{{ animatedStat3 }}%</strong>
+              <small>Satisfaction</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="hero-preview">
+            <div class="preview-glow"></div>
+            <div class="preview-orb"></div>
+
+            <div class="preview-top">
+              <span class="preview-icon">
+                <span class="preview-icon-pulse"></span>
+                ✦
+              </span>
+              <div>
+                <small>TRAVIXA AI</small>
+                <strong>Trip Intelligence</strong>
+              </div>
+              <span class="preview-live-dot"></span>
+            </div>
+
+            <div class="preview-route">
+              <div>
+                <small>DESTINATION</small>
+                <strong>{{ destination || 'Your next adventure' }}</strong>
+              </div>
+              <span class="preview-arrow">→</span>
+            </div>
+
+            <div class="preview-stats">
+              <div>
+                <strong>{{ duration }}</strong>
+                <small>Days</small>
+              </div>
+              <div>
+                <strong>{{ travelers }}</strong>
+                <small>Travelers</small>
+              </div>
+              <div>
+                <strong>{{ getStyleLabel() }}</strong>
+                <small>Style</small>
+              </div>
+            </div>
+
+            <div class="preview-progress">
+              <div class="preview-progress-label">
+                <small>TRIP READINESS</small>
+                <strong>{{ destination ? 100 : 35 }}%</strong>
+              </div>
+              <div class="preview-progress-track">
+                <div
+                  class="preview-progress-fill"
+                  [style.width.%]="destination ? 100 : 35"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ PLANNER FORM ═══════════════ -->
+  <section class="planner-section">
+    <div class="container">
+      <div class="section-heading">
+        <span>01 — PERSONALIZE</span>
+        <h2>Build your perfect trip</h2>
+        <p>
+          Give TRAVIXA AI a few details and we'll shape the journey around you.
+        </p>
+      </div>
+
+      <div class="planner-card">
+        <!-- DESTINATION -->
+        <div class="form-block">
+          <div class="block-heading">
+            <div class="heading-icon">📍</div>
+            <div>
+              <h3>Where are you going?</h3>
+              <p>Choose your dream destination.</p>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-lg-7">
+              <label class="form-label">Destination</label>
+              <div class="input-wrap">
+                <span class="input-icon">🗺️</span>
+                <select
+                  class="form-select planner-input"
+                  [(ngModel)]="destination"
+                >
+                  <option value="">Select a destination</option>
+                  @for (item of destinations; track item) {
+                    <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <label class="form-label">Travel Date</label>
+              <div class="input-wrap">
+                <span class="input-icon">📅</span>
+                <input
+                  type="date"
+                  class="form-control planner-input"
+                  [(ngModel)]="startDate"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRIP DETAILS -->
+        <div class="form-block">
+          <div class="block-heading">
+            <div class="heading-icon">🧭</div>
+            <div>
+              <h3>Trip details</h3>
+              <p>Tell us how long and with whom you're traveling.</p>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">
+                Duration
+                <span class="value-label">{{ duration }} days</span>
+              </label>
+
+              <div class="range-wrap">
+                <input
+                  type="range"
+                  class="form-range"
+                  min="1"
+                  max="14"
+                  [(ngModel)]="duration"
+                />
+                <div class="range-track-fill" [style.width.%]="((duration - 1) / 13) * 100"></div>
+              </div>
+
+              <div class="range-labels">
+                <span>1 day</span>
+                <span>{{ duration }} days</span>
+                <span>14 days</span>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Travelers</label>
+              <div class="traveler-control">
+                <button
+                  type="button"
+                  (click)="decrementTravelers()"
+                  [disabled]="travelers <= 1"
+                >
+                  −
+                </button>
+                <div>
+                  <strong>{{ travelers }}</strong>
+                  <small>{{ travelers === 1 ? 'Traveler' : 'Travelers' }}</small>
+                </div>
+                <button
+                  type="button"
+                  (click)="incrementTravelers()"
+                  [disabled]="travelers >= 12"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUDGET -->
+        <div class="form-block">
+          <div class="block-heading">
+            <div class="heading-icon">💰</div>
+            <div>
+              <h3>What's your budget?</h3>
+              <p>We'll balance comfort and experience.</p>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            @for (budget of budgets; track budget.value) {
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="choice-card"
+                  [class.active]="selectedBudget === budget.value"
+                  (click)="selectBudget(budget.value)"
+                >
+                  <span class="choice-icon">{{ budget.icon }}</span>
+                  <span class="choice-content">
+                    <strong>{{ budget.label }}</strong>
+                    <small>{{ budget.description }}</small>
+                    <span class="choice-range">{{ budget.range }}</span>
+                  </span>
+                  @if (selectedBudget === budget.value) {
+                    <span class="choice-check">✓</span>
+                  }
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- STYLE -->
+        <div class="form-block">
+          <div class="block-heading">
+            <div class="heading-icon">✨</div>
+            <div>
+              <h3>Choose your travel style</h3>
+              <p>What kind of experience are you looking for?</p>
+            </div>
+          </div>
+
+          <div class="style-grid">
+            @for (style of travelStyles; track style.value) {
+              <button
+                type="button"
+                class="style-card"
+                [class.active]="selectedStyle === style.value"
+                (click)="selectStyle(style.value)"
+              >
+                <span>{{ style.icon }}</span>
+                <strong>{{ style.label }}</strong>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- INTERESTS -->
+        <div class="form-block">
+          <div class="block-heading">
+            <div class="heading-icon">♥</div>
+            <div>
+              <h3>What do you love?</h3>
+              <p>Select everything that interests you.</p>
+            </div>
+          </div>
+
+          <div class="interest-list">
+            @for (interest of interests; track interest.value) {
+              <button
+                type="button"
+                class="interest-chip"
+                [class.active]="isInterestSelected(interest.value)"
+                (click)="toggleInterest(interest.value)"
+              >
+                <span class="interest-icon">{{ interest.icon }}</span>
+                {{ interest.value }}
+                @if (isInterestSelected(interest.value)) {
+                  <span class="interest-check">✓</span>
+                }
+              </button>
+            }
+          </div>
+
+          @if (selectedInterests.length > 0) {
+            <div class="interest-summary">
+              <strong>{{ selectedInterests.length }}</strong>
+              interest{{ selectedInterests.length > 1 ? 's' : '' }} selected
+            </div>
+          }
+        </div>
+
+        <!-- ACTION -->
+        <div class="planner-action">
+          @if (!isGenerating) {
+            <button
+              type="button"
+              class="generate-btn"
+              [disabled]="!destination"
+              (click)="generatePlan()"
+            >
+              <span class="btn-icon">✦</span>
+              Generate My Trip
+              <span class="btn-arrow">→</span>
+            </button>
+
+            @if (generated) {
+              <button type="button" class="reset-btn" (click)="resetPlanner()">
+                <span>↻</span> Start Over
+              </button>
+            }
+          } @else {
+            <div class="generating-state">
+              <div class="generating-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-icon">{{ currentThinkingIcon }}</div>
+              </div>
+              <div class="generating-content">
+                <strong>AI is planning your journey...</strong>
+                <span class="generating-step">{{ currentThinkingLabel }}</span>
+                <div class="generating-progress">
+                  <div
+                    class="generating-progress-fill"
+                    [style.width.%]="
+                      ((currentThinkingStep + 1) / aiThinkingSteps.length) * 100
+                    "
+                  ></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ RESULT ═══════════════ -->
+  @if (generated && tripPlan) {
+    <section class="result-section" id="trip-result">
+      <div class="container">
+        <div class="result-header">
+          <div>
+            <div class="result-badge">
+              <span class="badge-dot"></span>
+              YOUR AI-GENERATED JOURNEY
+            </div>
+            <h2>
+              Your {{ tripPlan.duration }}-day
+              <span>{{ tripPlan.destination }}</span>
+              adventure
+            </h2>
+            <p>{{ tripPlan.summary }}</p>
+          </div>
+
+          <div class="estimated-cost">
+            <small>ESTIMATED TRIP COST</small>
+            <strong>৳{{ tripPlan.estimatedCost | number }}</strong>
+            <span>for {{ tripPlan.travelers }} {{ tripPlan.travelers === 1 ? 'traveler' : 'travelers' }}</span>
+          </div>
+        </div>
+
+        <!-- RESULT STATS -->
+        <div class="row g-3 result-stats">
+          <div class="col-md-4">
+            <div class="result-stat" data-accent="blue">
+              <span>📅</span>
+              <div>
+                <small>DURATION</small>
+                <strong>{{ tripPlan.duration }} Days</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="result-stat" data-accent="purple">
+              <span>✨</span>
+              <div>
+                <small>TRAVEL STYLE</small>
+                <strong>{{ tripPlan.travelStyle }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="result-stat" data-accent="amber">
+              <span>💰</span>
+              <div>
+                <small>BUDGET</small>
+                <strong>{{ tripPlan.budget }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ITINERARY -->
+        <div class="itinerary-section">
+          <div class="result-section-title">
+            <span>02 — YOUR JOURNEY</span>
+            <h3>Day-by-day itinerary</h3>
+          </div>
+
+          <div class="itinerary-list">
+            @for (day of tripPlan.dailyPlans; track day.day) {
+              <div class="day-card">
+                <div class="day-image">
+                  <img [src]="day.image" [alt]="day.title" loading="lazy" />
+                  <div class="day-image-overlay"></div>
+                  <div class="day-number">
+                    <small>DAY</small>
+                    <strong>{{ day.day }}</strong>
+                  </div>
+                </div>
+
+                <div class="day-content">
+                  <h4>{{ day.title }}</h4>
+
+                  <div class="activity-grid">
+                    <div>
+                      <span>☀</span>
+                      <div>
+                        <small>MORNING</small>
+                        <p>{{ day.morning }}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <span>◐</span>
+                      <div>
+                        <small>AFTERNOON</small>
+                        <p>{{ day.afternoon }}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <span>☾</span>
+                      <div>
+                        <small>EVENING</small>
+                        <p>{{ day.evening }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="day-activities">
+                    @for (act of day.activities; track act) {
+                      <span class="day-activity-chip">{{ act }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- TIPS + CTA -->
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="tips-card">
+              <div class="result-section-title">
+                <span>03 — SMART TIPS</span>
+                <h3>Travel smarter</h3>
+              </div>
+
+              <div class="tips-list">
+                @for (tip of tripPlan.tips; track tip.text) {
+                  <div class="tip-item">
+                    <span class="tip-icon">{{ tip.icon }}</span>
+                    <p>{{ tip.text }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="cta-card">
+              <div class="cta-glow"></div>
+              <span class="cta-icon">✦</span>
+              <h3>Ready to make it real?</h3>
+              <p>Turn your AI-generated plan into a real TRAVIXA journey.</p>
+              <button type="button" class="cta-btn" (click)="goToBooking()">
+                Explore Booking
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+  @if (!generated) {
+    <section class="how-section">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span>HOW IT WORKS</span>
+          <h2>From idea to itinerary</h2>
+          <p>Planning your next adventure takes only three simple steps.</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="how-card">
+              <span class="step-number">01</span>
+              <div class="how-icon">🧭</div>
+              <h3>Tell us your style</h3>
+              <p>Share your destination, interests, budget and travel style.</p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="how-card">
+              <span class="step-number">02</span>
+              <div class="how-icon">✦</div>
+              <h3>TRAVIXA AI plans</h3>
+              <p>Our AI organizes your preferences into a personalized journey.</p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="how-card">
+              <span class="step-number">03</span>
+              <div class="how-icon">♥</div>
+              <h3>Start exploring</h3>
+              <p>Review your itinerary and turn your plan into a real trip.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+</div>

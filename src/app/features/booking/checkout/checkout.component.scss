@@ -1,0 +1,51 @@
+:host {
+  display: grid;
+  min-height: calc(100vh - 72px);
+  place-items: center;
+  padding: 24px;
+  background: #f4f8f6;
+}
+
+.checkout-redirect-card {
+  width: min(100%, 520px);
+  padding: 44px 32px;
+  border: 1px solid #dce9e3;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(18 59 53 / 10%);
+  text-align: center;
+}
+
+.checkout-mark {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  place-items: center;
+  border-radius: 18px;
+  background: #e5f5ef;
+  color: #176f5d;
+  font-size: 1.7rem;
+}
+
+.checkout-redirect-card h1 {
+  margin: 0 0 10px;
+  color: #123b35;
+  font-size: 1.7rem;
+  font-weight: 750;
+}
+
+.checkout-redirect-card p {
+  margin: 0 0 24px;
+  color: #687b74;
+}
+
+.checkout-btn {
+  min-height: 46px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 12px;
+  background: #176f5d;
+  color: white;
+  font-weight: 700;
+}

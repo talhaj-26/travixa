@@ -1,0 +1,54 @@
+<main class="contact-page">
+  <section class="contact-hero">
+    <div class="contact-hero__copy">
+      <p class="eyebrow"><span></span> Contact Travixa</p>
+      <h1>Real questions deserve a <em>thoughtful answer.</em></h1>
+      <p>Need a hand with a journey, a booking, or becoming a Travixa partner? Choose the path that suits you, or leave us a detailed note below.</p>
+    </div>
+    <div class="contact-hero__signal" aria-hidden="true">
+      <div class="signal-ring signal-ring--one"></div><div class="signal-ring signal-ring--two"></div>
+      <div class="signal-center"><span>✦</span><small>WE’RE<br>LISTENING</small></div>
+      <i class="signal-dot signal-dot--one"></i><i class="signal-dot signal-dot--two"></i><i class="signal-dot signal-dot--three"></i>
+    </div>
+  </section>
+
+  <section class="contact-options section-shell" aria-label="Ways to contact Travixa">
+    <a routerLink="/support" class="contact-option"><span class="contact-option__icon">?</span><div><h2>Support centre</h2><p>Find help for bookings, trips and account questions.</p></div><b>→</b></a>
+    <a href="mailto:support@travixa.com" class="contact-option"><span class="contact-option__icon">✉</span><div><h2>Email support</h2><p>support&#64;travixa.com</p></div><b>→</b></a>
+    <a routerLink="/partner-registration" class="contact-option"><span class="contact-option__icon">+</span><div><h2>Become a partner</h2><p>Bring your hotel, restaurant or service to Travixa.</p></div><b>→</b></a>
+  </section>
+
+  <section class="contact-workspace section-shell">
+    <aside class="contact-aside">
+      <p class="eyebrow"><span></span> Send a message</p>
+      <h2>Tell us what would make your trip <em>easier.</em></h2>
+      <p class="contact-aside__body">The more context you share, the more useful the reply can be. Your message is prepared safely on this device while the support API is being connected.</p>
+      <div class="response-note"><span>✓</span><div><strong>Helpful by design</strong><p>Include a booking reference when your message is about an existing booking.</p></div></div>
+    </aside>
+
+    <div class="form-card">
+      @if (submitted) {
+        <div class="success-state">
+          <span class="success-state__mark">✓</span><p class="eyebrow"><span></span> Message prepared</p>
+          <h2>Thank you, {{ form.name }}.</h2>
+          <p>Your note has been saved on this browser and is ready for the Travixa support connection. We appreciate you getting in touch.</p>
+          <button type="button" class="button button--primary" (click)="startAnotherMessage()">Send another message <span>→</span></button>
+        </div>
+      } @else {
+        <form #contactForm="ngForm" (ngSubmit)="submit()" novalidate>
+          <div class="form-heading"><h2>How can we help?</h2><p>Fields marked with <b>*</b> are required.</p></div>
+          <div class="form-grid">
+            <label><span>Your name <b>*</b></span><input name="name" [(ngModel)]="form.name" required autocomplete="name" placeholder="e.g. Ayesha Rahman"></label>
+            <label><span>Email address <b>*</b></span><input name="email" [(ngModel)]="form.email" required type="email" autocomplete="email" placeholder="you&#64;example.com"></label>
+            <label><span>Phone number <small>(optional)</small></span><input name="phone" [(ngModel)]="form.phone" type="tel" autocomplete="tel" placeholder="+880 1XXX-XXXXXX"></label>
+            <label><span>What is this about? <b>*</b></span><select name="topic" [(ngModel)]="form.topic" required><option value="" disabled>Select a topic</option>@for (topic of topics; track topic) { <option [value]="topic">{{ topic }}</option> }</select></label>
+            <label class="form-grid__message"><span>Your message <b>*</b></span><textarea name="message" [(ngModel)]="form.message" required rows="6" placeholder="Share the details and we’ll point you in the right direction."></textarea></label>
+          </div>
+          <div class="form-footer"><p><span>⌁</span> No card or payment details are needed here.</p><button type="submit" class="button button--primary" [disabled]="isSubmitting">{{ isSubmitting ? 'Preparing message…' : 'Send message' }} <span>→</span></button></div>
+        </form>
+      }
+    </div>
+  </section>
+
+  <section class="contact-cta"><div class="section-shell"><div><p class="eyebrow"><span></span> Prefer to browse first?</p><h2>There’s a whole journey <em>waiting to be discovered.</em></h2></div><a routerLink="/discover" class="button button--ghost">Explore Travixa</a></div></section>
+</main>

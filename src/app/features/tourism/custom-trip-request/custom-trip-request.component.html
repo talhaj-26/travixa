@@ -1,0 +1,30 @@
+<main class="request-page">
+  <div class="request-shell">
+    <header class="request-hero"><div class="hero-copy"><span class="eyebrow">CUSTOM JOURNEY · YOUR TRAVEL BRIEF</span><h1>Tell us where you want to go.</h1><p>Send your travel dates, group size and optional preferences. Your request is saved to your account for the TRAVIXA team to review.</p><div class="steps"><span><b>01</b> Choose a destination</span><span><b>02</b> Share your dates</span><span><b>03</b> Track your request</span></div></div><div class="hero-orbit" aria-hidden="true">✧</div></header>
+
+    @if (errorMessage) { <div class="notice notice--error" role="alert">{{ errorMessage }} <button type="button" (click)="load()">Retry loading</button></div> }
+    @if (successMessage) { <div class="notice notice--success" role="status">{{ successMessage }}</div> }
+
+    @if (loading) { <section class="state-card" aria-live="polite"><span class="spinner"></span><h2>Loading your travel workspace</h2><p>Getting destinations and your saved requests.</p></section> }
+    @else {
+      <section class="content-grid">
+        <form class="request-form" #tripForm="ngForm" (ngSubmit)="submit()">
+          <header><span class="eyebrow">PLAN AROUND YOU</span><h2>Trip details</h2><p>Destination and dates are required. Preferences and budget are optional.</p></header>
+          <label>Destination <span class="required">Required</span><select name="destinationId" [(ngModel)]="draft.destinationId" required><option [ngValue]="0" disabled>Select a published destination</option>@for (destination of destinations; track destination.id) { <option [ngValue]="destination.id">{{ destination.name }}{{ destination.region ? ' · ' + destination.region : '' }}</option> }</select></label>
+          <div class="field-row"><label>Start date <span class="required">Required</span><input type="date" name="startDate" [(ngModel)]="draft.startDate" [min]="minDate" required></label><label>End date <span class="required">Required</span><input type="date" name="endDate" [(ngModel)]="draft.endDate" [min]="draft.startDate || minDate" required></label></div>
+          <div class="field-row"><label>Travelers <span class="required">Required</span><input type="number" name="travelers" [(ngModel)]="draft.travelers" min="1" max="20" required></label><label>Budget per traveler <span class="optional">Optional · BDT</span><select name="budget" [(ngModel)]="draft.budget"><option [ngValue]="null">No budget set</option><option [ngValue]="15000">Up to ৳15,000</option><option [ngValue]="30000">Up to ৳30,000</option><option [ngValue]="50000">Up to ৳50,000</option><option [ngValue]="100000">Up to ৳100,000</option></select></label></div>
+          <label>Interests <span class="optional">Optional</span><input name="interests" [(ngModel)]="draft.interests" maxlength="500" placeholder="Nature, food, photography, family travel"></label>
+          <label>Additional notes <span class="optional">Optional</span><textarea name="notes" [(ngModel)]="draft.notes" maxlength="3000" rows="4" placeholder="Accommodation, transport or accessibility preferences"></textarea></label>
+          <button type="submit" [disabled]="tripForm.invalid || saving || !destinations.length">{{ saving ? 'Submitting…' : 'Submit trip request' }} <span>→</span></button>
+          @if (!destinations.length) { <small class="empty-destinations">No published destinations are available to select.</small> }
+        </form>
+        <aside class="trust-panel"><span class="trust-icon">✧</span><span class="eyebrow">TRAVIXA JOURNEY DESK</span><h2>Built around the way you travel.</h2><p>Your preferences stay attached to your account, so you can return to the request and see its current status.</p><div class="trust-points"><span><b>✓</b> Published destination selection</span><span><b>✓</b> Optional personal preferences</span><span><b>✓</b> Account-scoped request history</span></div></aside>
+      </section>
+
+      <section class="history-section"><header><div><span class="eyebrow">YOUR ACCOUNT</span><h2>My trip requests</h2></div><span class="request-count">{{ requests.length }} {{ requests.length === 1 ? 'request' : 'requests' }}</span></header>
+        @if (requests.length) { <div class="request-list">@for (request of requests; track trackById($index, request)) { <article class="request-card"><div class="request-card-main"><span class="request-mark">✧</span><div><span class="status" [class]="'status status--' + request.status.toLowerCase()">{{ statusLabel(request.status) }}</span><h3>{{ destinationName(request.destinationId) }}</h3><p>{{ request.startDate | date:'mediumDate' }} – {{ request.endDate | date:'mediumDate' }} <span>·</span> {{ request.travelerCount }} travelers</p></div></div><div class="request-budget">@if (request.targetBudget !== null) { <span>Budget / traveler</span><strong>{{ request.targetBudget | currency:request.currency:'symbol':'1.0-0' }}</strong> } @else { <span>Budget</span><strong>Not set</strong> }</div></article> }</div> }
+        @else { <div class="empty-history"><span>✧</span><h3>No custom trip requests yet</h3><p>Submit your first trip brief and it will be saved here.</p></div> }
+      </section>
+    }
+  </div>
+</main>

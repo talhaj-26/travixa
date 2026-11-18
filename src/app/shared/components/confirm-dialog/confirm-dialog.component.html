@@ -1,0 +1,25 @@
+<div class="travixa-confirm text-center">
+  <div class="confirm-icon">!</div>
+
+  <h4 class="confirm-title">
+    {{ title }}
+  </h4>
+
+  <p class="confirm-message">
+    {{ message }}
+  </p>
+
+  <div class="confirm-actions">
+    <button type="button" class="btn btn-light cancel-btn" (click)="onCancel()">
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-danger delete-btn"
+      (click)="onConfirm()"
+    >
+      {{ confirmText }}
+    </button>
+  </div>
+</div>

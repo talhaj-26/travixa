@@ -1,0 +1,31 @@
+<main class="profile-page">
+  <div class="profile-shell">
+    <header class="profile-hero">
+      <div class="hero-orbit" aria-hidden="true"></div>
+      <div class="hero-copy"><span class="eyebrow">TRAVIXA · PARTNER NETWORK</span><h1>Your organization profile</h1><p>View the partner organizations connected to your account and their current platform status.</p></div>
+      <a routerLink="/partner-dashboard" class="hero-link">Partner dashboard <span>↗</span></a>
+    </header>
+
+    @if (loading) {
+      <section class="state-card" aria-live="polite"><span class="spinner"></span><h2>Loading organization profile</h2><p>Checking your active partner memberships.</p></section>
+    } @else if (errorMessage) {
+      <section class="state-card error" role="alert"><h2>Profile unavailable</h2><p>{{ errorMessage }}</p><button type="button" (click)="load()">Try again</button></section>
+    } @else if (!organizations.length) {
+      <section class="state-card empty"><span class="empty-mark">◎</span><h2>No active partner organization is linked</h2><p>An administrator can connect your account to an approved organization. Once linked, its business information will appear here.</p><a routerLink="/partner-dashboard" class="hero-link">Open partner workspace <span>↗</span></a></section>
+    } @else {
+      <div class="section-heading"><div><span class="eyebrow">YOUR BUSINESS DETAILS</span><h2>{{ organizations.length }} linked {{ organizations.length === 1 ? 'organization' : 'organizations' }}</h2></div><a routerLink="/partner-listings">Manage listings <span>↗</span></a></div>
+      <section class="organization-grid" aria-label="Linked partner organizations">
+        @for (organization of organizations; track trackById($index, organization)) {
+          <article class="organization-card">
+            <header><span class="organization-mark">{{ initials(organization.name) }}</span><span class="status" [class]="'status status--' + organization.status.toLowerCase()">{{ organization.status.replaceAll('_', ' ') }}</span></header>
+            <p class="business-type">{{ businessTypeLabel(organization.businessType) }}</p><h3>{{ organization.name }}</h3>
+            @if (organization.legalName) { <p class="legal-name">{{ organization.legalName }}</p> }
+            <dl><div><dt>Registration</dt><dd>{{ organization.registrationNumber || 'Not provided' }}</dd></div><div><dt>Business email</dt><dd>{{ organization.contactEmail || 'Not provided' }}</dd></div><div><dt>Business phone</dt><dd>{{ organization.contactPhone || 'Not provided' }}</dd></div></dl>
+            <footer><span>Organization #{{ organization.id }}</span><a routerLink="/partner-listings">Open listings <span>→</span></a></footer>
+          </article>
+        }
+      </section>
+      <p class="access-note">Organization details are read-only here. Contact an administrator for legal name, contact, registration or status changes.</p>
+    }
+  </div>
+</main>

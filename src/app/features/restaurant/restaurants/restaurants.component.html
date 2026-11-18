@@ -1,0 +1,109 @@
+<main class="restaurant-page">
+  <section class="restaurant-hero" aria-labelledby="restaurant-page-title">
+    <div class="hero-slides" aria-hidden="true">
+      @for (slide of heroSlides; track slide.image; let i = $index) {
+        <div class="hero-slide" [class.hero-slide--active]="i === currentSlide"
+          [style.backgroundImage]="slide.image ? 'url(' + slide.image + ')' : null"></div>
+      }
+      <div class="hero-overlay"></div>
+    </div>
+    @if (heroSlides.length > 1) {
+      <button type="button" class="hero-arrow hero-arrow--left" (click)="prevSlide()" aria-label="Previous restaurant">‹</button>
+      <button type="button" class="hero-arrow hero-arrow--right" (click)="nextSlide()" aria-label="Next restaurant">›</button>
+    }
+    <div class="container hero-content">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="hero-badge"><span class="hero-badge__dot"></span> TRAVIXA DINING · {{ currentHero.kicker }}</span>
+          <h1 class="hero-title" id="restaurant-page-title">{{ currentHero.title }}<span>{{ currentHero.highlight }}</span></h1>
+          <p class="hero-text">{{ currentHero.text }}</p>
+          <div class="hero-cta"><button type="button" class="btn-hero-primary" (click)="scrollToListings()">Explore restaurants <span>→</span></button></div>
+        </div>
+        <div class="col-lg-5">
+          <div class="hero-stat-card">
+            <div class="stat-item"><strong>{{ restaurants.length }}</strong><span>Published restaurants</span></div>
+            <div class="stat-item"><strong>{{ cuisines.length - 1 }}</strong><span>Listed cuisines</span></div>
+            <div class="stat-item"><strong>{{ popularDishes.length }}</strong><span>Menu items</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="restaurant-search-card"><div class="search-box">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input type="search" class="form-control" placeholder="Search restaurants, cuisine or address" [(ngModel)]="searchTerm" (ngModelChange)="onFiltersChanged()" aria-label="Search restaurants">
+        @if (searchTerm) { <button type="button" class="clear-search" (click)="searchTerm = ''; onFiltersChanged()" aria-label="Clear search">×</button> }
+      </div></div>
+      @if (heroSlides.length > 1) {
+        <div class="hero-dots">@for (slide of heroSlides; track slide.image; let i = $index) {
+          <button type="button" class="hero-dot" [class.hero-dot--active]="i === currentSlide" (click)="goToSlide(i)" [attr.aria-label]="'Show restaurant ' + (i + 1)"></button>
+        }</div>
+      }
+    </div>
+  </section>
+
+  @if (!loading && popularDishes.length > 0) {
+    <section class="dishes-section" aria-labelledby="menu-highlights-title"><div class="container">
+      <div class="dishes-heading"><div><span class="section-kicker">FROM REAL MENUS</span><h2 id="menu-highlights-title">Explore the menu</h2></div><p>Dish names and prices come from published restaurant menus.</p></div>
+      <div class="dishes-track">
+        @for (dish of popularDishes; track dish.id) {
+          <article class="dish-card" (click)="openRestaurant(dish.restaurantId)">
+            <div class="dish-image">
+              @if (dish.image) { <img [src]="dish.image" [alt]="dish.name" loading="lazy" (error)="onDishImageError(dish)"> }
+              @else { <div class="dish-image-placeholder" role="img" [attr.aria-label]="dish.name + ' photo unavailable'">🍽</div> }
+            </div>
+            <div class="dish-body"><span class="dish-cuisine">{{ dish.cuisine || 'Menu' }}</span><h3>{{ dish.name }}</h3><p>{{ dish.restaurant }}</p><div class="dish-foot"><strong>{{ formatPrice(dish.price, dish.currency) }}</strong><span class="dish-arrow">→</span></div></div>
+          </article>
+        }
+      </div>
+    </div></section>
+  }
+
+  <section class="filter-section" id="restaurant-listings" aria-labelledby="restaurant-listing-title"><div class="container">
+    <div class="filter-header"><div><span class="section-kicker">EXPLORE</span><h2 id="restaurant-listing-title">Restaurants for your trip</h2></div>
+      <button type="button" class="btn-clear" (click)="clearFilters()">↻ Reset filters</button>
+    </div>
+    <div class="location-chips" aria-label="Filter by cuisine">
+      @for (cuisine of cuisines; track cuisine) {
+        <button type="button" class="location-chip" [class.location-chip--active]="selectedCuisine === cuisine" (click)="selectedCuisine = cuisine; onFiltersChanged()">{{ cuisine === 'ALL' ? 'All cuisines' : cuisine }}</button>
+      }
+    </div>
+    <div class="listing-toolbar">
+      <div class="toolbar-filters">
+        <label>Location <select [(ngModel)]="selectedLocation" (ngModelChange)="onFiltersChanged()"><option value="ALL">All locations</option>@for (location of locations.slice(1); track location) {<option [value]="location">{{ location }}</option>}</select></label>
+        <label>Sort <select [(ngModel)]="sortBy" (ngModelChange)="onFiltersChanged()"><option value="name">Name</option><option value="location">Location</option></select></label>
+      </div>
+      <div class="view-toggle" aria-label="Listing layout"><button type="button" [class.active]="viewMode === 'grid'" (click)="setView('grid')" aria-label="Grid view">▦</button><button type="button" [class.active]="viewMode === 'list'" (click)="setView('list')" aria-label="List view">☷</button></div>
+    </div>
+
+    @if (loading) {
+      <div class="empty-state" role="status"><h3>Loading restaurants…</h3><p>Getting published listings from the TRAVIXA service.</p></div>
+    } @else if (loadError) {
+      <div class="empty-state" role="alert"><h3>Restaurants are unavailable</h3><p>{{ loadError }}</p><button type="button" class="btn-view" (click)="loadRestaurants()">Try again</button></div>
+    } @else if (pagedRestaurants.length > 0) {
+      <div class="row g-4 mt-2" [class.listing-grid--list]="viewMode === 'list'">
+        @for (restaurant of pagedRestaurants; track restaurant.id) {
+          <div [class]="viewMode === 'grid' ? 'col-xl-4 col-lg-6' : 'col-12'">
+            <article class="restaurant-card" [class.restaurant-card--list]="viewMode === 'list'">
+              <div class="restaurant-image">
+                @if (restaurant.image) { <img [src]="restaurant.image" [alt]="restaurant.name" loading="lazy" (error)="onImageError(restaurant)"> }
+                @else { <div class="restaurant-image-placeholder" role="img" [attr.aria-label]="restaurant.name + ' photo unavailable'">⌂</div> }
+                <div class="image-overlay"></div>
+                <div class="restaurant-image-label">{{ restaurant.cuisine[0] || 'Dining' }}</div>
+              </div>
+              <div class="restaurant-content">
+                <div class="restaurant-top"><div class="restaurant-location">📍 {{ restaurant.location }}</div></div>
+                <h3>{{ restaurant.name }}</h3>
+                @if (restaurant.cuisine.length > 0) { <div class="cuisine-list">@for (item of restaurant.cuisine; track item) {<span class="cuisine-chip">{{ item }}</span>}</div> }
+                <p class="restaurant-description">{{ restaurant.description || 'Restaurant details are available from the listing team.' }}</p>
+                <div class="restaurant-meta"><div class="meta-item"><span>◷</span><div><small>Opening hours</small><strong>{{ restaurant.openingHours || 'Contact restaurant' }}</strong></div></div></div>
+                <div class="restaurant-actions"><button type="button" class="btn-view" (click)="openRestaurant(restaurant.id)">View menu</button><button type="button" class="btn-reserve" (click)="openRestaurant(restaurant.id)">Reserve a table <span>→</span></button></div>
+              </div>
+            </article>
+          </div>
+        }
+      </div>
+      @if (pageCount > 1) { <nav class="restaurant-pagination" aria-label="Restaurant pages"><button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">Previous</button><span>Page {{ currentPage + 1 }} of {{ pageCount }}</span><button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage + 1 >= pageCount">Next</button></nav> }
+    } @else {
+      <div class="empty-state"><h3>No restaurants match</h3><p>Try a different address or cuisine, or reset your filters.</p><button type="button" class="btn-view" (click)="clearFilters()">Reset filters</button></div>
+    }
+  </div></section>
+</main>

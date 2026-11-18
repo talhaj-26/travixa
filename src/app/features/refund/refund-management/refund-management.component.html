@@ -1,0 +1,277 @@
+
+<section class="refund-page">
+  <div class="refund-hero">
+    <div class="container">
+      <span class="hero-badge">↩ Refund Center</span>
+      <h1>{{ isManagementMode ? 'Refund Management' : 'Request a Refund' }}</h1>
+      <p>
+        {{ isManagementMode
+          ? 'Review, approve or reject customer refund requests.'
+          : 'Request a refund for a cancelled booking with a successful payment.' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    @if (errorMessage) {
+      <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success" role="status">{{ successMessage }}</div>
+    }
+
+    @if (!isManagementMode) {
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="card-shell">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">ELIGIBLE PAYMENTS</span>
+                <h2>Select a cancelled booking</h2>
+              </div>
+              <span class="count-pill">{{ eligiblePayments.length }}</span>
+            </div>
+
+            @if (eligiblePayments.length === 0) {
+              <div class="empty-state">
+                <div class="empty-icon">✓</div>
+                <h3>No eligible payment found</h3>
+                <p>
+                  A booking must be cancelled and payment successfully completed
+                  before requesting a refund.
+                </p>
+              </div>
+            } @else {
+              <div class="payment-list">
+                @for (payment of eligiblePayments; track payment.id) {
+                  <button
+                    type="button"
+                    class="payment-row"
+                    [class.active]="selectedPayment?.id === payment.id"
+                    (click)="selectPayment(payment)"
+                  >
+                    <span class="payment-main">
+                      <strong>{{ bookingFor(payment)?.bookingReference || ('Booking #' + payment.bookingId) }}</strong>
+                      <small>
+                        {{ bookingFor(payment)?.serviceName || 'Travel service' }}
+                      </small>
+                    </span>
+
+                    <span class="payment-amount">
+                      ৳{{ payment.amount | number:'1.0-2' }}
+                    </span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card-shell sticky-card">
+            <span class="eyebrow">REFUND REQUEST</span>
+
+            @if (selectedPayment && selectedBooking) {
+              <h2>
+                {{ selectedBooking.bookingReference || ('Booking #' + selectedBooking.id) }}
+              </h2>
+
+              <div class="summary-grid">
+                <div>
+                  <span>Payment Amount</span>
+                  <strong>৳{{ selectedPayment.amount | number:'1.0-2' }}</strong>
+                </div>
+
+                <div>
+                  <span>Refundable</span>
+                  <strong>৳{{ remainingRefundable(selectedPayment) | number:'1.0-2' }}</strong>
+                </div>
+
+                <div>
+                  <span>Booking</span>
+                  <strong>{{ selectedBooking.bookingStatus }}</strong>
+                </div>
+
+                <div>
+                  <span>Payment</span>
+                  <strong>{{ selectedPayment.status }}</strong>
+                </div>
+              </div>
+
+              @if (hasOpenRequest(selectedPayment)) {
+                <div class="notice">
+                  An active refund request already exists for this payment.
+                </div>
+              } @else if (remainingRefundable(selectedPayment) <= 0) {
+                <div class="notice">
+                  No refundable balance remains for this payment.
+                </div>
+              } @else {
+                <label class="form-label" for="refundAmount">
+                  Refund Amount (BDT)
+                </label>
+
+                <input
+                  id="refundAmount"
+                  class="form-control mb-3"
+                  type="number"
+                  min="1"
+                  [max]="remainingRefundable(selectedPayment)"
+                  step="0.01"
+                  [(ngModel)]="refundAmount"
+                />
+
+                <label class="form-label" for="refundReason">Reason</label>
+                <select
+                  id="refundReason"
+                  class="form-select mb-3"
+                  [(ngModel)]="reason"
+                >
+                  @for (item of reasons; track item.value) {
+                    <option [value]="item.value">{{ item.label }}</option>
+                  }
+                </select>
+
+                <label class="form-label" for="customerNote">
+                  Note (optional)
+                </label>
+                <textarea
+                  id="customerNote"
+                  class="form-control mb-3"
+                  rows="4"
+                  [(ngModel)]="customerNote"
+                  placeholder="Tell us why you are requesting the refund..."
+                ></textarea>
+
+                <button
+                  class="btn btn-primary w-100"
+                  type="button"
+                  [disabled]="
+                    isSubmitting ||
+                    refundAmount <= 0 ||
+                    refundAmount > remainingRefundable(selectedPayment)
+                  "
+                  (click)="submitRequest()"
+                >
+                  {{ isSubmitting ? 'Submitting...' : 'Submit Refund Request' }}
+                </button>
+              }
+            } @else {
+              <div class="empty-state compact">
+                <div class="empty-icon">↩</div>
+                <h3>Choose a payment</h3>
+                <p>
+                  Select a cancelled booking with a successful payment to continue.
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="card-shell">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">OPERATIONS</span>
+            <h2>Refund Requests</h2>
+          </div>
+
+          <span class="count-pill">{{ requests.length }}</span>
+        </div>
+
+        @if (requests.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">✓</div>
+            <h3>No refund requests</h3>
+            <p>Customer refund requests will appear here after submission.</p>
+          </div>
+        } @else {
+          <div class="table-responsive">
+            <table class="table align-middle refund-table">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Booking</th>
+                  <th>Payment ID</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Processed</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (request of requests; track request.id) {
+                  <tr>
+                    <td>
+                      <strong>{{ request.referenceNumber }}</strong>
+                      <small>{{ paymentReferenceFor(request) }}</small>
+                    </td>
+
+                    <td>{{ bookingReferenceFor(request) }}</td>
+
+                    <td>#{{ request.paymentId }}</td>
+
+                    <td>৳{{ request.amount | number:'1.0-2' }}</td>
+
+                    <td>
+                      <span
+                        class="status-badge"
+                        [ngClass]="statusClass(request.status)"
+                      >
+                        {{ statusLabels[request.status] }}
+                      </span>
+                    </td>
+
+                    <td>
+                      @if (request.processedAt) {
+                        {{ request.processedAt | date:'mediumDate' }}
+                      } @else {
+                        <span>—</span>
+                      }
+                    </td>
+
+                    <td class="action-cell">
+                      @if (request.status === 'REQUESTED') {
+                        <button
+                          class="btn btn-sm btn-outline-success me-1"
+                          type="button"
+                          (click)="processStatus(request, 'APPROVED')"
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          type="button"
+                          (click)="processStatus(request, 'REJECTED')"
+                        >
+                          Reject
+                        </button>
+                      } @else if (request.status === 'APPROVED') {
+                        @if (isDemoRefund(request)) {
+                          <button class="btn btn-sm btn-outline-primary" type="button" (click)="completeDemoRefund(request)">Complete demo refund</button>
+                        } @else {
+                          <span class="text-muted">Awaiting provider processing</span>
+                        }
+                      } @else if (request.status === 'PROCESSING') {
+                        <span class="text-muted">Processing</span>
+                      } @else if (request.status === 'COMPLETED') {
+                        <span class="text-success">Completed</span>
+                      } @else if (request.status === 'REJECTED') {
+                        <span class="text-danger">Rejected</span>
+                      } @else if (request.status === 'CANCELLED') {
+                        <span class="text-muted">Cancelled</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,534 @@
+<section class="stays-page">
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HERO                                            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stays-hero">
+    <div class="stays-hero-bg">
+      @for (slide of heroSlides; track slide.name; let i = $index) {
+      <div
+        class="stays-hero-slide"
+        [class.active]="currentSlide() === i"
+        [style.background-image]="slide.image ? 'url(' + slide.image + ')' : null"></div>
+      }
+      <div class="stays-hero-overlay"></div>
+    </div>
+
+    <div class="stays-hero-orb stays-hero-orb-one"></div>
+    <div class="stays-hero-orb stays-hero-orb-two"></div>
+
+    <div class="container stays-hero-container">
+      <div class="stays-hero-content">
+        <div class="stays-hero-badge">
+          <span class="badge-dot"></span>
+          <span>TRAVIXA STAYS</span>
+        </div>
+
+        <h1 class="stays-hero-title">
+          Stay somewhere
+          <span>worth remembering.</span>
+        </h1>
+
+        <div class="stays-hero-current">
+          <span class="current-location">{{ currentHero.location }}</span>
+          <span class="current-sep">•</span>
+          <span class="current-name">{{ currentHero.name }}</span>
+        </div>
+
+        <p class="stays-hero-desc">
+          {{ currentHero.tagline || 'Browse published hotels, compare current room rates, and choose a stay that fits your trip.' }}
+        </p>
+
+        <!-- Search -->
+        <div class="stays-search">
+          <span class="stays-search-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search hotel name, destination or address..." />
+
+          @if (searchTerm) {
+          <button
+            type="button"
+            class="stays-search-clear"
+            (click)="searchTerm = ''"
+            aria-label="Clear">
+            ×
+          </button>
+          }
+        </div>
+      </div>
+
+      <!-- Hero stats -->
+      <div class="stays-hero-stats">
+        <div class="stays-stat">
+          <strong>{{ hotels.length }}</strong>
+          <span>Published stays</span>
+        </div>
+        <div class="stays-stat">
+          <strong>{{ destinationCount }}</strong>
+          <span>Destinations</span>
+        </div>
+        <div class="stays-stat">
+          <strong>{{ loadingHotels ? '…' : hotelsWithCurrentRates }}</strong>
+          <span>Hotels with rates</span>
+        </div>
+      </div>
+
+      <!-- Slide dots -->
+      <div class="stays-hero-dots">
+        @for (slide of heroSlides; track slide.name; let i = $index) {
+        <button
+          type="button"
+          class="stays-hero-dot"
+          [class.active]="currentSlide() === i"
+          (click)="goToSlide(i)"
+          [attr.aria-label]="'Slide ' + (i + 1)">
+          <span class="dot-fill"></span>
+        </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  @if (selectedDestinationId === null) {
+    <section class="stays-filter-section destination-first-step">
+      <div class="container">
+        <span class="section-kicker">STEP 1 · CHOOSE YOUR DESTINATION</span>
+        <h2 class="section-title">Where would you <em>like to stay?</em></h2>
+        @if (loadingDestinations) { <p role="status">Loading published destinations…</p> }
+        @if (!loadingDestinations && destinationLoadError) { <div class="stays-empty" role="alert"><p>{{ destinationLoadError }}</p><button type="button" class="stays-reset-btn" (click)="loadDestinations()">Try again</button></div> }
+        @if (!destinations.length && !loadingDestinations && !destinationLoadError) { <div class="stays-empty"><h3>No published destinations yet</h3><p>Published hotel destinations will appear here.</p></div> }
+        <div class="destination-choice-grid">
+          @for (destination of destinations; track destination.id) {
+            <button type="button" class="destination-choice" (click)="selectDestination(destination.id)">
+              @if (destination.imageUrl) { <img [src]="destination.imageUrl" [alt]="destination.name" loading="lazy" (error)="destination.imageUrl = null"> }
+              <span><strong>{{ destination.name }}</strong><small>{{ destination.region || destination.countryCode }}</small></span>
+              <b aria-hidden="true">→</b>
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+  } @else {
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FILTERS                                         -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stays-filter-section">
+    <div class="container">
+      <div class="stays-filter-header">
+        <div>
+          <span class="section-kicker">
+            <span class="eyebrow-line"></span>
+            FIND YOUR STAY
+          </span>
+          <h2 class="section-title">
+            Hotels &
+            <em>resorts.</em>
+          </h2>
+        </div>
+
+        @if (activeFilterCount > 0) {
+        <button
+          type="button"
+          class="stays-clear-btn"
+          (click)="clearFilters()">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          <span>Reset</span>
+          <span class="filter-count">{{ activeFilterCount }}</span>
+        </button>
+        }
+      </div>
+
+      <!-- Type chips -->
+      <div class="stays-type-chips">
+        @for (type of types; track type.value) {
+        <button
+          type="button"
+          class="stays-chip"
+          [class.active]="selectedType === type.value"
+          (click)="selectedType = type.value">
+          <span class="chip-icon">{{ type.icon }}</span>
+          <span>{{ type.label }}</span>
+        </button>
+        }
+      </div>
+
+      <!-- Filter grid -->
+      <div class="stays-filter-grid">
+        <div class="stays-filter-field">
+          <label for="locFilter">Location</label>
+          <select id="locFilter" [(ngModel)]="selectedLocation">
+            @for (loc of locations; track loc.value) {
+            <option [value]="loc.value">{{ loc.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="stays-filter-field">
+          <label for="ratingFilter">Hotel stars</label>
+          <select id="ratingFilter" [(ngModel)]="selectedRating">
+            @for (opt of ratingOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="stays-filter-field">
+          <label for="priceFilter">Price / Night</label>
+          <select id="priceFilter" [(ngModel)]="selectedPrice">
+            @for (opt of priceOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HOTEL LISTING                                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stays-listing-section">
+    <div class="container">
+      <div class="stays-listing-head">
+        <div class="stays-listing-title">
+          <h2>
+            Available Stays
+            <span class="result-count">{{ filteredHotels.length }}</span>
+          </h2>
+          <p>Browse published hotel listings and current room rates.</p>
+        </div>
+
+        <div class="stays-listing-actions">
+          <div class="stays-sort">
+            <label for="sortBy">Sort</label>
+            <select id="sortBy" [(ngModel)]="sortBy">
+              @for (opt of sortOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="stays-view-toggle">
+            <button
+              type="button"
+              class="view-btn"
+              [class.active]="viewMode() === 'grid'"
+              (click)="setViewMode('grid')"
+              aria-label="Grid view">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="view-btn"
+              [class.active]="viewMode() === 'list'"
+              (click)="setViewMode('list')"
+              aria-label="List view">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      @if (loadingHotels) {
+        <div class="stays-empty" role="status"><h3>Finding available stays…</h3><p>Loading published hotel listings and room rates.</p></div>
+      } @else if (hotelLoadError) {
+        <div class="stays-empty" role="alert"><h3>Hotel listings unavailable</h3><p>{{ hotelLoadError }}</p><button type="button" class="stays-reset-btn" (click)="loadHotels()">Try again</button></div>
+      } @else if (filteredHotels.length > 0) {
+      <div class="stays-grid" [class.stays-grid-list]="viewMode() === 'list'">
+        @for (hotel of pagedHotels; track hotel.id; let i = $index) {
+        <article class="stays-card" [style.animation-delay.ms]="i * 60">
+          <!-- Image -->
+          <div class="stays-card-image">
+            @if (hotel.image) {
+              <img [src]="hotel.image" [alt]="hotel.name" loading="lazy" (error)="onHotelImageError(hotel)" />
+            } @else {
+              <div class="stays-image-placeholder" role="img" [attr.aria-label]="hotel.name + ' photo unavailable'">⌂</div>
+            }
+
+            <div class="stays-card-overlay"></div>
+
+            <!-- Top badges -->
+            <div class="stays-card-top">
+              @if (hotel.badge) {
+              <span class="stays-badge">{{ hotel.badge }}</span>
+              }
+              @if (hotel.starRating > 0) { <span class="stays-rating-badge">
+                <span class="rating-star">★</span>
+                {{ hotel.starRating }} star{{ hotel.starRating === 1 ? '' : 's' }}
+              </span> }
+            </div>
+
+            <!-- Star rating + type -->
+            <div class="stays-card-image-bottom">
+              <span class="stays-image-chip">
+                {{ hotel.typeLabel }}
+              </span>
+
+              <span class="stays-image-chip stays-stars">
+                @for (star of getStars(hotel.starRating); track $index) {
+                <span class="star">★</span>
+                }
+              </span>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="stays-card-body">
+            <div class="stays-card-location">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>{{ hotel.location }} · {{ hotel.region }}</span>
+            </div>
+
+            <h3 class="stays-card-title">{{ hotel.name }}</h3>
+
+            <p class="stays-card-desc">{{ hotel.description }}</p>
+
+            <!-- Amenities -->
+            @if (hotel.amenities.length > 0) { <div class="stays-card-amenities">
+              @for (amenity of hotel.amenities.slice(0, 4); track amenity) {
+              <span class="stays-amenity">
+                <span class="amenity-icon">{{
+                  getAmenityIcon(amenity)
+                  }}</span>
+                {{ amenity }}
+              </span>
+              }
+              @if (hotel.amenities.length > 4) {
+              <span class="stays-amenity stays-amenity-more">
+                +{{ hotel.amenities.length - 4 }} more
+              </span>
+              }
+            </div> }
+
+            <!-- Meta -->
+            <div class="stays-card-meta">
+              <div class="stays-meta-item">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                <div>
+                  <small>Property class</small>
+                  <strong>{{ hotel.starRating ? hotel.starRating + ' star' : 'Not rated' }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="stays-card-footer">
+              <div class="stays-price-block">
+                <span class="stays-price-label">Per night</span>
+                <div class="stays-price-row">
+                  <strong class="stays-price">{{ formatRate(hotel) }}</strong>
+                </div>
+              </div>
+
+              <div class="stays-card-actions">
+                <button
+                  type="button"
+                  class="stays-btn-view"
+                  (click)="viewHotel(hotel)"
+                  aria-label="View details">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5">
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="stays-btn-book"
+                  (click)="bookHotel(hotel)">
+                  <span>Choose a room</span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        }
+      </div>
+      <nav class="stays-pagination" aria-label="Hotel listing pages">
+        <button type="button" (click)="previousPage()" [disabled]="currentPage === 0">Previous</button>
+        <span>Page {{ currentPage + 1 }} of {{ pageCount }}</span>
+        <button type="button" (click)="nextPage()" [disabled]="currentPage + 1 >= pageCount">Next</button>
+      </nav>
+      } @else {
+      <div class="stays-empty">
+        <div class="stays-empty-icon">🏨</div>
+        <h3>No stays found</h3>
+        <p>Try changing your location, rating or search term.</p>
+        <button
+          type="button"
+          class="stays-reset-btn"
+          (click)="clearFilters()">
+          <span>Show all stays</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+        </button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- AI PLANNER CTA                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stays-cta-section">
+    <div class="container">
+      <div class="stays-cta">
+        <div class="stays-cta-bg">
+          <div class="stays-cta-overlay"></div>
+        </div>
+
+        <div class="stays-cta-glow"></div>
+
+        <div class="stays-cta-content">
+          <span class="stays-cta-badge">
+            <span>✦</span>
+            TRAVIXA SMART PLANNER
+          </span>
+
+          <h2 class="stays-cta-title">
+            Not sure where
+            <em>to stay?</em>
+          </h2>
+
+          <p class="stays-cta-desc">
+            Let TRAVIXA's smart trip planner build a journey around your
+            destination, budget and travel style.
+          </p>
+
+          <button type="button" class="stays-cta-btn" (click)="openPlanner()">
+            <span>Plan my trip</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="stays-cta-mark">
+          <span>⌂</span>
+          <small>TRAVIXA AI</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BACK                                            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="stays-back-section">
+    <div class="container">
+      <button type="button" class="stays-back-btn" (click)="changeDestination()">← Change destination</button>
+      <button type="button" class="stays-back-btn" (click)="goToDiscover()">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        <span>Back to Discover</span>
+      </button>
+    </div>
+  </section>
+  }
+</section>

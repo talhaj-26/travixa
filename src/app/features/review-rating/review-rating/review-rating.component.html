@@ -1,0 +1,500 @@
+<section class="review-page">
+  <!-- Hero -->
+  <section class="review-hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>⭐</span>
+          <span>Real Experiences. Real Ratings.</span>
+        </div>
+
+        <h1>
+          Your Experience
+          <span>Matters.</span>
+        </h1>
+
+        <p>
+          Discover trusted experiences from Travixa travelers and share your own
+          journey with the community.
+        </p>
+
+        <div class="hero-actions">
+          <button type="button" class="btn-primary" (click)="writeReview()">
+            ✍️ Write a Review
+          </button>
+
+          <button type="button" class="btn-outline" (click)="goToBooking()">
+            View My Bookings
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rating Overview -->
+  <section class="rating-overview">
+    <div class="container">
+      <div class="overview-grid">
+        <!-- Overall Rating -->
+        <div class="rating-card overall-card">
+          <div class="rating-icon">⭐</div>
+
+          <div class="overall-rating">
+            {{ averageRating | number: "1.1-1" }}
+          </div>
+
+          <div class="stars">
+            <span
+              *ngFor="let star of getStars(averageRating)"
+              [class.filled]="star === '★'"
+            >
+              {{ star }}
+            </span>
+          </div>
+
+          <p>Based on {{ reviews.length }} traveler reviews</p>
+        </div>
+
+        <!-- Rating Distribution -->
+        <div class="rating-card distribution-card">
+          <div class="card-heading">
+            <div>
+              <span class="eyebrow">COMMUNITY FEEDBACK</span>
+              <h3>Rating Distribution</h3>
+            </div>
+
+            <span class="total-reviews"> {{ reviews.length }} Reviews </span>
+          </div>
+
+          <div class="rating-row">
+            <span>5 ⭐</span>
+
+            <div class="rating-progress">
+              <div
+                class="progress-fill"
+                [style.width.%]="
+                  reviews.length ? (fiveStarCount / reviews.length) * 100 : 0
+                "
+              ></div>
+            </div>
+
+            <strong>{{ fiveStarCount }}</strong>
+          </div>
+
+          <div class="rating-row">
+            <span>4 ⭐</span>
+
+            <div class="rating-progress">
+              <div
+                class="progress-fill"
+                [style.width.%]="
+                  reviews.length ? (fourStarCount / reviews.length) * 100 : 0
+                "
+              ></div>
+            </div>
+
+            <strong>{{ fourStarCount }}</strong>
+          </div>
+
+          <div class="rating-row">
+            <span>3 ⭐</span>
+
+            <div class="rating-progress">
+              <div
+                class="progress-fill"
+                [style.width.%]="
+                  reviews.length ? (threeStarCount / reviews.length) * 100 : 0
+                "
+              ></div>
+            </div>
+
+            <strong>{{ threeStarCount }}</strong>
+          </div>
+        </div>
+
+        <!-- Trust Card -->
+        <div class="rating-card trust-card">
+          <div class="trust-icon">✓</div>
+
+          <h3>Trusted Reviews</h3>
+
+          <div class="trust-number">
+            {{ verifiedReviewCount }}
+          </div>
+
+          <p>Verified booking experiences from real Travixa travelers.</p>
+
+          <div class="trust-badge">🛡️ Verified by Travixa</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review Section -->
+  <section class="reviews-section">
+    <div class="container">
+      <!-- Section Header -->
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">TRAVELER STORIES</span>
+
+          <h2>
+            What Travelers
+            <span>Are Saying</span>
+          </h2>
+
+          <p>
+            Honest feedback that helps the Travixa community make better travel
+            decisions.
+          </p>
+        </div>
+
+        <button type="button" class="write-review-btn" (click)="writeReview()">
+          ✍️ Share Your Experience
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-card">
+        <div class="filter-label">
+          <span>🔎</span>
+          Filter Reviews
+        </div>
+
+        <div class="category-filters">
+          <button
+            *ngFor="let category of categories"
+            type="button"
+            class="filter-pill"
+            [class.active]="selectedCategory === category.value"
+            (click)="selectCategory(category.value)"
+          >
+            <span>{{ category.icon }}</span>
+            {{ category.label }}
+          </button>
+        </div>
+
+        <div class="rating-filter">
+          <label for="ratingFilter"> Rating </label>
+
+          <select
+            id="ratingFilter"
+            class="filter-select"
+            [(ngModel)]="selectedRating"
+            (ngModelChange)="selectRating($event)"
+          >
+            <option *ngFor="let option of ratingOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <button type="button" class="clear-filter-btn" (click)="clearFilters()">
+          Reset
+        </button>
+      </div>
+
+      <!-- Review Count -->
+      <div class="results-bar">
+        <span>
+          Showing
+          <strong>{{ filteredReviews.length }}</strong>
+          reviews
+        </span>
+
+        <span class="results-status"> ✓ Authentic traveler feedback </span>
+      </div>
+
+      <!-- Reviews -->
+      <div class="reviews-grid" *ngIf="filteredReviews.length > 0">
+        <article class="review-card" *ngFor="let review of filteredReviews">
+          <!-- Card Top -->
+          <div class="review-top">
+            <div class="reviewer">
+              <img
+                [src]="review.reviewerImage"
+                [alt]="review.reviewerName"
+                class="reviewer-image"
+              />
+
+              <div>
+                <h4>{{ review.reviewerName }}</h4>
+
+                <div class="review-date">
+                  {{ review.date | date: "MMM d, yyyy" }}
+                </div>
+              </div>
+            </div>
+
+            <div class="verified-badge" *ngIf="review.verifiedBooking">
+              ✓ Verified
+            </div>
+          </div>
+
+          <!-- Rating -->
+          <div class="review-rating">
+            <span
+              *ngFor="let star of getStars(review.rating)"
+              [class.filled]="star === '★'"
+            >
+              {{ star }}
+            </span>
+
+            <strong> {{ review.rating }}.0 </strong>
+          </div>
+
+          <!-- Category -->
+          <div class="review-category">
+            {{ review.category.replace("_", " ") }}
+          </div>
+
+          <!-- Content -->
+          <h3>{{ review.title }}</h3>
+
+          <p class="review-comment">“{{ review.comment }}”</p>
+
+          <!-- Destination / Service -->
+          <div class="review-item">
+            <span class="item-icon">
+              {{
+                review.category === "HOTEL"
+                  ? "🏨"
+                  : review.category === "RESTAURANT"
+                    ? "🍽️"
+                    : review.category === "TOUR_PACKAGE"
+                      ? "🧳"
+                      : "🧭"
+              }}
+            </span>
+
+            <div>
+              <small>Reviewed</small>
+              <strong>{{ review.itemName }}</strong>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredReviews.length === 0">
+        <div class="empty-icon">🔍</div>
+
+        <h3>No Reviews Found</h3>
+
+        <p>Try changing your filters to discover more traveler experiences.</p>
+
+        <button type="button" class="btn-primary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Write Review Modal -->
+  <div
+    class="review-modal-backdrop"
+    *ngIf="isReviewFormOpen"
+    (click)="closeReviewForm()"
+  >
+    <div class="review-modal" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">TRAVIXA COMMUNITY</span>
+
+          <h2>Share Your Experience</h2>
+
+          <p>Your feedback can help another traveler make a better choice.</p>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          aria-label="Close"
+          (click)="closeReviewForm()"
+        >
+          ×
+        </button>
+      </div>
+
+      <!-- Success -->
+      <div class="review-success" *ngIf="isSubmitted">
+        <div class="success-icon">✓</div>
+
+        <h3>Thank You!</h3>
+
+        <p>
+          Your review has been added successfully. Your experience may help
+          another traveler.
+        </p>
+
+        <button type="button" class="btn-primary" (click)="closeReviewForm()">
+          Done
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form
+        *ngIf="!isSubmitted"
+        #reviewFormRef="ngForm"
+        (ngSubmit)="submitReview()"
+      >
+        <div class="form-grid">
+          <!-- Reviewer -->
+          <div class="form-group">
+            <label for="reviewerName"> Your Name </label>
+
+            <input
+              id="reviewerName"
+              type="text"
+              name="reviewerName"
+              [(ngModel)]="reviewForm.reviewerName"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+
+          <!-- Category -->
+          <div class="form-group">
+            <label for="reviewCategory"> Experience Type </label>
+
+            <select
+              id="reviewCategory"
+              name="category"
+              [(ngModel)]="reviewForm.category"
+              required
+            >
+              <option value="HOTEL">🏨 Hotel</option>
+
+              <option value="RESTAURANT">🍽️ Restaurant</option>
+
+              <option value="TOUR_PACKAGE">🧳 Tour Package</option>
+
+              <option value="TOUR_GUIDE">🧭 Tour Guide</option>
+            </select>
+          </div>
+
+          <!-- Item -->
+          <div class="form-group full-width">
+            <label for="itemName"> What did you experience? </label>
+
+            <input
+              id="itemName"
+              type="text"
+              name="itemName"
+              [(ngModel)]="reviewForm.itemName"
+              placeholder="e.g. Sea Pearl Beach Resort"
+              required
+            />
+          </div>
+
+          <!-- Rating -->
+          <div class="form-group full-width">
+            <label> Your Rating </label>
+
+            <div class="star-selector">
+              <button
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                type="button"
+                class="star-btn"
+                [class.selected]="reviewForm.rating >= star"
+                (click)="setRating(star)"
+                [attr.aria-label]="star + ' stars'"
+              >
+                ★
+              </button>
+            </div>
+
+            <small *ngIf="reviewForm.rating > 0">
+              You selected {{ reviewForm.rating }} out of 5 stars.
+            </small>
+          </div>
+
+          <!-- Title -->
+          <div class="form-group full-width">
+            <label for="reviewTitle"> Review Title </label>
+
+            <input
+              id="reviewTitle"
+              type="text"
+              name="title"
+              [(ngModel)]="reviewForm.title"
+              placeholder="Give your review a short title"
+              required
+            />
+          </div>
+
+          <!-- Comment -->
+          <div class="form-group full-width">
+            <label for="reviewComment"> Your Experience </label>
+
+            <textarea
+              id="reviewComment"
+              name="comment"
+              rows="5"
+              [(ngModel)]="reviewForm.comment"
+              placeholder="Tell other travelers about your experience..."
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeReviewForm()">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="submit-review-btn"
+            [disabled]="
+              !reviewForm.reviewerName ||
+              !reviewForm.itemName ||
+              !reviewForm.rating ||
+              !reviewForm.title ||
+              !reviewForm.comment
+            "
+          >
+            ⭐ Publish Review
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Community CTA -->
+  <section class="community-cta">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-icon">💜</div>
+
+        <div class="cta-content">
+          <span class="eyebrow"> TRAVEL WITH CONFIDENCE </span>
+
+          <h2>
+            Your Story Could
+            <span>Inspire Someone.</span>
+          </h2>
+
+          <p>
+            Every honest review helps travelers discover better stays,
+            experiences, guides and destinations.
+          </p>
+        </div>
+
+        <button type="button" class="cta-button" (click)="writeReview()">
+          Share Your Story
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back -->
+  <div class="back-section">
+    <button type="button" class="back-button" (click)="goToDiscover()">
+      ← Back to Discover
+    </button>
+  </div>
+</section>
